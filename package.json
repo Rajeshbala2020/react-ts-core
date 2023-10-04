@@ -1,0 +1,53 @@
+{
+  "name": "qbs-core",
+  "version": "1.0.0",
+  "description": "React Components",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "start": "webpack serve --open --mode development",
+    "build": "webpack --mode production",
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rajeshbala2020/react-components.git"
+  },
+  "keywords": [
+    "react",
+    "components",
+    "textfield",
+    "autocomplete"
+  ],
+  "author": "rajeshbala",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Rajeshbala2020/react-components/issues"
+  },
+  "homepage": "https://github.com/Rajeshbala2020/react-components#readme",
+  "peerDependencies": {
+    "react": "^17.0.0",
+    "react-dom": "^17.0.0"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/preset-env": "^7.22.20",
+    "@babel/preset-react": "^7.22.15",
+    "@babel/preset-typescript": "^7.23.0",
+    "@types/react": "^18.2.24",
+    "@types/react-dom": "^18.2.9",
+    "babel-loader": "^8.3.0",
+    "css-loader": "^6.8.1",
+    "html-webpack-plugin": "^4.0.0",
+    "mini-css-extract-plugin": "^2.7.6",
+    "style-loader": "^3.3.3",
+    "ts-loader": "^9.4.4",
+    "typescript": "^4.0.0",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0",
+    "webpack-dev-server": "^3.0.0"
+  },
+  "dependencies": {
+    "@babel/plugin-transform-typescript": "^7.22.15"
+  }
+}
