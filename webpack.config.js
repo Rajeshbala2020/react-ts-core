@@ -3,18 +3,31 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 module.exports = {
   //...
-  entry: './src/index.tsx',
-
+  entry: './dist/index.js',
+  devtool: 'source-map',
   module: {
     rules: [
       {
+        test: /\.css$/i,
+        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      },
+      
+      {
         test: /\.tsx?$/,
-        exclude: /node_modules/,
+        exclude: (file) =>
+          /node_modules/.test(file) && !/\.qbs-core/.test(file),
         use: 'ts-loader',
       },
       {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        enforce: 'pre',
+        test: /\.js$/,
+        loader: 'source-map-loader',
+        exclude: /node_modules/,
+      },
+
+      {
+        test: /\.svg$/,
+        use: ['@svgr/webpack', 'file-loader'],
       },
     ],
   },

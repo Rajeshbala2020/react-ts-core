@@ -1,2 +1,2 @@
 import './styles/global.css';
-export { default as AutoComplete } from './components/AutoComplete';
+export { default as AutoComplete } from './AutoComplete';

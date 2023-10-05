@@ -1,3 +1,95 @@
+:root {
+  --grey-dark: #4a4a4a;
+  --grey-light: #d3d3d3;
+  --blue-navy: #001f3f;
+  --input-disabled: #a9a9a9;
+  --error-light: #f08080;
+  --error-extra-light: #fddede;
+  --success: #28a745;
+  --success-light: #d4edda;
+  --blue-light: #add8e6;
+}
+:root {
+  --blue-navy: #001f3f;
+  --table-hover: #your-hover-color; /* Replace with your actual color code */
+}
+
+.custom-spinner {
+  width: 24px; /* w-6 */
+  height: 24px; /* h-6 */
+  margin-right: 0.5rem; /* mr-2 */
+  color: var(--table-hover); /* text-table-hover */
+  fill: var(--blue-navy); /* fill-blue-navy */
+  animation: spin 1s linear infinite; /* animate-spin */
+  width: 15px;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.textfield,
+.textfield-big {
+  outline: none;
+  color: var(--grey-dark);
+  border-color: var(--grey-light);
+  background-color: white;
+}
+
+.textfield:focus,
+.textfield-big:focus {
+  border-color: var(--blue-navy);
+}
+
+.textfield:disabled,
+.textfield-big:disabled {
+  color: var(--input-disabled);
+}
+
+.textfield-error,
+.textfield-big-error {
+  outline: none;
+  color: var(--error-light);
+  border-color: var(--error-light);
+  background-color: var(--error-extra-light);
+}
+
+.textfield-error::placeholder,
+.textfield-big-error::placeholder {
+  color: var(--error-light);
+}
+
+.textfield-success {
+  outline: none;
+  color: var(--success);
+  border-color: var(--success);
+  background-color: var(--success-light);
+}
+
+.textfield-success:focus {
+  ring-width: 0;
+}
+
+.textfield-success::placeholder {
+  color: var(--success);
+}
+
+.textfield-editable {
+  outline: none;
+  color: var(--grey-dark);
+  border-color: var(--blue-navy);
+  background-color: var(--blue-light);
+}
+
+.textfield-editable::placeholder {
+  color: var(--grey-dark);
+}
+
 .qbs-autocomplete-suggestions {
   position: absolute;
   height: auto;
@@ -51,9 +143,15 @@
   background-color: white; /* bg-white */
 }
 .qbs-textfield-default {
-  width: 100%;  /* w-full */
-  position: relative;  /* relative */
-  padding-right: 0.25rem;  /* pr-1 */
+  width: 100%; /* w-full */
+  position: relative; /* relative */
+  padding-right: 0.25rem; /* pr-1 */
 }
 
+.fullWidth {
+  width: 100%;
+}
 
+.autoWidth {
+  width: auto;
+}

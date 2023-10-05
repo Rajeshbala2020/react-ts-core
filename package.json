@@ -1,12 +1,12 @@
 {
   "name": "qbs-core",
-  "version": "1.0.0",
+  "version": "1.0.11",
   "description": "React Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
     "start": "webpack serve --open --mode development",
-    "build": "webpack --mode production",
+    "build": "tsc",
     "test": "jest"
   },
   "repository": {
@@ -26,18 +26,20 @@
   },
   "homepage": "https://github.com/Rajeshbala2020/react-components#readme",
   "peerDependencies": {
-    "react": "^17.0.0",
-    "react-dom": "^17.0.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
     "@babel/preset-env": "^7.22.20",
     "@babel/preset-react": "^7.22.15",
     "@babel/preset-typescript": "^7.23.0",
+    "@svgr/webpack": "^8.1.0",
     "@types/react": "^18.2.24",
     "@types/react-dom": "^18.2.9",
     "babel-loader": "^8.3.0",
     "css-loader": "^6.8.1",
+    "file-loader": "^6.2.0",
     "html-webpack-plugin": "^4.0.0",
     "mini-css-extract-plugin": "^2.7.6",
     "style-loader": "^3.3.3",
@@ -48,6 +50,7 @@
     "webpack-dev-server": "^3.0.0"
   },
   "dependencies": {
-    "@babel/plugin-transform-typescript": "^7.22.15"
+    "@babel/plugin-transform-typescript": "^7.22.15",
+    "source-map-loader": "^4.0.1"
   }
 }
