@@ -39,12 +39,7 @@ export const useSuggestions: UseSuggestionsType = (
   };
 
   useEffect(() => {
-    if (
-      (type === 'custom_select' || type === 'custom_search_select') &&
-      (!initialData || initialData?.length === 0) &&
-      dropOpen
-    ) {
-      console.log(initialData);
+    if ((!initialData || initialData?.length === 0) && dropOpen) {
       handlePickSuggestions();
     }
   }, [dropOpen]);

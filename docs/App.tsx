@@ -4,7 +4,11 @@ import '../src/styles/global.css';
 
 export default function App() {
   const getData = (keyName?: string) => {
-    return fetch('https://jsonplaceholder.typicode.com/posts')
+    return fetch(
+      keyName
+        ? `https://jsonplaceholder.typicode.com/posts?title_like=${keyName}`
+        : 'https://jsonplaceholder.typicode.com/posts'
+    )
       .then((res) => res.json())
       .then((res) => {
         const result = res.map((item: any) => {
@@ -16,7 +20,14 @@ export default function App() {
   };
   return (
     <React.Fragment>
-      <div style={{ display: 'flex', gap: 20 }}>
+      <div style={{ display: 'block', gap: 20, padding: 20 }}>
+        <div className="autocomplete-section">
+          <h2>Custom Select</h2>
+          <p>
+            Select an option from a predefined static list. Ideal for a scenario
+            when the available options are limited and known.
+          </p>
+        </div>
         <div style={{ width: 200 }}>
           <AutoComplete
             label="Custom Select"
@@ -34,6 +45,14 @@ export default function App() {
             onChange={() => console.log('onchange')}
           />
         </div>
+        <div className="autocomplete-section">
+          <h2>Auto Complete</h2>
+          <p>
+            Type in the input field and get real-time suggestions from
+            dynamically fetched data. Useful for selecting from large datasets
+            where displaying all available options is impractical.
+          </p>
+        </div>
         <div style={{ width: 200 }}>
           <AutoComplete
             label="Auto Complete"
@@ -44,6 +63,16 @@ export default function App() {
             onChange={() => console.log('onchange')}
           />
         </div>
+        <div className="autocomplete-section">
+          <h2>Custom Search Select</h2>
+          <p>
+            This allows you to search through static data, providing a filtered
+            list based on your query or select from available items. Optimal for
+            scenarios where you might have predefined options but also want to
+            enable users to quickly narrow down their choices.
+          </p>
+        </div>
+
         <div style={{ width: 200 }}>
           <AutoComplete
             label="Custom Search Select"
@@ -63,6 +92,15 @@ export default function App() {
             ]}
             onChange={() => console.log('onchange')}
           />
+        </div>
+        <div className="autocomplete-section">
+          <h2>Auto Suggestion</h2>
+          <p>
+            As you type, suggestions will appear based on your input, aiding in
+            quicker and potentially more accurate data entry. This mode supports
+            both listed and non-listed input, providing flexibility in user
+            input while still offering assistance.
+          </p>
         </div>
         <div style={{ width: 200 }}>
           <AutoComplete

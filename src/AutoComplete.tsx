@@ -49,13 +49,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   isMultiple = false,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
+  // State Hooks Section
 
   const [inputValue, setInputValue] = useState<string>(value?.name ?? '');
   const [searchValue, setSearchValue] = useState<string>('');
-
   const [dropOpen, setDropOpen] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
 
+  // API call for suggestions through a custom hook
   const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
     getData,
     data,
@@ -63,6 +64,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     dropOpen
   );
 
+  // Handling the selection of a suggestion
   const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
     if (isMultiple) {
       setSelectedItems((prev) => [...prev, suggestion]);
@@ -74,6 +76,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     setDropOpen(false);
   }, []);
 
+  // Adding debounce to avoid making API calls on every keystroke
   const handleChangeWithDebounce = debounce((value) => {
     if (type === 'auto_complete' || type === 'auto_suggestion') {
       handlePickSuggestions(value);
@@ -91,6 +94,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     }
   };
 
+  // Effect to set the input value whenever `value` prop changes
   useEffect(() => {
     setInputValue(value?.name ?? '');
   }, [value?.name]);
@@ -124,6 +128,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       return prev.filter((_, i) => i !== index);
     });
   };
+
   useEffect(() => {
     const handleClickOutside = (event: React.MouseEvent) => {
       if (
@@ -139,12 +144,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       document.removeEventListener('mousedown', handleClickOutside as any);
     };
   }, []);
+
+  // Filtering suggestions based on type and search value
   const filteredData: ValueProps[] = filterSuggestions(
     suggestions,
     searchValue,
     type
   );
-  console.log(inputValue, searchValue);
+
   return (
     <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
       {label && (
@@ -155,6 +162,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           </label>
         </div>
       )}
+      {/* Displaying selected items for multi-select */}
       <div className="selected-items-container">
         {selectedItems.map((item, index) => (
           <div key={index} className="selected-item">
@@ -172,7 +180,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         <input
           id={id}
           type="text"
-          value={searchValue ? searchValue : inputValue}
+          value={
+            type === 'auto_suggestion' ? inputValue : searchValue || inputValue
+          }
           onChange={handleChange}
           onBlur={handleBlur}
           className={generateClassName()}
@@ -185,6 +195,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           disabled={disabled}
           data-testid="custom-autocomplete"
         />
+
+        {/* Icons for Clearing Input or Toggling Dropdown */}
         <div className="qbs-autocomplete-close-icon">
           {inputValue && !disabled && !readOnly && (
             <button
@@ -205,11 +217,15 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
             <DropArrow />
           </button>
         </div>
+
+        {/* Displaying Loading Spinner */}
         {isLoading && (
           <span style={{ position: 'absolute', top: 5, right: 2 }}>
             <Spinner />
           </span>
         )}
+
+        {/* Suggestions Dropdown */}
         {dropOpen && (
           <ul className="qbs-autocomplete-suggestions">
             {type == 'auto_suggestion' && (
@@ -222,7 +238,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                 />
               </div>
             )}
+
             <div className="qbs-autocomplete-suggestions-sub">
+              {/* Displaying Suggestions or Not Found Message */}
               {filteredData.length > 0 ? (
                 filteredData.map((suggestion: ValueProps, idx: number) => (
                   <div
@@ -256,6 +274,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           </ul>
         )}
       </div>
+
+      {/* Displaying Validation Error */}
       {errors && errors[name] && (
         <div
           className="text-error text-error-label mt-[1px]"
