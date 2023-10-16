@@ -5,8 +5,7 @@ import { Close, DropArrow, Spinner } from './utilities/icons';
 import { debounce } from './utilities/debounce';
 import { filterSuggestions } from './utilities/filterSuggestions';
 type ValueProps = {
-  id: string;
-  name: string;
+  [key: string]: string;
 };
 
 interface AutoSuggestionInputProps {
@@ -14,7 +13,7 @@ interface AutoSuggestionInputProps {
   label: string;
   fullWidth?: boolean;
   required?: boolean;
-  value?: ValueProps;
+  value?: string;
   onChange: (value?: ValueProps) => void;
   data?: ValueProps[];
   type?:
@@ -29,6 +28,9 @@ interface AutoSuggestionInputProps {
   readOnly?: boolean;
   disabled?: boolean;
   isMultiple?: boolean;
+  desc: string;
+  descId: string;
+  singleSelect?: boolean;
 }
 
 const AutoComplete: FC<AutoSuggestionInputProps> = ({
@@ -47,11 +49,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   disabled = false,
   value,
   isMultiple = false,
+  desc = 'name',
+  descId = 'id',
+  singleSelect,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
 
-  const [inputValue, setInputValue] = useState<string>(value?.name ?? '');
+  const [inputValue, setInputValue] = useState<string>(value);
   const [searchValue, setSearchValue] = useState<string>('');
   const [dropOpen, setDropOpen] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
@@ -69,7 +74,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     if (isMultiple) {
       setSelectedItems((prev) => [...prev, suggestion]);
     } else {
-      setInputValue(suggestion.name);
+      setInputValue(suggestion[desc]);
     }
     setSearchValue('');
     onChange(suggestion);
@@ -85,19 +90,27 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
   const handleMultiSelect = (e: any, suggestion: ValueProps) => {
     const { checked } = e.target;
-    if (checked) {
-      setSelectedItems((prev) => [...prev, suggestion]);
+    if (isMultiple) {
+      if (checked) {
+        setSelectedItems((prev) => [...prev, suggestion]);
+      } else {
+        setSelectedItems((prev) => {
+          return prev.filter((item, i) => item[descId] !== suggestion[descId]);
+        });
+      }
     } else {
-      setSelectedItems((prev) => {
-        return prev.filter((item, i) => item.id !== suggestion?.id);
-      });
+      if (checked) {
+        setInputValue(suggestion[desc]);
+      } else {
+        setInputValue('');
+      }
     }
   };
 
   // Effect to set the input value whenever `value` prop changes
   useEffect(() => {
-    setInputValue(value?.name ?? '');
-  }, [value?.name]);
+    setInputValue(value ?? '');
+  }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target;
@@ -114,7 +127,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
   const handleClear = () => {
     setInputValue('');
-    onChange({ id: '', name: '' });
+    onChange({ [descId]: '', [desc]: '' });
     setDropOpen(false);
   };
 
@@ -146,12 +159,25 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   }, []);
 
   // Filtering suggestions based on type and search value
+  const selected: any = isMultiple ? selectedItems : inputValue;
   const filteredData: ValueProps[] = filterSuggestions(
     suggestions,
     searchValue,
-    type
+    type,
+    selected
   );
-
+  const isSelected = (
+    item: ValueProps,
+    selectedItems: ValueProps[] | string
+  ): boolean => {
+    if (Array.isArray(selectedItems)) {
+      return selectedItems.some(
+        (selectedItem) => selectedItem.name === item.name
+      );
+    } else {
+      return item.name === selectedItems;
+    }
+  };
   return (
     <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
       {label && (
@@ -163,20 +189,32 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         </div>
       )}
       {/* Displaying selected items for multi-select */}
-      <div className="selected-items-container">
-        {selectedItems.map((item, index) => (
-          <div key={index} className="selected-item">
-            {item.name}
-            <button
-              onClick={() => handleRemoveSelectedItem(index)}
-              className="remove-item-btn"
-            >
-              X
-            </button>
-          </div>
-        ))}
-      </div>
+
       <div style={{ position: 'relative' }}>
+        <div className="selected-items-container">
+          {selectedItems.length > 0 && (
+            <>
+              <div key={selectedItems[0].id} className="selected-item">
+                {selectedItems[0].name.length > 8
+                  ? `${selectedItems[0].name.substring(0, 8)}...`
+                  : selectedItems[0].name}
+                <button
+                  onClick={() => handleRemoveSelectedItem(0)}
+                  className="remove-item-btn"
+                  aria-label={`Remove ${selectedItems[0].name}`}
+                >
+                  X
+                </button>
+              </div>
+
+              {selectedItems.length > 1 && (
+                <div className="selected-item-more">
+                  +{selectedItems.length - 1} more
+                </div>
+              )}
+            </>
+          )}
+        </div>
         <input
           id={id}
           type="text"
@@ -186,7 +224,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           onChange={handleChange}
           onBlur={handleBlur}
           className={generateClassName()}
-          placeholder={placeholder ?? ''}
+          placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
           readOnly={
             readOnly || type === 'custom_select' || type == 'auto_suggestion'
               ? true
@@ -229,7 +267,10 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         {dropOpen && (
           <ul className="qbs-autocomplete-suggestions">
             {type == 'auto_suggestion' && (
-              <div style={{ position: 'relative' }}>
+              <div
+                style={{ position: 'relative' }}
+                className="qbs-core-search-container"
+              >
                 <input
                   className="dropdown-search-input"
                   onChange={handleChange}
@@ -247,21 +288,24 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                     key={idx.toString()}
                     className="qbs-autocomplete-listitem-container"
                   >
-                    {isMultiple && (
+                    {(isMultiple || singleSelect) && (
                       <div>
                         <input
                           onChange={(e) => handleMultiSelect(e, suggestion)}
                           type="checkbox"
+                          checked={isSelected(suggestion, selected)}
                         />
                       </div>
                     )}
                     <li
                       key={idx}
-                      className="qbs-autocomplete-suggestions-item"
+                      className={`qbs-autocomplete-suggestions-item ${
+                        isSelected(suggestion, selected) ? 'is-selected' : ''
+                      }`}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      data-testid={suggestion.name}
+                      data-testid={suggestion[desc]}
                     >
-                      {suggestion.name}
+                      {suggestion[desc]}
                     </li>
                   </div>
                 ))

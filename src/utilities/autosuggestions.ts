@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 
 type ValueProps = {
-  id: string;
-  name: string;
+  [key: string]: string;
 };
 
 type UseSuggestionsType = (

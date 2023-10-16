@@ -42,6 +42,8 @@ export default function App() {
               label="Custom Select"
               name="sample"
               placeholder="Custom Select"
+              desc="name"
+              descId="id"
               type="custom_select"
               data={[
                 { name: 'test', id: '1' },
@@ -67,6 +69,8 @@ export default function App() {
             <AutoComplete
               label="Auto Complete"
               name="sample"
+              desc="name"
+              descId="id"
               type="auto_complete"
               placeholder="Auto Complete"
               // data={[{ name: 'test', id: '1' }]}
@@ -89,6 +93,8 @@ export default function App() {
               label="Custom Search Select"
               name="sample"
               placeholder="Custom Search Select"
+              desc="name"
+              descId="id"
               type="custom_search_select"
               data={[
                 { name: 'Apple', id: '1' },
@@ -119,6 +125,37 @@ export default function App() {
               label="Auto Suggestion"
               name="sample"
               type="auto_suggestion"
+              desc="name"
+              descId="id"
+              placeholder="Auto Suggestion"
+              // data={[{ name: 'test', id: '1' }]}
+              getData={getData}
+              onChange={() => console.log('onchange')}
+            />
+          </div>
+          <div style={{ width: 200 }}>
+            <AutoComplete
+              label="Auto Suggestion"
+              name="sample"
+              type="auto_suggestion"
+              required
+              desc="name"
+              isMultiple
+              descId="id"
+              placeholder="Auto Suggestion"
+              // data={[{ name: 'test', id: '1' }]}
+              getData={getData}
+              onChange={() => console.log('onchange')}
+            />
+          </div>
+          <div style={{ width: 200 }}>
+            <AutoComplete
+              label="Auto Suggestion"
+              name="sample"
+              type="auto_suggestion"
+              desc="name"
+              singleSelect
+              descId="id"
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
