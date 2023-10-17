@@ -4,34 +4,10 @@ import { useSuggestions } from './utilities/autosuggestions';
 import { Close, DropArrow, Spinner } from './utilities/icons';
 import { debounce } from './utilities/debounce';
 import { filterSuggestions } from './utilities/filterSuggestions';
+import { AutoSuggestionInputProps } from './commontypes';
 type ValueProps = {
   [key: string]: string;
 };
-
-interface AutoSuggestionInputProps {
-  id?: string;
-  label: string;
-  fullWidth?: boolean;
-  required?: boolean;
-  value?: string;
-  onChange: (value?: ValueProps) => void;
-  data?: ValueProps[];
-  type?:
-    | 'custom_select'
-    | 'auto_complete'
-    | 'custom_search_select'
-    | 'auto_suggestion';
-  placeholder?: string;
-  getData?: (key?: string) => any;
-  errors?: any;
-  name: string;
-  readOnly?: boolean;
-  disabled?: boolean;
-  isMultiple?: boolean;
-  desc: string;
-  descId: string;
-  singleSelect?: boolean;
-}
 
 const AutoComplete: FC<AutoSuggestionInputProps> = ({
   label,
@@ -52,6 +28,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   desc = 'name',
   descId = 'id',
   singleSelect,
+  className,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
@@ -132,7 +109,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   };
 
   const generateClassName = useCallback(() => {
-    return `qbs-textfield-default ${
+    return `qbs-textfield-default ${className} ${
       errors && errors[name] ? 'textfield-error' : 'textfield'
     }`;
   }, [errors, name]);
