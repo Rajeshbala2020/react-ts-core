@@ -156,7 +156,7 @@
   width: 100%; /* w-full */
   position: relative; /* relative */
   padding-right: 0.25rem; /* pr-1 */
-  min-height: 32px;
+  min-height: 36px;
   border-radius: 6px;
   padding-left: 7px;
   border: 1px solid var(--border-card-color-default, #d6d8dc);
@@ -248,4 +248,11 @@ ul {
 .selected-item-more {
   margin: 0.5rem 0.5rem 0 0;
   font-size: 14px;
+}
+.loadMoreSection {
+  margin: 3px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  color: blue;
 }

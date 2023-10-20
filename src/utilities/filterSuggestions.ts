@@ -9,7 +9,7 @@ export const filterSuggestions = (
   inputValue?: string
 ): Item[] => {
   if (type === 'custom_search_select' && query) {
-    return data.filter((item) =>
+    return data?.filter((item) =>
       item.name.toLowerCase().includes(query.toLowerCase())
     );
   }

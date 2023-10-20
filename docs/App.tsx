@@ -1,20 +1,41 @@
-import React from 'react';
+import React, { useState } from 'react';
+
 import AutoComplete from '../src/AutoComplete';
+
 import '../src/styles/global.css';
 
 export default function App() {
-  const getData = (keyName?: string) => {
+  const [dropData, setDropData] = useState();
+  const [nexBlock, setNexBlock] = useState(1);
+  const [prev, setPrev] = useState(1);
+
+  const getData = (keyName?: string, next?: number) => {
     return fetch(
       keyName
-        ? `https://jsonplaceholder.typicode.com/posts?title_like=${keyName}`
-        : 'https://jsonplaceholder.typicode.com/posts'
+        ? `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10&title_like=${keyName}`
+        : `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10`
     )
       .then((res) => res.json())
       .then((res) => {
+        setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
           return { ...item, ['name']: item?.title, id: item?.id.toString() };
         });
-        console.log(result);
+        return result;
+      });
+  };
+  const getDatas = (keyName?: string) => {
+    return fetch(
+      keyName
+        ? `https://jsonplaceholder.typicode.com/posts?title_like=${keyName}`
+        : `https://jsonplaceholder.typicode.com/posts`
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setPrev(prev + 1);
+        const result = res.map((item: any) => {
+          return { ...item, ['name']: item?.title, id: item?.id.toString() };
+        });
         return result;
       });
   };
@@ -70,11 +91,28 @@ export default function App() {
               label="Auto Complete"
               name="sample"
               desc="name"
+              paginationEnabled={true}
+              nextBlock={nexBlock}
               descId="id"
+              async={true}
               type="auto_complete"
               placeholder="Auto Complete"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
+              onChange={() => console.log('onchange')}
+            />
+          </div>
+          <div style={{ width: 200 }}>
+            <AutoComplete
+              label="Auto Complete"
+              name="sample"
+              desc="name"
+              descId="id"
+              async={false}
+              type="auto_complete"
+              placeholder="Auto Complete"
+              // data={[{ name: 'test', id: '1' }]}
+              getData={getDatas}
               onChange={() => console.log('onchange')}
             />
           </div>
@@ -127,6 +165,7 @@ export default function App() {
               type="auto_suggestion"
               desc="name"
               descId="id"
+              async
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
@@ -140,12 +179,13 @@ export default function App() {
               type="auto_suggestion"
               required
               desc="name"
+              async
               isMultiple
               descId="id"
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={(value) => console.log(value, 'onchange')}
             />
           </div>
           <div style={{ width: 200 }}>
@@ -153,9 +193,12 @@ export default function App() {
               label="Auto Suggestion"
               name="sample"
               type="auto_suggestion"
+              async
               desc="name"
               singleSelect
               descId="id"
+              paginationEnabled={true}
+              nextBlock={nexBlock}
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}

@@ -1,35 +1,47 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 type ValueProps = {
   [key: string]: string;
 };
 
 type UseSuggestionsType = (
-  getData: (key?: string) => any,
+  getData: (key?: string, next?: number) => Promise<ValueProps[]>,
   initialData?: ValueProps[],
-  type?: string,
-  dropOpen?: boolean
+  dropOpen?: boolean,
+  asyncFetch?: boolean,
+  paginationEnabled?: boolean
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
-  handlePickSuggestions: (value?: string) => Promise<void>;
+  handlePickSuggestions: (
+    value?: string,
+    next?: number,
+    append?: boolean
+  ) => Promise<void>;
 };
 
 export const useSuggestions: UseSuggestionsType = (
   getData,
   initialData = [],
-  type = 'custom_select',
-  dropOpen = false
+  dropOpen = false,
+  asyncFetch = false,
+  paginationEnabled = false
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
 
-  const handlePickSuggestions = async (value?: string) => {
+  const handlePickSuggestions = async (
+    value?: string,
+    nextPage?: number,
+    appendData?: boolean
+  ) => {
     setIsLoading(true);
     try {
-      const fetchedSuggestions = await getData(value);
-
-      setSuggestions(fetchedSuggestions);
+      const data = await (asyncFetch
+        ? getData(value, nextPage)
+        : Promise.resolve(initialData));
+      const newSuggestions = appendData ? [...suggestions, ...data] : data;
+      setSuggestions(newSuggestions);
     } catch (error) {
       console.error('Error fetching data:', error);
     } finally {
@@ -38,8 +50,8 @@ export const useSuggestions: UseSuggestionsType = (
   };
 
   useEffect(() => {
-    if ((!initialData || initialData?.length === 0) && dropOpen) {
-      handlePickSuggestions();
+    if (dropOpen && suggestions.length === 0) {
+      handlePickSuggestions('', paginationEnabled ? 1 : undefined);
     }
   }, [dropOpen]);
 

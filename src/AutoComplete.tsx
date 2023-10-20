@@ -1,10 +1,11 @@
-import React, { FC, useEffect, useState, useCallback, useRef } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
 
+import { AutoSuggestionInputProps } from './commontypes';
 import { useSuggestions } from './utilities/autosuggestions';
-import { Close, DropArrow, Spinner } from './utilities/icons';
 import { debounce } from './utilities/debounce';
 import { filterSuggestions } from './utilities/filterSuggestions';
-import { AutoSuggestionInputProps } from './commontypes';
+import { Close, DropArrow, Spinner } from './utilities/icons';
+
 type ValueProps = {
   [key: string]: string;
 };
@@ -29,6 +30,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   descId = 'id',
   singleSelect,
   className,
+  async = false,
+  nextBlock,
+  paginationEnabled,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
@@ -37,13 +41,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   const [searchValue, setSearchValue] = useState<string>('');
   const [dropOpen, setDropOpen] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
-
   // API call for suggestions through a custom hook
   const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
     getData,
     data,
-    type,
-    dropOpen
+    dropOpen,
+    async,
+    paginationEnabled
+    // nextBlock
   );
 
   // Handling the selection of a suggestion
@@ -54,6 +59,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       setInputValue(suggestion[desc]);
     }
     setSearchValue('');
+    setInputValue(suggestion[desc]);
     onChange(suggestion);
     setDropOpen(false);
   }, []);
@@ -61,7 +67,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   // Adding debounce to avoid making API calls on every keystroke
   const handleChangeWithDebounce = debounce((value) => {
     if (type === 'auto_complete' || type === 'auto_suggestion') {
-      handlePickSuggestions(value);
+      handlePickSuggestions(value, 1);
     }
   }, 300);
 
@@ -78,6 +84,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     } else {
       if (checked) {
         setInputValue(suggestion[desc]);
+        onChange(suggestion);
       } else {
         setInputValue('');
       }
@@ -94,6 +101,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     setDropOpen(true);
     setSearchValue(value);
     handleChangeWithDebounce(value);
+    if (!value) {
+      setInputValue('');
+    }
   };
 
   const handleBlur = () => {
@@ -118,6 +128,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       return prev.filter((_, i) => i !== index);
     });
   };
+  useEffect(() => {
+    onChange(selectedItems);
+  }, [selectedItems]);
 
   useEffect(() => {
     const handleClickOutside = (event: React.MouseEvent) => {
@@ -154,6 +167,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     } else {
       return item.name === selectedItems;
     }
+  };
+  const handleLoadMore = () => {
+    handlePickSuggestions(searchValue, nextBlock, true);
   };
   return (
     <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
@@ -234,11 +250,6 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         </div>
 
         {/* Displaying Loading Spinner */}
-        {isLoading && (
-          <span style={{ position: 'absolute', top: 5, right: 2 }}>
-            <Spinner />
-          </span>
-        )}
 
         {/* Suggestions Dropdown */}
         {dropOpen && (
@@ -259,6 +270,15 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
             <div className="qbs-autocomplete-suggestions-sub">
               {/* Displaying Suggestions or Not Found Message */}
+              {/* {isLoading && ( 
+              <div style={{ display: 'flex', justifyContent: 'center' }}>
+                <span>
+                  <Spinner />
+                </span>
+              </div>
+
+              {/* )} */}
+
               {filteredData.length > 0 ? (
                 filteredData.map((suggestion: ValueProps, idx: number) => (
                   <div
@@ -287,22 +307,45 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                   </div>
                 ))
               ) : (
-                <li className="qbs-autocomplete-notfound" onClick={handleBlur}>
-                  No Results Found
-                </li>
+                <>
+                  {isLoading ? (
+                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                      <span>
+                        <Spinner />
+                      </span>
+                    </div>
+                  ) : (
+                    <li
+                      className="qbs-autocomplete-notfound"
+                      onClick={handleBlur}
+                    >
+                      No Results Found
+                    </li>
+                  )}
+                </>
               )}
+              {paginationEnabled &&
+                nextBlock !== undefined &&
+                filteredData.length > 0 && (
+                  <div
+                    className="loadMoreSection"
+                    onClick={() => handleLoadMore()}
+                  >
+                    <p style={{ margin: 2 }}>Load More</p>
+                  </div>
+                )}
             </div>
           </ul>
         )}
       </div>
 
       {/* Displaying Validation Error */}
-      {errors && errors[name] && (
+      {errors && (
         <div
           className="text-error text-error-label mt-[1px]"
           data-testid="autocomplete-error"
         >
-          {errors[name].message}
+          {errors.message}
         </div>
       )}
     </div>
