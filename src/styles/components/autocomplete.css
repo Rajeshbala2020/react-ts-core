@@ -159,6 +159,7 @@
   min-height: 36px;
   border-radius: 6px;
   padding-left: 7px;
+  font-size: 14px;
   border: 1px solid var(--border-card-color-default, #d6d8dc);
   background: var(--surface-input-bg-color-default, #fff);
 }

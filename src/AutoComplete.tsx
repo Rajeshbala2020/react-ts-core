@@ -120,7 +120,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
   const generateClassName = useCallback(() => {
     return `qbs-textfield-default ${className} ${
-      errors && errors[name] ? 'textfield-error' : 'textfield'
+      errors && errors?.message ? 'textfield-error' : 'textfield'
     }`;
   }, [errors, name]);
   const handleRemoveSelectedItem = (index: number) => {
@@ -154,7 +154,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     suggestions,
     searchValue,
     type,
-    selected
+    selected,
+    desc
   );
   const isSelected = (
     item: ValueProps,
