@@ -325,6 +325,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                 </>
               )}
               {paginationEnabled &&
+                nextBlock !== 0 &&
                 nextBlock !== undefined &&
                 filteredData.length > 0 && (
                   <div
