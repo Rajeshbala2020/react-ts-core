@@ -9,7 +9,8 @@ type UseSuggestionsType = (
   initialData?: ValueProps[],
   dropOpen?: boolean,
   asyncFetch?: boolean,
-  paginationEnabled?: boolean
+  paginationEnabled?: boolean,
+  initialLoad?: boolean
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
@@ -25,7 +26,8 @@ export const useSuggestions: UseSuggestionsType = (
   initialData = [],
   dropOpen = false,
   asyncFetch = false,
-  paginationEnabled = false
+  paginationEnabled = false,
+  initialLoad = false
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -37,7 +39,7 @@ export const useSuggestions: UseSuggestionsType = (
   ) => {
     setIsLoading(true);
     try {
-      const data = await (asyncFetch
+      const data = await (asyncFetch || initialLoad
         ? getData(value, nextPage)
         : Promise.resolve(initialData));
       const newSuggestions = appendData ? [...suggestions, ...data] : data;

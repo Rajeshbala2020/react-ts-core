@@ -33,6 +33,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   async = false,
   nextBlock,
   paginationEnabled,
+  initialLoad,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
@@ -47,7 +48,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     data,
     dropOpen,
     async,
-    paginationEnabled
+    paginationEnabled,
+    initialLoad
     // nextBlock
   );
 
@@ -66,7 +68,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
   // Adding debounce to avoid making API calls on every keystroke
   const handleChangeWithDebounce = debounce((value) => {
-    if (type === 'auto_complete' || type === 'auto_suggestion') {
+    if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
       handlePickSuggestions(value, 1);
     }
   }, 300);
@@ -128,9 +130,10 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       return prev.filter((_, i) => i !== index);
     });
   };
-  useEffect(() => {
-    onChange(selectedItems);
-  }, [selectedItems]);
+  //TO DO
+  // useEffect(() => {
+  //   onChange(selectedItems);
+  // }, [selectedItems]);
 
   useEffect(() => {
     const handleClickOutside = (event: React.MouseEvent) => {
@@ -155,7 +158,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     searchValue,
     type,
     selected,
-    desc
+    desc,
+    async
   );
   const isSelected = (
     item: ValueProps,
@@ -163,10 +167,10 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   ): boolean => {
     if (Array.isArray(selectedItems)) {
       return selectedItems.some(
-        (selectedItem) => selectedItem.name === item.name
+        (selectedItem) => selectedItem[desc] === item[desc]
       );
     } else {
-      return item.name === selectedItems;
+      return item[desc] === selectedItems;
     }
   };
   const handleLoadMore = () => {

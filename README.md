@@ -1,63 +1,80 @@
 # AutoComplete Component
 
-`AutoComplete` is a React component that allows users to quickly find and select from a pre-populated list of values as they type, leveraging searching and filtering.
+The `AutoComplete` component offers a user-friendly input experience by presenting suggestions based on their input, allowing for efficient and interactive form filling. This component can work with both local and asynchronous data, and provides single and multi-select functionality.
 
 ## Table of Contents
 
-- [Installation](#installation)
-- [Usage](#usage)
-- 
-- [Props](#props)
-- [Examples](#examples)
-- [Contributing](#contributing)
-- [License](#license)
+- [AutoComplete Component](#autocomplete-component)
+  - [Table of Contents](#table-of-contents)
+  - [Features](#features)
+  - [Installation](#installation)
+  - [Props](#props)
+  - [Contribution](#contribution)
+
+## Features
+
+- **Single & Multi-select**: Allows users to select a single or multiple suggestions.
+- **Asynchronous Data Support**: Can fetch suggestions from an API or use local data.
+- **Pagination**: Supports paginated data with a "Load More" feature.
+- **Customizable**: Provides props for styling, placeholder text, and more.
+- **Error Handling**: Displays validation errors.
 
 ## Installation
 
-If your component is published on npm, users can install it using npm or yarn:
+Before you can use the `AutoComplete` component, ensure you've imported it properly.
 
-
-
-```jsx
-import React from 'react';
-import AutoComplete from 'your-package-name';
-
-const ExampleComponent = () => {
-  const handleChange = (value) => {
-    console.log("Selected value: ", value);
-  };
-
-  return (
-    <AutoComplete 
-      label="Search"
-      onChange={handleChange}
-      // other props
-    />
- 
-
-```
-## Props
-
-### `AutoComplete` Component Props
-
-- **`id`** _(string, optional)_ - The ID of the input element.
-- **`label`** _(string)_ - The label for the input element.
-- **`fullWidth`** _(boolean, optional)_ - If true, the input will take up the full width of its container. Default is `false`.
-- **`required`** _(boolean, optional)_ - If true, the input will be required. Default is `false`.
-- **`value`** _(`valueProps`, optional)_ - The current selected value.
-- **`onChange`** _(function)_ - Function to handle the change event.
-- **`data`** _(array, optional)_ - The array of data for generating list suggestions.
-- **`type`** _(string, optional)_ - Determines the type of autocomplete. Options are `'custom_select'`, `'auto_complete'`, and `'custom_search_select'`. Default is `'custom_select'`.
-- **`placeholder`** _(string, optional)_ - Placeholder text for the input field.
-- **`getData`** _(function, optional)_ - Asynchronous function to fetch data for suggestions.
-- **`errors`** _(object, optional)_ - Any validation errors.
-- **`name`** _(string)_ - The name of the input element.
-- **`readOnly`** _(boolean, optional)_ - If true, the input is read-only. Default is `false`.
-- **`disabled`** _(boolean, optional)_ - If true, the input is disabled. Default is `false`.
-
-### `valueProps` Object Type
-
-- **`id`** _(string)_ - The unique identifier of the value.
-- **`name`** _(string)_ - The name of the value.
+```bash
 
 npm install qbs-core
+```
+
+```jsx
+import {AutoComplete} from 'qbs-core';
+
+function ExampleComponent() {
+  return (
+    <AutoComplete
+      label="Search"
+      onChange={handleChange}
+      getData={fetchSuggestions}
+      required={true}
+      placeholder="Type to search..."
+      type="auto_complete"
+      async={true}
+    />
+  );
+}
+
+```
+
+## Props
+
+You can pass the following props to the `AutoComplete` component:
+
+- **label** _(string)_: Label for the input field.
+- **onChange** _(function)_: Callback when the value changes.
+- **getData** _(function)_: Asynchronous function to retrieve suggestions. By default, it returns an empty array.
+- **data** _(Array)_: Local data source for suggestions.
+- **errors** _(object)_: Validation error messages.
+- **required** _(boolean)_: Indicates if the input is mandatory. Defaults to false.
+- **name** _(string)_: Name attribute for the input element.
+- **fullWidth** _(boolean)_: If true, the input will take the full width of its container. Defaults to false.
+- **placeholder** _(string)_: Placeholder text for the input.
+- **id** _(string)_: ID attribute for the input element.
+- **type** _(string)_: Determines the type of autocomplete (custom_select, auto_complete, or auto_suggestion). Defaults to custom_select.
+- **readOnly** _(boolean)_: Makes the input read-only if set to true. Defaults to false.
+- **disabled** _(boolean)_: Disables the input if set to true. Defaults to false.
+- **value** _(string)_: Value of the input.
+- **isMultiple** _(boolean)_: If true, allows for multiple selection. Defaults to false.
+- **desc** _(string)_: The key name for displaying suggestion items. Defaults to 'name'.
+- **descId** _(string)_: The key name for the unique ID of suggestion items. Defaults to 'id'.
+- **singleSelect** _(boolean)_: If set to true, adds checkbox functionality in single-select mode.
+- **className** _(string)_: CSS class for styling the input component.
+- **async** _(boolean)_: If true, indicates that the `getData` function is asynchronous.
+- **nextBlock** _(function or boolean)_: Function for pagination or boolean to determine if pagination is enabled.
+- **paginationEnabled** _(boolean)_: If true, pagination for suggestions is enabled.
+
+## Contribution
+
+If you'd like to contribute to the improvement of the AutoComplete component, please follow the standard contribution guidelines for this project. Your feedback and contributions are valuable!
+

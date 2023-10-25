@@ -7,9 +7,16 @@ export const filterSuggestions = (
   query: string,
   type: string,
   desc: string,
-  inputValue?: string
+  inputValue?: string,
+  async?: boolean
 ): Item[] => {
-  if (type === 'custom_search_select' && query) {
+  if (
+    (type === 'custom_search_select' ||
+      type === 'auto_complete' ||
+      type === 'auto_suggestion') &&
+    !async &&
+    query
+  ) {
     return data?.filter((item) =>
       item.name.toLowerCase().includes(query.toLowerCase())
     );

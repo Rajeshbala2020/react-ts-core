@@ -193,12 +193,13 @@ export default function App() {
               label="Auto Suggestion"
               name="sample"
               type="auto_suggestion"
-              async
+              // async
               desc="name"
               singleSelect
               descId="id"
-              paginationEnabled={true}
-              nextBlock={nexBlock}
+              paginationEnabled={false}
+              initialLoad={true}
+              // nextBlock={nexBlock}
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
