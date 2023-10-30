@@ -157,8 +157,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     suggestions,
     searchValue,
     type,
-    selected,
     desc,
+    selected,
     async
   );
   const isSelected = (

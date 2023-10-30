@@ -18,7 +18,7 @@ export const filterSuggestions = (
     query
   ) {
     return data?.filter((item) =>
-      item.name.toLowerCase().includes(query.toLowerCase())
+      item[desc].toLowerCase().includes(query.toLowerCase())
     );
   }
   return sortedArrayData(data, inputValue, desc);
