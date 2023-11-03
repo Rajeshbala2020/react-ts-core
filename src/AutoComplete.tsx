@@ -221,7 +221,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           }
           onChange={handleChange}
           onBlur={handleBlur}
-          onClick={() => (!disabled && !readOnly ? setDropOpen(!dropOpen) : '')}
+          // onClick={() => (!disabled && !readOnly ? setDropOpen(!dropOpen) : '')}
           className={generateClassName()}
           placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
           readOnly={
