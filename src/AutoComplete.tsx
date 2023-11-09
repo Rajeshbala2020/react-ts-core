@@ -34,6 +34,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   nextBlock,
   paginationEnabled,
   initialLoad,
+  actionLabel,
+  handleAction,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
@@ -107,6 +109,12 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       setInputValue('');
     }
   };
+  const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { value } = e.target;
+    setDropOpen(true);
+    setSearchValue(value);
+    handleChangeWithDebounce(value);
+  };
 
   const handleBlur = () => {
     setTimeout(() => {
@@ -176,14 +184,27 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   const handleLoadMore = () => {
     handlePickSuggestions(searchValue, nextBlock, true);
   };
+  const handleOnClick = () => {
+    console.log('asd');
+    !disabled && !readOnly ? setDropOpen(true) : '';
+  };
   return (
     <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
       {label && (
-        <div style={{ marginBottom: 5 }}>
+        <div
+          style={{
+            marginBottom: 5,
+            display: 'flex',
+            justifyContent: 'space-between',
+          }}
+        >
           <label className={`labels label-text`}>
             {label}
             {required && <span className="text-error"> *</span>}
           </label>
+          <span onClick={() => handleAction?.()} className={`action_label`}>
+            {actionLabel}
+          </span>
         </div>
       )}
       {/* Displaying selected items for multi-select */}
@@ -205,9 +226,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                 </button>
               </div>
 
-              {selectedItems.length > 1 && (
+              {selectedItems.length > 2 && (
                 <div className="selected-item-more">
-                  +{selectedItems.length - 1} more
+                  +{selectedItems.length - 2} more
                 </div>
               )}
             </>
@@ -220,8 +241,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
             type === 'auto_suggestion' ? inputValue : searchValue || inputValue
           }
           onChange={handleChange}
-          onBlur={handleBlur}
-          // onClick={() => (!disabled && !readOnly ? setDropOpen(!dropOpen) : '')}
+          // onBlur={handleBlur}
+          onClick={() => handleOnClick()}
           className={generateClassName()}
           placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
           readOnly={
@@ -267,7 +288,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
               >
                 <input
                   className="dropdown-search-input"
-                  onChange={handleChange}
+                  onChange={handleSuggestionChange}
                   value={searchValue}
                   placeholder="Type to search..."
                 />

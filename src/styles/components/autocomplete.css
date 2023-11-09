@@ -238,6 +238,7 @@ ul {
 .remove-item-btn:hover {
   color: #666;
 }
+
 .selected-items-container {
   display: flex;
   gap: 5px;
@@ -246,14 +247,21 @@ ul {
   left: 7px;
   z-index: 99;
 }
+
 .selected-item-more {
   margin: 0.5rem 0.5rem 0 0;
   font-size: 14px;
 }
+
 .loadMoreSection {
   margin: 3px;
   cursor: pointer;
   display: flex;
   justify-content: center;
   color: blue;
+}
+
+.action_label {
+  font-size: 14px;
+  color: #4c7ad6;
 }
