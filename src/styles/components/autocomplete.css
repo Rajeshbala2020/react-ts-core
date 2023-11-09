@@ -1,3 +1,6 @@
+body * {
+  box-sizing: border-box;
+}
 :root {
   --grey-dark: #4a4a4a;
   --grey-light: #d3d3d3;
@@ -97,28 +100,30 @@
   width: 100%;
   background-color: white;
   border: 1px solid #d2d6dc; /* Approximation, as Tailwind's 'grey-light' can be custom */
-  padding: 0.375rem; /* Corresponding to p-1.5 in Tailwind */
+  padding: 8px; /* Corresponding to p-1.5 in Tailwind */
   z-index: 50;
-  margin-top: 2px;
+  margin-top: 4px;
+  margin-bottom: 0;
   border-radius: 8px;
   background: #fff;
   box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
 }
 .qbs-autocomplete-suggestions-item {
   cursor: pointer;
-  padding: 0.25rem;
-  border-radius: 0.125rem;
-  color: var(--text-primary-color, #222);
-
-  font-family: Manrope;
+  padding: 6px 8px;
+  border-radius: 6px;
+  color: #222;
   font-size: 14px;
   font-weight: 500;
   line-height: 20px; /* 142.857% */
   width: 100%;
-  &:hover {
-    background: var(--neutrals-grey-20, #f4f4f4);
-    border-radius: 0.125rem;
-  }
+  display: flex;
+  align-items: start;
+  gap: 8px;
+}
+.qbs-autocomplete-suggestions-item:hover {
+  background: #f8f8f8;
+  border-radius: 6px;
 }
 
 /* When value.id is equal to suggestion.id */
@@ -128,17 +133,16 @@
 }
 
 /* When value.id is NOT equal to suggestion.id */
-.qbs-autocomplete-suggestions-item .is-not-selected {
-  &:hover {
-    background-color: #f1f5f9; /* Replace with actual color code for 'hover:bg-table-hover' */
-  }
+.qbs-autocomplete-suggestions-item .is-not-selected:hover {
+  background-color: #f1f5f9; /* Replace with actual color code for 'hover:bg-table-hover' */
 }
 
 .qbs-autocomplete-notfound {
   cursor: pointer;
-  padding: 0.25rem; /* p-1 */
-  border-radius: 0.125rem; /* rounded-sm */
-  font-size: 0.625rem; /* text-xxs - ensure this value is correct */
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .qbs-autocomplete-close-icon {
@@ -153,15 +157,32 @@
   background-color: white; /* bg-white */
 }
 .qbs-textfield-default {
-  width: 100%; /* w-full */
-  position: relative; /* relative */
-  padding-right: 0.25rem; /* pr-1 */
+  width: 100%;
+  position: relative;
+  padding-right: 8px;
   min-height: 36px;
+  height: 36px;
   border-radius: 6px;
-  padding-left: 7px;
+  padding-left: 8px;
+  border: 1px solid #d6d8dc;
+  background: #fff;
+  box-sizing: border-box;
   font-size: 14px;
-  border: 1px solid var(--border-card-color-default, #d6d8dc);
-  background: var(--surface-input-bg-color-default, #fff);
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  color: #313131;
+}
+
+.qbs-textfield-default::placeholder {
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+}
+
+.qbs-autocomplete-close-icon button:focus-within {
+  outline: none;
 }
 
 .fullWidth {
@@ -186,25 +207,28 @@
   border-radius: 6px;
   border: 1px solid var(--border-card-color-default, #d6d8dc);
   background: var(--surface-input-bg-color-default, #fff);
-  color: var(--text-input-text-color-placeholder, #999696);
-  font-family: Manrope;
+  color: #313131;
   font-size: 14px;
-  height: 32px;
-  padding: 0px 7px;
+  height: 36px;
+  padding: 0px 8px;
   font-style: normal;
   font-weight: 500;
-  line-height: 20px; /* 142.857% */
+  line-height: 20px;
+  padding-left: 32px;
 }
 .qbs-autocomplete-suggestions-sub {
   position: relative;
   overflow: auto;
   max-height: 192px;
-  top: 5px;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 .qbs-autocomplete-listitem-container {
   display: flex;
   align-items: center;
-  gap: 2px;
+  gap: 0px;
 }
 ul {
   list-style-type: none;
@@ -215,45 +239,96 @@ ul {
   align-items: center;
   gap: var(--spacing-4, 4px);
   align-self: stretch;
+  margin-bottom: 4px;
 }
 .selected-item {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  padding: 2px 5px;
-  margin: 0.5rem 0.5rem 0 0;
-  border-radius: 25px;
+  justify-content: space-between;
+  padding: 3px 6px;
+  margin: 0;
   background-color: #e0e0e0;
   color: #333;
-  font-size: 0.875rem;
+  border-radius: 6px;
+  border: 1px solid rgba(231, 100, 88, 0.1);
+  background: rgba(231, 100, 88, 0.1);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 16px;
+  color: #e76458;
+  gap: 6px;
 }
 
 .remove-item-btn {
-  margin-left: 0.5rem;
   background-color: transparent;
   border: none;
-  color: #999;
+  color: #e76458;
   cursor: pointer;
 }
 
 .remove-item-btn:hover {
-  color: #666;
+  color: #e76458;
 }
 .selected-items-container {
   display: flex;
-  gap: 5px;
+  gap: 12px;
   align-items: center;
   position: absolute;
-  left: 7px;
+  left: 8px;
   z-index: 99;
+  top: 5px;
+  flex-wrap: wrap;
 }
 .selected-item-more {
-  margin: 0.5rem 0.5rem 0 0;
-  font-size: 14px;
+  margin: 0;
+  font-size: 12px;
 }
 .loadMoreSection {
-  margin: 3px;
+  margin: 0;
   cursor: pointer;
   display: flex;
-  justify-content: center;
-  color: blue;
+  justify-content: start;
+  padding: 8px;
+}
+.loadMoreSection p {
+  color: #336cfc;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 20px;
+  margin: 0;
+}
+::-webkit-scrollbar-track {
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+  border-radius: 0px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar {
+  width: 6px;
+  height: 4px;
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 100px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0);
+  background-color: #ddd;
+}
+
+.qbs-autocomplete-suggestions-item.is-selected {
+  color: #e76458;
+  background: #f8f8f8;
+}
+
+span.dropdown-search-icon {
+  position: absolute;
+  left: 8px;
+  top: 10px;
+}
+
+.dropdown-search-input:focus {
+  outline: none;
+  border: 1px solid #222;
 }
