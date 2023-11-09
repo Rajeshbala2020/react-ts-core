@@ -271,6 +271,7 @@ ul {
 .remove-item-btn:hover {
   color: #e76458;
 }
+
 .selected-items-container {
   display: flex;
   gap: 12px;
@@ -281,6 +282,7 @@ ul {
   top: 6.5px;
   flex-wrap: wrap;
 }
+
 .selected-item-more {
   display: flex;
   align-items: center;
@@ -296,6 +298,7 @@ ul {
   color: #fff;
   height: 22px;
 }
+
 .loadMoreSection {
   margin: 0;
   cursor: pointer;
@@ -407,4 +410,9 @@ span.dropdown-search-icon {
 .qbs-autocomplete-checkbox input:checked ~ label svg {
   opacity: 1;
   transition: all 0.2s ease;
+}
+
+.action_label {
+  font-size: 14px;
+  color: #4c7ad6;
 }

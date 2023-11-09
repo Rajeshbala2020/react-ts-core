@@ -29,4 +29,6 @@ export interface AutoSuggestionInputProps {
   paginationEnabled?: boolean;
   nextBlock?: number;
   initialLoad?: boolean;
+  handleAction?: () => void;
+  actionLabel?: string;
 }
