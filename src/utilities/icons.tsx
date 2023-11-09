@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-export const DropArrow: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const DropArrow: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -19,7 +19,7 @@ export const DropArrow: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   );
 };
 
-export const Close: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Close: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -38,7 +38,7 @@ export const Close: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   );
 };
 
-export const Spinner: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Spinner: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
@@ -61,7 +61,7 @@ export const Spinner: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   );
 };
 
-export const Search: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Search: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
