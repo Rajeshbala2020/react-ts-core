@@ -1,10 +1,10 @@
-import React, { FC, useCallback, useEffect, useRef, useState } from 'react';
+import React, { FC, useCallback, useEffect, useRef, useState } from "react";
 
-import { AutoSuggestionInputProps } from './commontypes';
-import { useSuggestions } from './utilities/autosuggestions';
-import { debounce } from './utilities/debounce';
-import { filterSuggestions } from './utilities/filterSuggestions';
-import { Close, DropArrow, Spinner } from './utilities/icons';
+import { AutoSuggestionInputProps } from "./commontypes";
+import { useSuggestions } from "./utilities/autosuggestions";
+import { debounce } from "./utilities/debounce";
+import { filterSuggestions } from "./utilities/filterSuggestions";
+import { Close, DropArrow, Search, Spinner } from "./utilities/icons";
 
 type ValueProps = {
   [key: string]: string;
@@ -21,13 +21,13 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   fullWidth = false,
   placeholder,
   id,
-  type = 'custom_select',
+  type = "custom_select",
   readOnly = false,
   disabled = false,
   value,
   isMultiple = false,
-  desc = 'name',
-  descId = 'id',
+  desc = "name",
+  descId = "id",
   singleSelect,
   className,
   async = false,
@@ -41,7 +41,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   // State Hooks Section
 
   const [inputValue, setInputValue] = useState<string>(value);
-  const [searchValue, setSearchValue] = useState<string>('');
+  const [searchValue, setSearchValue] = useState<string>("");
   const [dropOpen, setDropOpen] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
   // API call for suggestions through a custom hook
@@ -62,7 +62,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     } else {
       setInputValue(suggestion[desc]);
     }
-    setSearchValue('');
+    setSearchValue("");
     setInputValue(suggestion[desc]);
     onChange(suggestion);
     setDropOpen(false);
@@ -70,7 +70,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
   // Adding debounce to avoid making API calls on every keystroke
   const handleChangeWithDebounce = debounce((value) => {
-    if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
+    if ((type === "auto_complete" || type === "auto_suggestion") && async) {
       handlePickSuggestions(value, 1);
     }
   }, 300);
@@ -90,14 +90,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         setInputValue(suggestion[desc]);
         onChange(suggestion);
       } else {
-        setInputValue('');
+        setInputValue("");
       }
     }
   };
 
   // Effect to set the input value whenever `value` prop changes
   useEffect(() => {
-    setInputValue(value ?? '');
+    setInputValue(value ?? "");
   }, [value]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -106,7 +106,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     setSearchValue(value);
     handleChangeWithDebounce(value);
     if (!value) {
-      setInputValue('');
+      setInputValue("");
     }
   };
   const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -123,14 +123,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   };
 
   const handleClear = () => {
-    setInputValue('');
-    onChange({ [descId]: '', [desc]: '' });
+    setInputValue("");
+    onChange({ [descId]: "", [desc]: "" });
     setDropOpen(false);
   };
 
   const generateClassName = useCallback(() => {
     return `qbs-textfield-default ${className} ${
-      errors && errors?.message ? 'textfield-error' : 'textfield'
+      errors && errors?.message ? "textfield-error" : "textfield"
     }`;
   }, [errors, name]);
   const handleRemoveSelectedItem = (index: number) => {
@@ -153,9 +153,9 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         setDropOpen(false);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside as any);
+    document.addEventListener("mousedown", handleClickOutside as any);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside as any);
+      document.removeEventListener("mousedown", handleClickOutside as any);
     };
   }, []);
 
@@ -189,7 +189,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     !disabled && !readOnly ? setDropOpen(true) : '';
   };
   return (
-    <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+    <div className={fullWidth ? "fullWidth" : "autoWidth"} ref={dropdownRef}>
       {label && (
         <div
           style={{
@@ -209,7 +209,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       )}
       {/* Displaying selected items for multi-select */}
 
-      <div style={{ position: 'relative' }}>
+      <div style={{ position: "relative" }}>
         <div className="selected-items-container">
           {selectedItems.length > 0 && (
             <>
@@ -226,9 +226,11 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                 </button>
               </div>
 
-              {selectedItems.length > 2 && (
+              {selectedItems.length > 1 && (
                 <div className="selected-item-more">
-                  +{selectedItems.length - 2} more
+
+                  +{selectedItems.length - 1} more
+
                 </div>
               )}
             </>
@@ -238,15 +240,15 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           id={id}
           type="text"
           value={
-            type === 'auto_suggestion' ? inputValue : searchValue || inputValue
+            type === "auto_suggestion" ? inputValue : searchValue || inputValue
           }
           onChange={handleChange}
           // onBlur={handleBlur}
           onClick={() => handleOnClick()}
           className={generateClassName()}
-          placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+          placeholder={selectedItems?.length > 0 ? "" : placeholder ?? ""}
           readOnly={
-            readOnly || type === 'custom_select' || type == 'auto_suggestion'
+            readOnly || type === "custom_select" || type == "auto_suggestion"
               ? true
               : false
           }
@@ -281,16 +283,19 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         {/* Suggestions Dropdown */}
         {dropOpen && (
           <ul className="qbs-autocomplete-suggestions">
-            {type == 'auto_suggestion' && (
+            {type == "auto_suggestion" && (
               <div
-                style={{ position: 'relative' }}
+                style={{ position: "relative" }}
                 className="qbs-core-search-container"
               >
+                <span className="dropdown-search-icon">
+                  <Search />
+                </span>
                 <input
                   className="dropdown-search-input"
                   onChange={handleSuggestionChange}
                   value={searchValue}
-                  placeholder="Type to search..."
+                  placeholder="Search"
                 />
               </div>
             )}
@@ -310,21 +315,39 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
                 filteredData.map((suggestion: ValueProps, idx: number) => (
                   <div
                     key={idx.toString()}
-                    className="qbs-autocomplete-listitem-container"
+                    className={`qbs-autocomplete-listitem-container ${
+                      (isMultiple || singleSelect) &&
+                      "qbs-autocomplete-checkbox-container"
+                    } ${isSelected(suggestion, selected) ? "is-selected" : ""}`}
                   >
                     {(isMultiple || singleSelect) && (
-                      <div>
+                      <div className="qbs-autocomplete-checkbox">
                         <input
                           onChange={(e) => handleMultiSelect(e, suggestion)}
                           type="checkbox"
                           checked={isSelected(suggestion, selected)}
+                          id={`qbs-checkbox-${idx.toString()}`}
                         />
+                        <label htmlFor={`qbs-checkbox-${idx.toString()}`}>
+                          <svg
+                            width="8"
+                            height="6"
+                            viewBox="0 0 8 6"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </label>
                       </div>
                     )}
                     <li
                       key={idx}
                       className={`qbs-autocomplete-suggestions-item ${
-                        isSelected(suggestion, selected) ? 'is-selected' : ''
+                        isSelected(suggestion, selected) ? "is-selected" : ""
                       }`}
                       onClick={() => handleSuggestionClick(suggestion)}
                       data-testid={suggestion[desc]}
@@ -336,7 +359,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
               ) : (
                 <>
                   {isLoading ? (
-                    <div style={{ display: 'flex', justifyContent: 'center' }}>
+                    <div style={{ display: "flex", justifyContent: "center" }}>
                       <span>
                         <Spinner />
                       </span>

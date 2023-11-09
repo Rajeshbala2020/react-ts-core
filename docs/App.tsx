@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import AutoComplete from '../src/AutoComplete';
+import AutoComplete from "../src/AutoComplete";
 
-import '../src/styles/global.css';
+import "../src/styles/global.css";
 
 export default function App() {
   const [dropData, setDropData] = useState();
@@ -19,7 +19,7 @@ export default function App() {
       .then((res) => {
         setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
-          return { ...item, ['name']: item?.title, id: item?.id.toString() };
+          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -34,7 +34,7 @@ export default function App() {
       .then((res) => {
         setPrev(prev + 1);
         const result = res.map((item: any) => {
-          return { ...item, ['name']: item?.title, id: item?.id.toString() };
+          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -44,8 +44,8 @@ export default function App() {
       <div>
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
             gap: 20,
             padding: 20,
             maxWidth: 700,
@@ -58,7 +58,7 @@ export default function App() {
               scenario when the available options are limited and known.
             </p>
           </div>
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Custom Select"
               name="sample"
@@ -67,15 +67,15 @@ export default function App() {
               descId="id"
               type="custom_select"
               data={[
-                { name: 'test', id: '1' },
-                { name: 'test1', id: '2' },
+                { name: "test", id: "1" },
+                { name: "test1", id: "2" },
 
-                { name: 'test2', id: '3' },
+                { name: "test2", id: "3" },
 
-                { name: 'test3', id: '4' },
+                { name: "test3", id: "4" },
               ]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -86,7 +86,7 @@ export default function App() {
               where displaying all available options is impractical.
             </p>
           </div>
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Auto Complete"
               name="sample"
@@ -99,10 +99,10 @@ export default function App() {
               placeholder="Auto Complete"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Auto Complete"
               name="sample"
@@ -113,7 +113,7 @@ export default function App() {
               placeholder="Auto Complete"
               // data={[{ name: 'test', id: '1' }]}
               getData={getDatas}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -126,7 +126,7 @@ export default function App() {
             </p>
           </div>
 
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Custom Search Select"
               name="sample"
@@ -135,18 +135,18 @@ export default function App() {
               descId="id"
               type="custom_search_select"
               data={[
-                { name: 'Apple', id: '1' },
-                { name: 'Banana', id: '2' },
-                { name: 'Cherry', id: '3' },
-                { name: 'Date', id: '4' },
-                { name: 'Fig', id: '5' },
-                { name: 'Grape', id: '6' },
-                { name: 'Honeydew', id: '7' },
-                { name: 'Kiwi', id: '8' },
-                { name: 'Lemon', id: '9' },
-                { name: 'Mango', id: '10' },
+                { name: "Apple", id: "1" },
+                { name: "Banana", id: "2" },
+                { name: "Cherry", id: "3" },
+                { name: "Date", id: "4" },
+                { name: "Fig", id: "5" },
+                { name: "Grape", id: "6" },
+                { name: "Honeydew", id: "7" },
+                { name: "Kiwi", id: "8" },
+                { name: "Lemon", id: "9" },
+                { name: "Mango", id: "10" },
               ]}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -158,7 +158,7 @@ export default function App() {
               in user input while still offering assistance.
             </p>
           </div>
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Auto Suggestion"
               name="sample"
@@ -169,10 +169,10 @@ export default function App() {
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Auto Suggestion"
               name="sample"
@@ -185,10 +185,10 @@ export default function App() {
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={(value) => console.log(value, 'onchange')}
+              onChange={(value) => console.log(value, "onchange")}
             />
           </div>
-          <div style={{ width: 200 }}>
+          <div style={{ width: 300 }}>
             <AutoComplete
               label="Auto Suggestion"
               name="sample"
@@ -203,7 +203,7 @@ export default function App() {
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
         </div>
