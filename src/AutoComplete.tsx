@@ -22,6 +22,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   placeholder,
   id,
   type = 'custom_select',
+  selectedItems: propsSeelctedItems = [],
   readOnly = false,
   disabled = false,
   value,
@@ -39,11 +40,13 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
+  const [isInitialRender, setIsInitialRender] = useState(true);
 
   const [inputValue, setInputValue] = useState<string>(value);
   const [searchValue, setSearchValue] = useState<string>('');
   const [dropOpen, setDropOpen] = useState<boolean>(false);
-  const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
+  const [selectedItems, setSelectedItems] =
+    useState<ValueProps[]>(propsSeelctedItems);
   // API call for suggestions through a custom hook
   const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
     getData,
@@ -51,7 +54,8 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     dropOpen,
     async,
     paginationEnabled,
-    initialLoad
+    initialLoad,
+    inputValue
     // nextBlock
   );
 
@@ -123,9 +127,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   };
 
   const handleClear = () => {
-    setInputValue('');
-    onChange({ [descId]: '', [desc]: '' });
-    setDropOpen(false);
+    if (searchValue) {
+      setSearchValue('');
+      setDropOpen(false);
+    } else {
+      setInputValue('');
+      onChange({ [descId]: '', [desc]: '' });
+      setDropOpen(false);
+    }
   };
 
   const generateClassName = useCallback(() => {
@@ -138,10 +147,14 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       return prev.filter((_, i) => i !== index);
     });
   };
-  //TO DO
-  // useEffect(() => {
-  //   onChange(selectedItems);
-  // }, [selectedItems]);
+
+  useEffect(() => {
+    if (isInitialRender) {
+      setIsInitialRender(false);
+    } else {
+      onChange(selectedItems);
+    }
+  }, [selectedItems]);
 
   useEffect(() => {
     const handleClickOutside = (event: React.MouseEvent) => {
@@ -151,6 +164,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         !dropdownRef.current.contains(event.target)
       ) {
         setDropOpen(false);
+        setSearchValue('');
       }
     };
     document.addEventListener('mousedown', handleClickOutside as any);
@@ -181,13 +195,15 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
       return item[desc] === selectedItems;
     }
   };
+
   const handleLoadMore = () => {
     handlePickSuggestions(searchValue, nextBlock, true);
   };
+
   const handleOnClick = () => {
-    console.log('asd');
     !disabled && !readOnly ? setDropOpen(true) : '';
   };
+
   return (
     <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
       {label && (
@@ -211,22 +227,22 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
       <div style={{ position: 'relative' }}>
         <div className="selected-items-container">
-          {selectedItems.length > 0 && (
+          {selectedItems?.length > 0 && (
             <>
               <div key={selectedItems[0].id} className="selected-item">
-                {selectedItems[0].name.length > 8
-                  ? `${selectedItems[0].name.substring(0, 8)}...`
-                  : selectedItems[0].name}
+                {selectedItems[0]?.[desc].length > 8
+                  ? `${selectedItems[0]?.[desc].substring(0, 8)}...`
+                  : selectedItems[0]?.[desc]}
                 <button
                   onClick={() => handleRemoveSelectedItem(0)}
                   className="remove-item-btn"
-                  aria-label={`Remove ${selectedItems[0].name}`}
+                  aria-label={`Remove ${selectedItems[0]?.[desc]}`}
                 >
                   X
                 </button>
               </div>
 
-              {selectedItems.length > 1 && (
+              {selectedItems?.length > 1 && (
                 <div className="selected-item-more">
                   +{selectedItems.length - 1} more
                 </div>
@@ -256,7 +272,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
         {/* Icons for Clearing Input or Toggling Dropdown */}
         <div className="qbs-autocomplete-close-icon">
-          {inputValue && !disabled && !readOnly && (
+          {(inputValue || searchValue) && !disabled && !readOnly && (
             <button
               onClick={handleClear}
               className="icon-button"

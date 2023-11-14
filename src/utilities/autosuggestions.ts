@@ -10,7 +10,8 @@ type UseSuggestionsType = (
   dropOpen?: boolean,
   asyncFetch?: boolean,
   paginationEnabled?: boolean,
-  initialLoad?: boolean
+  initialLoad?: boolean,
+  inputValue?: string
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
@@ -27,7 +28,8 @@ export const useSuggestions: UseSuggestionsType = (
   dropOpen = false,
   asyncFetch = false,
   paginationEnabled = false,
-  initialLoad = false
+  initialLoad = false,
+  inputValue = ''
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -52,7 +54,7 @@ export const useSuggestions: UseSuggestionsType = (
   };
 
   useEffect(() => {
-    if (dropOpen && suggestions.length === 0) {
+    if (dropOpen && (!inputValue || suggestions.length === 0)) {
       handlePickSuggestions('', paginationEnabled ? 1 : undefined);
     }
   }, [dropOpen]);

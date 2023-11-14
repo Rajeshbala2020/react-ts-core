@@ -31,4 +31,5 @@ export interface AutoSuggestionInputProps {
   initialLoad?: boolean;
   handleAction?: () => void;
   actionLabel?: string;
+  selectedItems?: any[];
 }
