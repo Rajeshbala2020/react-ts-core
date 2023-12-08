@@ -32,11 +32,11 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   singleSelect,
   className,
   async = false,
-  nextBlock,
   paginationEnabled,
   initialLoad,
   actionLabel,
   handleAction,
+  nextBlock,
 }) => {
   const dropdownRef = useRef<HTMLDivElement>(null);
   // State Hooks Section
@@ -44,10 +44,40 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
   const [inputValue, setInputValue] = useState<string>(value);
   const [searchValue, setSearchValue] = useState<string>('');
+  const [nextPage, setNextPage] = useState<number | undefined>(1);
   const [dropOpen, setDropOpen] = useState<boolean>(false);
   const [selectedItems, setSelectedItems] =
     useState<ValueProps[]>(propsSeelctedItems);
   // API call for suggestions through a custom hook
+  const [dropdownPosition, setDropdownPosition] = useState('bottom');
+  const inputRef = useRef(null);
+  const dropRef = useRef(null);
+
+  const adjustDropdownPosition = () => {
+    if (inputRef.current && dropRef.current) {
+      const inputBoxRect = inputRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+
+      const spaceAbove = inputBoxRect.top;
+      const spaceBelow = viewportHeight - inputBoxRect.bottom;
+      console.log(spaceAbove, spaceBelow);
+      if (spaceAbove > spaceBelow) {
+        setDropdownPosition('top');
+      } else {
+        setDropdownPosition('bottom');
+      }
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener('resize', adjustDropdownPosition);
+    adjustDropdownPosition();
+
+    return () => {
+      window.removeEventListener('resize', adjustDropdownPosition);
+    };
+  }, [dropOpen]);
+
   const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
     getData,
     data,
@@ -55,7 +85,10 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
     async,
     paginationEnabled,
     initialLoad,
-    inputValue
+    inputValue,
+    isMultiple,
+    setNextPage,
+    selectedItems
     // nextBlock
   );
 
@@ -197,13 +230,15 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
   };
 
   const handleLoadMore = () => {
-    handlePickSuggestions(searchValue, nextBlock, true);
+    if (paginationEnabled) {
+      handlePickSuggestions(searchValue, nextPage + 1, true);
+      setNextPage(nextPage + 1);
+    }
   };
 
   const handleOnClick = () => {
     !disabled && !readOnly ? setDropOpen(true) : '';
   };
-
   return (
     <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
       {label && (
@@ -230,7 +265,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
           {selectedItems?.length > 0 && (
             <>
               <div key={selectedItems[0].id} className="selected-item">
-                {selectedItems[0]?.[desc].length > 8
+                {selectedItems[0]?.[desc]?.length > 8
                   ? `${selectedItems[0]?.[desc].substring(0, 8)}...`
                   : selectedItems[0]?.[desc]}
                 <button
@@ -244,7 +279,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
               {selectedItems?.length > 1 && (
                 <div className="selected-item-more">
-                  +{selectedItems.length - 1} more
+                  +{selectedItems?.length - 1} more
                 </div>
               )}
             </>
@@ -252,6 +287,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
         </div>
         <input
           id={id}
+          ref={inputRef}
           type="text"
           value={
             type === 'auto_suggestion' ? inputValue : searchValue || inputValue
@@ -296,7 +332,10 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
         {/* Suggestions Dropdown */}
         {dropOpen && (
-          <ul className="qbs-autocomplete-suggestions">
+          <ul
+            ref={dropRef}
+            className={`qbs-autocomplete-suggestions ${dropdownPosition}`}
+          >
             {type == 'auto_suggestion' && (
               <div
                 style={{ position: 'relative' }}
@@ -325,7 +364,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
 
               {/* )} */}
 
-              {filteredData.length > 0 ? (
+              {filteredData?.length > 0 ? (
                 filteredData.map((suggestion: ValueProps, idx: number) => (
                   <div
                     key={idx.toString()}
@@ -391,7 +430,7 @@ const AutoComplete: FC<AutoSuggestionInputProps> = ({
               {paginationEnabled &&
                 nextBlock !== 0 &&
                 nextBlock !== undefined &&
-                filteredData.length > 0 && (
+                filteredData?.length > 0 && (
                   <div
                     className="loadMoreSection"
                     onClick={() => handleLoadMore()}

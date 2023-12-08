@@ -11,10 +11,14 @@ type UseSuggestionsType = (
   asyncFetch?: boolean,
   paginationEnabled?: boolean,
   initialLoad?: boolean,
-  inputValue?: string
+  inputValue?: string,
+  isMultiple?: boolean,
+  setNextPage?: (value: number) => void,
+  selectedItems?: any[]
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
+
   handlePickSuggestions: (
     value?: string,
     next?: number,
@@ -29,7 +33,10 @@ export const useSuggestions: UseSuggestionsType = (
   asyncFetch = false,
   paginationEnabled = false,
   initialLoad = false,
-  inputValue = ''
+  inputValue = '',
+  isMultiple,
+  setNextPage,
+  selectedItems = []
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -44,6 +51,9 @@ export const useSuggestions: UseSuggestionsType = (
       const data = await (asyncFetch || initialLoad
         ? getData(value, nextPage)
         : Promise.resolve(initialData));
+      if (!data || data?.length === 0) {
+        setNextPage(undefined);
+      }
       const newSuggestions = appendData ? [...suggestions, ...data] : data;
       setSuggestions(newSuggestions);
     } catch (error) {
@@ -54,8 +64,18 @@ export const useSuggestions: UseSuggestionsType = (
   };
 
   useEffect(() => {
-    if (dropOpen && (!inputValue || suggestions.length === 0)) {
-      handlePickSuggestions('', paginationEnabled ? 1 : undefined);
+    if (dropOpen) {
+      if (!isMultiple && (!inputValue || suggestions.length === 0)) {
+        setNextPage(1);
+        handlePickSuggestions('', paginationEnabled ? 1 : undefined);
+      } else if (
+        isMultiple &&
+        (suggestions.length === 0 ||
+          !selectedItems ||
+          selectedItems?.length === 0)
+      ) {
+        handlePickSuggestions('', paginationEnabled ? 1 : undefined);
+      }
     }
   }, [dropOpen]);
 

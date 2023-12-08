@@ -74,7 +74,7 @@ export default function App() {
 
                 { name: 'test3', id: '4' },
               ]}
-              getData={getData}
+              // getData={getData}
               onChange={() => console.log('onchange')}
             />
           </div>

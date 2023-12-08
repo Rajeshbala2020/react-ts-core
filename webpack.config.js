@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   //...
-  entry: './dist',
+  entry: './docs',
   devtool: 'source-map',
   devServer: {
     contentBase: './docs',
