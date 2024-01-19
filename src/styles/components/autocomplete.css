@@ -98,10 +98,8 @@ body * {
   position: absolute;
   height: auto;
   width: 100%;
-  background-color: white;
-  border: 1px solid #d2d6dc; /* Approximation, as Tailwind's 'grey-light' can be custom */
   padding: 8px; /* Corresponding to p-1.5 in Tailwind */
-  z-index: 50;
+  z-index: 99;
   margin-top: 4px;
   margin-bottom: 0;
   border-radius: 8px;
