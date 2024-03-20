@@ -160,7 +160,7 @@ export default function App() {
           </div>
           <div style={{ width: 300 }}>
             <AutoComplete
-              label="Auto Suggestion"
+              label="select Auto Suggestion"
               name="sample"
               type="auto_suggestion"
               desc="name"

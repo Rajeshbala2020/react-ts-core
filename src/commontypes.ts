@@ -31,5 +31,8 @@ export interface AutoSuggestionInputProps {
   initialLoad?: boolean;
   handleAction?: () => void;
   actionLabel?: string;
+  notDataMessage?: string;
   selectedItems?: any[];
+  onFocus?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
+  dopDownRef?: HTMLInputElement;
 }
