@@ -241,7 +241,7 @@ ul {
   list-style-type: none;
 }
 
-.qbs-core-search-container {
+.react-core-ts-search-container {
   display: flex;
   align-items: center;
   gap: var(--spacing-4, 4px);

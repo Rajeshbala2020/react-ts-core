@@ -1,9 +1,13 @@
 {
-  "name": "qbs-core",
-  "version": "1.1.12",
+  "name": "react-core-ts",
+  "version": "1.0.1",
   "description": "React Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "files": [
+    "dist",
+    "README.md"
+  ],
   "scripts": {
     "start": "webpack serve --open --mode development",
     "build": "tsc && cp -R src/styles dist/styles",

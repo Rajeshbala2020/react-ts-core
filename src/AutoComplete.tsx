@@ -371,7 +371,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
               {type == 'auto_suggestion' && (
                 <div
                   style={{ position: 'relative' }}
-                  className="qbs-core-search-container"
+                  className="react-core-ts-search-container"
                 >
                   <span className="dropdown-search-icon">
                     <Search />

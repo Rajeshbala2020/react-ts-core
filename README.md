@@ -25,11 +25,11 @@ Before you can use the `AutoComplete` component, ensure you've imported it prope
 
 ```bash
 
-npm install qbs-core
+npm install react-core-ts
 ```
 
 ```jsx
-import {AutoComplete} from 'qbs-core';
+import {AutoComplete} from 'react-core-ts';
 
 function ExampleComponent() {
   return (

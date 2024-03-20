@@ -23,7 +23,7 @@ module.exports = {
       {
         test: /\.tsx?$/,
         exclude: (file) =>
-          /node_modules/.test(file) && !/\.qbs-core/.test(file),
+          /node_modules/.test(file) && !/\.react-core-ts/.test(file),
         use: 'ts-loader',
       },
 
