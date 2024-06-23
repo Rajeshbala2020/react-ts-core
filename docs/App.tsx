@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import AutoComplete from '../src/AutoComplete';
+import {AutoComplete, ExpandableAutoComplete} from '../src/index';
 
 import '../src/styles/global.css';
 
@@ -200,6 +200,36 @@ export default function App() {
               descId="id"
               paginationEnabled={false}
               initialLoad={true}
+              // nextBlock={nexBlock}
+              placeholder="Auto Suggestion"
+              selectedItems={[{ name: 'test', id: '1' }]}
+              getData={getData}
+              onChange={(e) => console.log(e, 'onchange')}
+            />
+          </div>
+
+          <div className="autocomplete-section">
+            <h2>Expandable Auto Suggestion</h2>
+            <p>
+              As you type, suggestions will appear based on your input, aiding
+              in quicker and potentially more accurate data entry. This mode
+              supports both listed and non-listed input, providing flexibility
+              in user input while still offering assistance.
+            </p>
+          </div>
+          <div style={{ width: 300 }}>
+            <ExpandableAutoComplete
+              label="Auto Suggestion"
+              name="sample"
+              type="auto_suggestion"
+              // async
+              desc="name"
+              isMultiple
+              expandable={true}
+              descId="id"
+              paginationEnabled={false}
+              initialLoad={true}
+              itemCount={5}
               // nextBlock={nexBlock}
               placeholder="Auto Suggestion"
               selectedItems={[{ name: 'test', id: '1' }]}

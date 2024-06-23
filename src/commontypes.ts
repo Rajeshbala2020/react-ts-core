@@ -35,4 +35,7 @@ export interface AutoSuggestionInputProps {
   selectedItems?: any[];
   onFocus?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
   dopDownRef?: HTMLInputElement;
+  expandable?: boolean
+  textCount?: number
+  itemCount?: number
 }
