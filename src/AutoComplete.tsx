@@ -1,11 +1,5 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import Tooltip from './utilities/tooltip';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import { AutoSuggestionInputProps } from './commontypes';
 import { useSuggestions } from './utilities/autosuggestions';
@@ -13,7 +7,6 @@ import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
 import { filterSuggestions } from './utilities/filterSuggestions';
 import { Close, DropArrow, Search, Spinner } from './utilities/icons';
-import Tooltip from './utilities/tootltip';
 
 type ValueProps = {
   [key: string]: string;

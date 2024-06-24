@@ -125,7 +125,7 @@ body * {
   line-height: 20px; /* 142.857% */
   width: 100%;
   display: flex;
-  align-items: start;
+  align-items: flex-start;
   gap: 8px;
 }
 .qbs-autocomplete-suggestions-item:hover {
@@ -365,7 +365,7 @@ ul {
   margin: 0;
   cursor: pointer;
   display: flex;
-  justify-content: start;
+  justify-content: flex-start;
   padding: 8px;
 }
 .loadMoreSection p {
@@ -413,7 +413,8 @@ span.dropdown-search-icon {
 .qbs-autocomplete-checkbox-container {
   gap: 8px;
   padding: 6px 8px;
-  align-items: start;
+  display: flex;
+  align-items: flex-start;
 }
 
 .qbs-autocomplete-checkbox-container .qbs-autocomplete-suggestions-item {
