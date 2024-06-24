@@ -181,6 +181,55 @@ body * {
   color: #313131;
 }
 
+.qbs-expandable-container {
+  border: 1px solid #d6d8dc;
+  background: #fff;
+  box-sizing: border-box;
+  padding: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  flex: 1 1 0%;
+  gap: 5px;
+}
+
+.qbs-textfield-default.expandable {
+  height: auto;
+  border: none;
+}
+
+.qbs-expandable-container .qbs-textfield-expandable {
+  flex: 1 1 auto;
+  display: inline-grid;
+  grid-template-columns: 0px min-content;
+  grid-area: 1 / 1 / 2 / 3;
+  overflow: hidden;
+}
+.qbs-expandable-container .qbs-textfield-expandable::after {
+  content: attr(data-value) " ";
+  visibility: hidden;
+  white-space: pre;
+  grid-area: 1 / 2;
+  font: inherit;
+  min-width: 2px;
+  border: 0px;
+  margin: 0px;
+  outline: 0px;
+  padding: 0px;
+}
+.qbs-expandable-container .qbs-textfield-expandable input {
+  opacity: 1;
+  width: 100%;
+  grid-area: 1 / 2;
+  min-width: 10px;
+  border: 0px;
+  margin: 0px;
+  outline: 0px;
+  padding: 0px;
+  height: auto;
+  min-height: auto;
+  border-radius: 0;
+}
+
 .qbs-textfield-default::placeholder {
   font-size: 14px;
   font-style: normal;
@@ -288,6 +337,12 @@ ul {
   z-index: 99;
   top: 6.5px;
   flex-wrap: wrap;
+}
+
+.qbs-expandable-container .selected-items-container {
+  position: relative;
+  top: 0;
+  left: 0;
 }
 
 .selected-item-more {
@@ -467,7 +522,7 @@ span.dropdown-search-icon {
   cursor: pointer;
 }
 
-.qbs-table-tooltip .tooltiptext {
+.qbs-table-tooltip .tooltiptext, .tooltiptext {
   visibility: hidden;
   background-color: #000;
   color: #fff;
@@ -501,21 +556,21 @@ span.dropdown-search-icon {
   opacity: 1;
 }
 
-.qbs-table-tooltip .tooltiptext::after {
-  content: '';
+.qbs-table-tooltip .tooltiptext::after, .tooltiptext::after {
+  content: "";
   position: absolute;
   border-width: 5px;
   border-style: solid;
 }
 
-.qbs-table-tooltip.up .tooltiptext::after {
+.qbs-table-tooltip.up .tooltiptext::after, .up.tooltiptext::after {
   top: 100%;
   left: 50%;
   margin-left: -5px;
   border-color: #000 transparent transparent transparent;
 }
 
-.qbs-table-tooltip.down .tooltiptext::after {
+.qbs-table-tooltip.down .tooltiptext::after, .down.tooltiptext::after {
   bottom: 100%;
   left: 50%;
   margin-left: -5px;
