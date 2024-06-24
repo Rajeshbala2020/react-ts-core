@@ -1,15 +1,4 @@
-// import React from 'react';
-// const Tooltip: React.FC<any> = ({ children, title }) => {
-//   return (
-//     <div className="tooltip-wrapper">
-//       {children}
-//       <div className="tooltip-content">{title}</div>
-//     </div>
-//   );
-// };
-
-// export default Tooltip;
-import React, { useState, useRef } from 'react';
+import React, { useRef, useState } from 'react';
 
 const ToolTip: React.FC<any> = ({ title, children }) => {
   const [dropdownPosition, setDropdownPosition] = useState('bottom-position');
