@@ -271,7 +271,7 @@ const ExpandableAutoComplete = forwardRef<
     const tooltipContent =
       selectedItems?.length > itemCount
         ? selectedItems
-            ?.slice(1)
+            ?.slice(itemCount)
             .map((item) => item[desc])
             .join(", ")
         : "";
@@ -349,7 +349,7 @@ const ExpandableAutoComplete = forwardRef<
           )}
 
           <div
-            className="qbs-textfield-expandable"
+            className={`qbs-textfield-expandable ${!expandable ? 'qbs-normal': ''}`}
             data-value={
               selectedItems?.length > 0 || searchValue
                 ? searchValue
