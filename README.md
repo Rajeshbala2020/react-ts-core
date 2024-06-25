@@ -29,7 +29,7 @@ npm install react-core-ts
 ```
 
 ```jsx
-import {AutoComplete} from 'react-core-ts';
+import { AutoComplete } from 'react-core-ts';
 
 function ExampleComponent() {
   return (
@@ -46,7 +46,28 @@ function ExampleComponent() {
 }
 
 ```
+You can also use the `ExpandableAutoComplete` component, which will allow you to show all selected items and have the option to inline search.
 
+```jsx
+import { ExpandableAutoComplete } from 'react-core-ts';
+
+function ExampleExpandableComponent() {
+  return (
+    <ExpandableAutoComplete
+      label="Search"
+      onChange={handleChange}
+      getData={fetchSuggestions}
+      placeholder="Type to search..."
+      type="auto_suggestion"
+      selectedItems={selectedItems}
+      async={true}
+      isMultiple={true}
+      expandable={true}
+    />
+  );
+}
+
+```
 ## Props
 
 You can pass the following props to the `AutoComplete` component:
@@ -73,6 +94,13 @@ You can pass the following props to the `AutoComplete` component:
 - **async** _(boolean)_: If true, indicates that the `getData` function is asynchronous.
 - **nextBlock** _(function or boolean)_: Function for pagination or boolean to determine if pagination is enabled.
 - **paginationEnabled** _(boolean)_: If true, pagination for suggestions is enabled.
+
+Additional props for the `ExpandableAutoComplete` component:
+
+- **expandable** _(boolean)_: If true, enable the expandable feature.
+- **textCount** _(number)_: Selected chip item text count; the default value will be `10`. If the text count is higher than this, it will show `...` prefix.
+- **itemCount** _(number)_: Selected items count; the default value will be `1`. If more than this count is selected, then will show a `+ count more` button with tooltip.
+
 
 ## Contribution
 

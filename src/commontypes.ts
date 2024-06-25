@@ -21,8 +21,8 @@ export interface AutoSuggestionInputProps {
   readOnly?: boolean;
   disabled?: boolean;
   isMultiple?: boolean;
-  desc: string;
-  descId: string;
+  desc?: string;
+  descId?: string;
   singleSelect?: boolean;
   className?: string;
   async?: boolean;
