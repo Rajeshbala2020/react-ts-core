@@ -1,8 +1,8 @@
-import React, { useState, useRef, useLayoutEffect, useEffect } from "react";
-import ReactDOM from "react-dom";
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
-  const [dropdownPosition, setDropdownPosition] = useState("bottom-position");
+  const [dropdownPosition, setDropdownPosition] = useState('bottom-position');
   const dropRef = useRef(null);
   const menuButtonRef = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
@@ -20,16 +20,16 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
       const spaceBelow = viewportHeight - inputBoxRect.bottom;
       if (spaceAbove > spaceBelow) {
         if (spaceAbove > 90 && spaceBelow < 120) {
-          return "top-position";
+          return 'top-position';
         } else {
-          return "bottom-position";
+          return 'bottom-position';
         }
       } else {
         const diff: number = spaceBelow - spaceAbove;
         if (spaceAbove > 90 && spaceBelow > 90 && diff < 90) {
-          return "top-position";
+          return 'top-position';
         } else {
-          return "bottom-position";
+          return 'bottom-position';
         }
       }
     }
@@ -44,7 +44,7 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
       let left = rect.left + window.scrollX;
       const height = rect.height;
       const width = dropRef?.current?.offsetWidth;
-      if (dropPosition === "bottom-position") {
+      if (dropPosition === 'bottom-position') {
         top = top + height / 2 - 5;
       } else {
         top = top - height * 2 + 15;
@@ -77,7 +77,7 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
               : prevStyle.left + boxWidth / 2 - tooltipWidth / 2,
           width: tooltipWidth,
           top:
-            dropdownPosition === "bottom-position"
+            dropdownPosition === 'bottom-position'
               ? prevStyle.top
               : prevStyle.top - tooltipHeight,
         }));
@@ -88,10 +88,10 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
       updateTooltipPosition();
     }
 
-    window.addEventListener("resize", updateTooltipPosition);
+    window.addEventListener('resize', updateTooltipPosition);
 
     return () => {
-      window.removeEventListener("resize", updateTooltipPosition);
+      window.removeEventListener('resize', updateTooltipPosition);
     };
   }, [visible, dropdownPosition]);
 
@@ -102,47 +102,45 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
       }
     };
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
   return (
-    <>
-      <div
-        onMouseEnter={handleMouseEnter}
-        onMouseLeave={handleMouseLeave}
-        ref={menuButtonRef}
-        style={{ display: "flex" }}
-      >
-        {children}
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      ref={menuButtonRef}
+      style={{ display: 'flex' }}
+    >
+      {children}
 
-        {visible &&
-          enabled &&
-          tooltipStyle &&
-          ReactDOM.createPortal(
-            <span
-              ref={(node) => (dropRef.current = node)}
-              className={`tooltiptext  ${
-                dropdownPosition == "bottom-position" ? "down" : "up"
-              }`}
-              style={{
-                top: tooltipStyle.top,
-                left: tooltipStyle.left,
-                opacity: 1,
-                width: tooltipStyle.width,
-                minWidth: "60px",
-                maxWidth: "200px",
-                visibility: "visible",
-              }}
-            >
-              {title}
-            </span>,
-            document.body
-          )}
-      </div>
-    </>
+      {visible &&
+        enabled &&
+        tooltipStyle &&
+        ReactDOM.createPortal(
+          <span
+            ref={(node) => (dropRef.current = node)}
+            className={`tooltiptext  ${
+              dropdownPosition == 'bottom-position' ? 'down' : 'up'
+            }`}
+            style={{
+              top: tooltipStyle.top,
+              left: tooltipStyle.left,
+              opacity: 1,
+              width: tooltipStyle.width,
+              minWidth: '60px',
+              maxWidth: '200px',
+              visibility: 'visible',
+            }}
+          >
+            {title}
+          </span>,
+          document.body
+        )}
+    </div>
   );
 };
 
