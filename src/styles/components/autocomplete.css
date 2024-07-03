@@ -205,7 +205,7 @@ body * {
   overflow: hidden;
 }
 .qbs-expandable-container .qbs-textfield-expandable::after {
-  content: attr(data-value) " ";
+  content: attr(data-value) ' ';
   visibility: hidden;
   white-space: pre;
   grid-area: 1 / 2;
@@ -218,7 +218,7 @@ body * {
 }
 .qbs-expandable-container .qbs-textfield-expandable input {
   opacity: 1;
-  width: 100%;
+  width: auto;
   grid-area: 1 / 2;
   min-width: 10px;
   border: 0px;
@@ -522,7 +522,8 @@ span.dropdown-search-icon {
   cursor: pointer;
 }
 
-.qbs-table-tooltip .tooltiptext, .tooltiptext {
+.qbs-table-tooltip .tooltiptext,
+.tooltiptext {
   visibility: hidden;
   background-color: #000;
   color: #fff;
@@ -556,21 +557,24 @@ span.dropdown-search-icon {
   opacity: 1;
 }
 
-.qbs-table-tooltip .tooltiptext::after, .tooltiptext::after {
-  content: "";
+.qbs-table-tooltip .tooltiptext::after,
+.tooltiptext::after {
+  content: '';
   position: absolute;
   border-width: 5px;
   border-style: solid;
 }
 
-.qbs-table-tooltip.up .tooltiptext::after, .up.tooltiptext::after {
+.qbs-table-tooltip.up .tooltiptext::after,
+.up.tooltiptext::after {
   top: 100%;
   left: 50%;
   margin-left: -5px;
   border-color: #000 transparent transparent transparent;
 }
 
-.qbs-table-tooltip.down .tooltiptext::after, .down.tooltiptext::after {
+.qbs-table-tooltip.down .tooltiptext::after,
+.down.tooltiptext::after {
   bottom: 100%;
   left: 50%;
   margin-left: -5px;

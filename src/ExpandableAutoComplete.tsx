@@ -1,11 +1,5 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
 import { useSuggestions } from './utilities/autosuggestions';
@@ -68,23 +62,41 @@ const ExpandableAutoComplete = forwardRef<
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
     // API call for suggestions through a custom hook
-    const [dropdownPosition, setDropdownPosition] = useState('bottom');
     const inputRef = useRef(null);
     const dropRef = useRef(null);
     useImperativeHandle(ref, () => inputRef.current);
+    const [dropdownStyle, setDropdownStyle] = useState({
+      top: 0,
+      left: 0,
+      width: 200,
+    });
 
     const adjustDropdownPosition = () => {
-      if (inputRef.current && dropRef.current) {
-        const inputBoxRect = inputRef.current.getBoundingClientRect();
-        const viewportHeight = window.innerHeight;
+      if (dropdownRef.current) {
+        const inputRect = dropdownRef.current.getBoundingClientRect();
+        const dropdownPosition = {
+          left: inputRect.left + window.scrollX,
+          width: inputRect.width,
+          top: 0,
+        };
+        // Check if there's enough space below the input for the dropdown
+        const spaceBelow = window.innerHeight - inputRect.bottom;
+        const dropdownHeight = 275; // Assume a fixed height or calculate based on content
 
-        const spaceAbove = inputBoxRect.top;
-        const spaceBelow = viewportHeight - inputBoxRect.bottom;
-        if (spaceAbove > spaceBelow) {
-          setDropdownPosition('top');
+        if (spaceBelow >= dropdownHeight) {
+          dropdownPosition.top = inputRect.bottom + window.scrollY;
         } else {
-          setDropdownPosition('bottom');
+          dropdownPosition.top =
+            inputRect.top +
+            window.scrollY -
+            dropdownHeight +
+            inputRect.height +
+            20;
         }
+
+        setDropdownStyle({
+          ...dropdownPosition,
+        });
       }
     };
 
@@ -96,6 +108,15 @@ const ExpandableAutoComplete = forwardRef<
         window.removeEventListener('resize', adjustDropdownPosition);
       };
     }, [dropOpen]);
+
+    useEffect(() => {
+      window.addEventListener('resize', adjustDropdownPosition);
+      adjustDropdownPosition();
+
+      return () => {
+        window.removeEventListener('resize', adjustDropdownPosition);
+      };
+    }, []);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -275,7 +296,6 @@ const ExpandableAutoComplete = forwardRef<
             .map((item) => item[desc])
             .join(', ')
         : '';
-
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (
@@ -412,31 +432,34 @@ const ExpandableAutoComplete = forwardRef<
           {/* Displaying Loading Spinner */}
 
           {/* Suggestions Dropdown */}
-          {dropOpen && (
-            <ul
-              ref={dropRef}
-              className={`qbs-autocomplete-suggestions ${dropdownPosition}`}
-            >
-              {type == 'auto_suggestion' && !expandable && (
-                <div
-                  style={{ position: 'relative' }}
-                  className="react-core-ts-search-container"
-                >
-                  <span className="dropdown-search-icon">
-                    <Search />
-                  </span>
-                  <input
-                    className="dropdown-search-input"
-                    onChange={handleSuggestionChange}
-                    value={searchValue}
-                    placeholder="Search"
-                  />
-                </div>
-              )}
 
-              <div className="qbs-autocomplete-suggestions-sub">
-                {/* Displaying Suggestions or Not Found Message */}
-                {/* {isLoading && ( 
+          {dropOpen &&
+            ReactDOM.createPortal(
+              <ul
+                ref={dropRef}
+                style={{ ...dropdownStyle, minHeight: 192 }}
+                className={`qbs-autocomplete-suggestions`}
+              >
+                {type == 'auto_suggestion' && !expandable && (
+                  <div
+                    style={{ position: 'relative' }}
+                    className="react-core-ts-search-container"
+                  >
+                    <span className="dropdown-search-icon">
+                      <Search />
+                    </span>
+                    <input
+                      className="dropdown-search-input"
+                      onChange={handleSuggestionChange}
+                      value={searchValue}
+                      placeholder="Search"
+                    />
+                  </div>
+                )}
+
+                <div className="qbs-autocomplete-suggestions-sub">
+                  {/* Displaying Suggestions or Not Found Message */}
+                  {/* {isLoading && ( 
               <div style={{ display: 'flex', justifyContent: 'center' }}>
                 <span>
                   <Spinner />
@@ -445,87 +468,90 @@ const ExpandableAutoComplete = forwardRef<
 
               {/* )} */}
 
-                {filteredData?.length > 0 ? (
-                  filteredData.map((suggestion: ValueProps, idx: number) => (
-                    <div
-                      key={idx.toString()}
-                      className={`qbs-autocomplete-listitem-container ${
-                        (isMultiple || singleSelect) &&
-                        'qbs-autocomplete-checkbox-container'
-                      } ${
-                        isSelected(suggestion, selected) ? 'is-selected' : ''
-                      }`}
-                    >
-                      {(isMultiple || singleSelect) && (
-                        <div className="qbs-autocomplete-checkbox">
-                          <input
-                            onChange={(e) => handleMultiSelect(e, suggestion)}
-                            type="checkbox"
-                            checked={isSelected(suggestion, selected)}
-                            id={`qbs-checkbox-${idx.toString()}`}
-                          />
-                          <label htmlFor={`qbs-checkbox-${idx.toString()}`}>
-                            <svg
-                              width="8"
-                              height="6"
-                              viewBox="0 0 8 6"
-                              fill="none"
-                              xmlns="http://www.w3.org/2000/svg"
-                            >
-                              <path
-                                d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
-                                fill="white"
-                              />
-                            </svg>
-                          </label>
-                        </div>
-                      )}
-                      <li
-                        key={idx}
-                        className={`qbs-autocomplete-suggestions-item ${
+                  {filteredData?.length > 0 ? (
+                    filteredData.map((suggestion: ValueProps, idx: number) => (
+                      <div
+                        key={idx.toString()}
+                        className={`qbs-autocomplete-listitem-container ${
+                          (isMultiple || singleSelect) &&
+                          'qbs-autocomplete-checkbox-container'
+                        } ${
                           isSelected(suggestion, selected) ? 'is-selected' : ''
                         }`}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        data-testid={suggestion[desc]}
                       >
-                        {suggestion[desc]}
-                      </li>
-                    </div>
-                  ))
-                ) : (
-                  <>
-                    {isLoading ? (
-                      <div
-                        style={{ display: 'flex', justifyContent: 'center' }}
-                      >
-                        <span>
-                          <Spinner />
-                        </span>
+                        {(isMultiple || singleSelect) && (
+                          <div className="qbs-autocomplete-checkbox">
+                            <input
+                              onChange={(e) => handleMultiSelect(e, suggestion)}
+                              type="checkbox"
+                              checked={isSelected(suggestion, selected)}
+                              id={`qbs-checkbox-${idx.toString()}`}
+                            />
+                            <label htmlFor={`qbs-checkbox-${idx.toString()}`}>
+                              <svg
+                                width="8"
+                                height="6"
+                                viewBox="0 0 8 6"
+                                fill="none"
+                                xmlns="http://www.w3.org/2000/svg"
+                              >
+                                <path
+                                  d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
+                                  fill="white"
+                                />
+                              </svg>
+                            </label>
+                          </div>
+                        )}
+                        <li
+                          key={idx}
+                          className={`qbs-autocomplete-suggestions-item ${
+                            isSelected(suggestion, selected)
+                              ? 'is-selected'
+                              : ''
+                          }`}
+                          onClick={() => handleSuggestionClick(suggestion)}
+                          data-testid={suggestion[desc]}
+                        >
+                          {suggestion[desc]}
+                        </li>
                       </div>
-                    ) : (
-                      <li
-                        className="qbs-autocomplete-notfound"
-                        onClick={handleBlur}
-                      >
-                        {notDataMessage ?? 'No Results Found'}
-                      </li>
-                    )}
-                  </>
-                )}
-                {paginationEnabled &&
-                  nextBlock !== 0 &&
-                  nextBlock !== undefined &&
-                  filteredData?.length > 0 && (
-                    <div
-                      className="loadMoreSection"
-                      onClick={() => handleLoadMore()}
-                    >
-                      <p style={{ margin: 2 }}>Load More</p>
-                    </div>
+                    ))
+                  ) : (
+                    <>
+                      {isLoading ? (
+                        <div
+                          style={{ display: 'flex', justifyContent: 'center' }}
+                        >
+                          <span>
+                            <Spinner />
+                          </span>
+                        </div>
+                      ) : (
+                        <li
+                          className="qbs-autocomplete-notfound"
+                          onClick={handleBlur}
+                        >
+                          {notDataMessage ?? 'No Results Found'}
+                        </li>
+                      )}
+                    </>
                   )}
-              </div>
-            </ul>
-          )}
+                  {paginationEnabled &&
+                    nextBlock !== 0 &&
+                    nextBlock !== undefined &&
+                    filteredData?.length > 0 && (
+                      <div
+                        className="loadMoreSection"
+                        onClick={() => handleLoadMore()}
+                      >
+                        <p style={{ margin: 2 }}>Load More</p>
+                      </div>
+                    )}
+                </div>
+              </ul>,
+              document.body
+            )}
         </div>
 
         {/* Displaying Validation Error */}
