@@ -247,12 +247,16 @@ const ExpandableAutoComplete = forwardRef<
       };
       document.addEventListener('mousedown', handleClickOutside as any);
       window.addEventListener('scroll', handleClickOutside as any);
+
+      const scrollableDivs = document.querySelectorAll('div[style*="overflow"]');
+      scrollableDivs.forEach(div => div.addEventListener('scroll', handleClickOutside as any))
       if (scrollRef && scrollRef.current && scrollRef.current !== null) {
         scrollRef.current.addEventListener('scroll', handleClickOutside as any);
       }
       return () => {
         document.removeEventListener('mousedown', handleClickOutside as any);
         window.removeEventListener('scroll', handleClickOutside as any);
+        scrollableDivs.forEach(div => div.removeEventListener('scroll', handleClickOutside as any))
         if (scrollRef && scrollRef.current && scrollRef.current !== null) {
           scrollRef.current.removeEventListener(
             'scroll',
@@ -299,24 +303,6 @@ const ExpandableAutoComplete = forwardRef<
       if (inputRef.current) inputRef.current.focus();
       handleOnClick();
     };
-    const closeDropdown = () => setDropOpen(false);
-
-    useEffect(() => {
-      const inputElement = dropdownRef.current;
-
-      if (inputElement) {
-        const observer = new MutationObserver(() => {
-          closeDropdown();
-        });
-        console.log('sdlkflsk');
-        observer.observe(inputElement, {
-          attributes: true,
-          attributeFilter: ['style', 'qbs-textfield-default'],
-        });
-
-        return () => observer.disconnect();
-      }
-    }, []);
 
     const tooltipContent =
       selectedItems?.length > itemCount
