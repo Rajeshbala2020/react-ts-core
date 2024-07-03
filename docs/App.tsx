@@ -49,7 +49,7 @@ export default function App() {
           padding: 20,
           maxWidth: 700,
           height: 500,
-          overflow: 'scroll',
+          overflowY: 'scroll',
         }}
       >
         <div className="autocomplete-section">
