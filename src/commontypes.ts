@@ -26,6 +26,7 @@ export interface AutoSuggestionInputProps {
   singleSelect?: boolean;
   className?: string;
   async?: boolean;
+  scrollRef?: any;
   paginationEnabled?: boolean;
   nextBlock?: number;
   initialLoad?: boolean;
@@ -35,7 +36,7 @@ export interface AutoSuggestionInputProps {
   selectedItems?: any[];
   onFocus?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
   dopDownRef?: HTMLInputElement;
-  expandable?: boolean
-  textCount?: number
-  itemCount?: number
+  expandable?: boolean;
+  textCount?: number;
+  itemCount?: number;
 }

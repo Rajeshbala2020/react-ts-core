@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -49,6 +56,7 @@ const ExpandableAutoComplete = forwardRef<
       expandable = false,
       textCount = 10,
       itemCount = 1,
+      scrollRef,
     },
     ref
   ) => {
@@ -108,15 +116,6 @@ const ExpandableAutoComplete = forwardRef<
         window.removeEventListener('resize', adjustDropdownPosition);
       };
     }, [dropOpen]);
-
-    useEffect(() => {
-      window.addEventListener('resize', adjustDropdownPosition);
-      adjustDropdownPosition();
-
-      return () => {
-        window.removeEventListener('resize', adjustDropdownPosition);
-      };
-    }, []);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -238,17 +237,28 @@ const ExpandableAutoComplete = forwardRef<
     useEffect(() => {
       const handleClickOutside = (event: React.MouseEvent) => {
         if (
-          dropdownRef.current &&
+          dropRef.current &&
           event.target instanceof Node &&
-          !dropdownRef.current.contains(event.target)
+          !dropRef.current.contains(event.target)
         ) {
           setDropOpen(false);
           setSearchValue('');
         }
       };
       document.addEventListener('mousedown', handleClickOutside as any);
+      window.addEventListener('scroll', handleClickOutside as any);
+      if (scrollRef && scrollRef.current && scrollRef.current !== null) {
+        scrollRef.current.addEventListener('scroll', handleClickOutside as any);
+      }
       return () => {
         document.removeEventListener('mousedown', handleClickOutside as any);
+        window.removeEventListener('scroll', handleClickOutside as any);
+        if (scrollRef && scrollRef.current && scrollRef.current !== null) {
+          scrollRef.current.removeEventListener(
+            'scroll',
+            handleClickOutside as any
+          );
+        }
       };
     }, []);
 
@@ -289,6 +299,25 @@ const ExpandableAutoComplete = forwardRef<
       if (inputRef.current) inputRef.current.focus();
       handleOnClick();
     };
+    const closeDropdown = () => setDropOpen(false);
+
+    useEffect(() => {
+      const inputElement = dropdownRef.current;
+
+      if (inputElement) {
+        const observer = new MutationObserver(() => {
+          closeDropdown();
+        });
+        console.log('sdlkflsk');
+        observer.observe(inputElement, {
+          attributes: true,
+          attributeFilter: ['style', 'qbs-textfield-default'],
+        });
+
+        return () => observer.disconnect();
+      }
+    }, []);
+
     const tooltipContent =
       selectedItems?.length > itemCount
         ? selectedItems
@@ -296,6 +325,7 @@ const ExpandableAutoComplete = forwardRef<
             .map((item) => item[desc])
             .join(', ')
         : '';
+
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (
@@ -333,28 +363,26 @@ const ExpandableAutoComplete = forwardRef<
                     : selectedItems?.length
                 )
                 .map((item, index) => (
-                  <>
-                    <div className="selected-items-container">
-                      <Tooltip
-                        title={item?.[desc]}
-                        enabled={item?.[desc]?.length > textCount}
-                      >
-                        <div key={item.id} className="selected-item">
-                          {item?.[desc]?.length > textCount
-                            ? `${item?.[desc].substring(0, textCount)}...`
-                            : item?.[desc]}
+                  <div className="selected-items-container">
+                    <Tooltip
+                      title={item?.[desc]}
+                      enabled={item?.[desc]?.length > textCount}
+                    >
+                      <div key={item.id} className="selected-item">
+                        {item?.[desc]?.length > textCount
+                          ? `${item?.[desc].substring(0, textCount)}...`
+                          : item?.[desc]}
 
-                          <button
-                            onClick={() => handleRemoveSelectedItem(index)}
-                            className="remove-item-btn"
-                            aria-label={`Remove ${item?.[desc]}`}
-                          >
-                            X
-                          </button>
-                        </div>
-                      </Tooltip>
-                    </div>
-                  </>
+                        <button
+                          onClick={() => handleRemoveSelectedItem(index)}
+                          className="remove-item-btn"
+                          aria-label={`Remove ${item?.[desc]}`}
+                        >
+                          X
+                        </button>
+                      </div>
+                    </Tooltip>
+                  </div>
                 ))}
               {selectedItems?.length > itemCount && (
                 <div className="selected-items-container">

@@ -9,7 +9,7 @@ module.exports = {
   devServer: {
     contentBase: './docs',
     hot: true,
-    port: 3001, // port to run the dev server on
+    port: 3200, // port to run the dev server on
     // stats: 'errors-only', // only show errors in the output
     clientLogLevel: 'silent',
   },
