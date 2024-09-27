@@ -47,8 +47,7 @@ export default function App() {
           flexDirection: 'column',
           gap: 20,
           padding: 20,
-          maxWidth: 700,
-          height: 500,
+
           overflowY: 'scroll',
         }}
       >
@@ -70,6 +69,27 @@ export default function App() {
             desc="name"
             isMultiple
             expandable={true}
+            descId="id"
+            paginationEnabled={false}
+            initialLoad={true}
+            itemCount={5}
+            // nextBlock={nexBlock}
+            placeholder="Auto Suggestion Suggestion Suggestion Suggestion"
+            selectedItems={[{ name: 'test', id: '1' }]}
+            getData={getData}
+            onChange={(e) => console.log(e, 'onchange')}
+          />
+        </div>
+        <div style={{ width: 300 }}>
+          <ExpandableAutoComplete
+            label="Auto Suggestion"
+            name="sample"
+            type="auto_suggestion"
+            // async
+            desc="name"
+            isMultiple
+            expandable={true}
+            isTreeDropdown={true}
             descId="id"
             paginationEnabled={false}
             initialLoad={true}

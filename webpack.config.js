@@ -4,7 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   //...
-  entry: './docs',
+  entry: ['./docs', './src/styles/global.css'],
   devtool: 'source-map',
   devServer: {
     contentBase: './docs',
@@ -15,11 +15,25 @@ module.exports = {
   },
   module: {
     rules: [
+      // {
+      //   test: /\.css$/i,
+      //   use: [MiniCssExtractPlugin.loader, 'css-loader'],
+      // },
       {
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [
+          MiniCssExtractPlugin.loader,
+          'css-loader',
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: ['tailwindcss', 'autoprefixer'],
+              },
+            },
+          },
+        ],
       },
-
       {
         test: /\.tsx?$/,
         exclude: (file) =>

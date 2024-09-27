@@ -9,12 +9,15 @@ import React, {
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
+import DropdownList from './components/DropdownList';
+import InputActions from './components/InputActions';
+import TreeNode from './components/TreeNode';
 import { useSuggestions } from './utilities/autosuggestions';
 import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
 import { default as Tooltip } from './utilities/expandableTootltip';
 import { filterSuggestions } from './utilities/filterSuggestions';
-import { Close, DropArrow, Search, Spinner } from './utilities/icons';
+import { Search, Spinner } from './utilities/icons';
 
 type ValueProps = {
   [key: string]: string;
@@ -57,6 +60,7 @@ const ExpandableAutoComplete = forwardRef<
       textCount = 10,
       itemCount = 1,
       scrollRef,
+      isTreeDropdown = false,
     },
     ref
   ) => {
@@ -89,17 +93,15 @@ const ExpandableAutoComplete = forwardRef<
         };
         // Check if there's enough space below the input for the dropdown
         const spaceBelow = window.innerHeight - inputRect.bottom;
-        const dropdownHeight = 275; // Assume a fixed height or calculate based on content
+        const spaceAbove = inputRect.top + window.scrollY;
 
+        const dropdownHeight = 275; // Assume a fixed height or calculate based on content
         if (spaceBelow >= dropdownHeight) {
-          dropdownPosition.top = inputRect.bottom + window.scrollY;
+          dropdownPosition.top =
+            inputRect.top + window.scrollY + inputRect.height;
         } else {
           dropdownPosition.top =
-            inputRect.top +
-            window.scrollY -
-            dropdownHeight +
-            inputRect.height +
-            20;
+            inputRect.top + window.scrollY - dropdownHeight + 73;
         }
 
         setDropdownStyle({
@@ -115,7 +117,7 @@ const ExpandableAutoComplete = forwardRef<
       return () => {
         window.removeEventListener('resize', adjustDropdownPosition);
       };
-    }, [dropOpen]);
+    }, [dropOpen, selectedItems]);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -235,11 +237,12 @@ const ExpandableAutoComplete = forwardRef<
     }, [selectedItems]);
 
     useEffect(() => {
-      const handleClickOutside = (event: React.MouseEvent) => {
+      const handleClickOutside = (event: any) => {
         if (
           dropRef.current &&
           event.target instanceof Node &&
-          !dropRef.current.contains(event.target)
+          !dropRef.current.contains(event.target) &&
+          event.target.nodeName !== 'svg'
         ) {
           setDropOpen(false);
           setSearchValue('');
@@ -248,15 +251,21 @@ const ExpandableAutoComplete = forwardRef<
       document.addEventListener('mousedown', handleClickOutside as any);
       window.addEventListener('scroll', handleClickOutside as any);
 
-      const scrollableDivs = document.querySelectorAll('div[style*="overflow"]');
-      scrollableDivs.forEach(div => div.addEventListener('scroll', handleClickOutside as any))
+      const scrollableDivs = document.querySelectorAll(
+        'div[style*="overflow"]'
+      );
+      scrollableDivs.forEach((div) =>
+        div.addEventListener('scroll', handleClickOutside as any)
+      );
       if (scrollRef && scrollRef.current && scrollRef.current !== null) {
         scrollRef.current.addEventListener('scroll', handleClickOutside as any);
       }
       return () => {
         document.removeEventListener('mousedown', handleClickOutside as any);
         window.removeEventListener('scroll', handleClickOutside as any);
-        scrollableDivs.forEach(div => div.removeEventListener('scroll', handleClickOutside as any))
+        scrollableDivs.forEach((div) =>
+          div.removeEventListener('scroll', handleClickOutside as any)
+        );
         if (scrollRef && scrollRef.current && scrollRef.current !== null) {
           scrollRef.current.removeEventListener(
             'scroll',
@@ -274,7 +283,8 @@ const ExpandableAutoComplete = forwardRef<
       type,
       desc,
       selected,
-      async
+      async,
+      isTreeDropdown
     );
     const isSelected = (
       item: ValueProps,
@@ -311,6 +321,14 @@ const ExpandableAutoComplete = forwardRef<
             .map((item) => item[desc])
             .join(', ')
         : '';
+
+    const handleDropOpen = (e: any) => {
+      if (!dropOpen) setDropOpen(true);
+    };
+
+    const handleDropClose = (e: any) => {
+      if (dropOpen) setDropOpen(false);
+    };
 
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
@@ -349,7 +367,7 @@ const ExpandableAutoComplete = forwardRef<
                     : selectedItems?.length
                 )
                 .map((item, index) => (
-                  <div className="selected-items-container">
+                  <div key={index} className="selected-items-container">
                     <Tooltip
                       title={item?.[desc]}
                       enabled={item?.[desc]?.length > textCount}
@@ -419,30 +437,18 @@ const ExpandableAutoComplete = forwardRef<
           </div>
 
           {/* Icons for Clearing Input or Toggling Dropdown */}
-          {!expandable && (
-            <div className="qbs-autocomplete-close-icon">
-              {(inputValue || searchValue) && !disabled && !readOnly && (
-                <button
-                  onClick={handleClear}
-                  className="icon-button"
-                  aria-label="clear"
-                >
-                  <Close />
-                </button>
-              )}
 
-              <button
-                disabled={disabled || readOnly}
-                type="button"
-                onClick={() => setDropOpen(!dropOpen)}
-                className="icon-button"
-                aria-label="toggle"
-              >
-                <DropArrow />
-              </button>
-            </div>
-          )}
-
+          <InputActions
+            inputValue={inputValue}
+            searchValue={searchValue}
+            dropOpen={dropOpen}
+            handleDropOpen={handleDropOpen}
+            handleDropClose={handleDropClose}
+            disabled={disabled}
+            readOnly={readOnly}
+            expandable={expandable}
+            handleClear={handleClear}
+          />
           {/* Displaying Loading Spinner */}
 
           {/* Suggestions Dropdown */}
@@ -471,66 +477,38 @@ const ExpandableAutoComplete = forwardRef<
                   </div>
                 )}
 
-                <div className="qbs-autocomplete-suggestions-sub">
-                  {/* Displaying Suggestions or Not Found Message */}
-                  {/* {isLoading && ( 
-              <div style={{ display: 'flex', justifyContent: 'center' }}>
-                <span>
-                  <Spinner />
-                </span>
-              </div>
-
-              {/* )} */}
-
+                <div
+                  className={`qbs-autocomplete-suggestions-sub ${
+                    isTreeDropdown ? ' gap-4' : ''
+                  }`}
+                >
                   {filteredData?.length > 0 ? (
-                    filteredData.map((suggestion: ValueProps, idx: number) => (
-                      <div
-                        key={idx.toString()}
-                        className={`qbs-autocomplete-listitem-container ${
-                          (isMultiple || singleSelect) &&
-                          'qbs-autocomplete-checkbox-container'
-                        } ${
-                          isSelected(suggestion, selected) ? 'is-selected' : ''
-                        }`}
-                      >
-                        {(isMultiple || singleSelect) && (
-                          <div className="qbs-autocomplete-checkbox">
-                            <input
-                              onChange={(e) => handleMultiSelect(e, suggestion)}
-                              type="checkbox"
-                              checked={isSelected(suggestion, selected)}
-                              id={`qbs-checkbox-${idx.toString()}`}
-                            />
-                            <label htmlFor={`qbs-checkbox-${idx.toString()}`}>
-                              <svg
-                                width="8"
-                                height="6"
-                                viewBox="0 0 8 6"
-                                fill="none"
-                                xmlns="http://www.w3.org/2000/svg"
-                              >
-                                <path
-                                  d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
-                                  fill="white"
-                                />
-                              </svg>
-                            </label>
-                          </div>
-                        )}
-                        <li
-                          key={idx}
-                          className={`qbs-autocomplete-suggestions-item ${
-                            isSelected(suggestion, selected)
-                              ? 'is-selected'
-                              : ''
-                          }`}
-                          onClick={() => handleSuggestionClick(suggestion)}
-                          data-testid={suggestion[desc]}
-                        >
-                          {suggestion[desc]}
-                        </li>
-                      </div>
-                    ))
+                    filteredData.map((suggestion: ValueProps, idx: number) =>
+                      !isTreeDropdown ? (
+                        <DropdownList
+                          idx={idx}
+                          suggestion={suggestion}
+                          isSelected={isSelected}
+                          handleSuggestionClick={handleSuggestionClick}
+                          handleMultiSelect={handleMultiSelect}
+                          selected={selected}
+                          isMultiple={isMultiple}
+                          singleSelect={singleSelect}
+                          desc={desc}
+                        />
+                      ) : (
+                        <TreeNode
+                          node={suggestion}
+                          isSelected={isSelected}
+                          handleMultiSelect={handleMultiSelect}
+                          selected={selected}
+                          isMultiple={isMultiple}
+                          singleSelect={singleSelect}
+                          idx={idx}
+                          desc={desc}
+                        />
+                      )
+                    )
                   ) : (
                     <>
                       {isLoading ? (

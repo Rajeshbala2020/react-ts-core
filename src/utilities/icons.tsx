@@ -9,6 +9,8 @@ export const DropArrow: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
       strokeWidth="1.5"
       stroke="currentColor"
       style={{ width: 15 }}
+      className={className}
+      name="toggle"
     >
       <path
         strokeLinecap="round"

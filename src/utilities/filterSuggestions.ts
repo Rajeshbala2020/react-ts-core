@@ -8,20 +8,22 @@ export const filterSuggestions = (
   type: string,
   desc: string,
   inputValue?: string,
-  async?: boolean
+  async?: boolean,
+  isTreeDropdown?: boolean
 ): Item[] => {
   if (
     (type === 'custom_search_select' ||
       type === 'auto_complete' ||
       type === 'auto_suggestion') &&
     !async &&
-    query
+    query &&
+    !isTreeDropdown
   ) {
     return data?.filter((item) =>
       item[desc].toLowerCase().includes(query.toLowerCase())
     );
   }
-  return sortedArrayData(data, inputValue, desc);
+  return isTreeDropdown ? data : sortedArrayData(data, inputValue, desc);
 };
 
 const sortedArrayData = (

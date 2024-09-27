@@ -39,4 +39,5 @@ export interface AutoSuggestionInputProps {
   expandable?: boolean;
   textCount?: number;
   itemCount?: number;
+  isTreeDropdown?: boolean;
 }
