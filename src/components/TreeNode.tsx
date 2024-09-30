@@ -25,10 +25,10 @@ const TreeNode: React.FC<any> = ({
   };
   return (
     <div>
-      <li className="flex flex-col">
+      <li className=" qbs-flex qbs-flex-col">
         <div
           style={{ display: 'flex' }}
-          className={`items-start gap-4 flex-row ${
+          className={`qbs-items-start qbs-gap-4 qbs-flex-row ${
             node?.children?.length > 0 ? '' : 'ml-5'
           }`}
         >
@@ -37,8 +37,8 @@ const TreeNode: React.FC<any> = ({
           {node?.children && node?.children?.length > 0 && (
             <span
               onClick={() => handleToggle(node)}
-              className={`mt-1 cursor-pointer ${
-                node.expanded ? ' rotate-90' : ''
+              className={`qbs-mt-1 qbs-cursor-pointer ${
+                node.expanded ? ' qbs-rotate-90' : ''
               }`}
             >
               <DropSideIcon />
@@ -68,7 +68,7 @@ const TreeNode: React.FC<any> = ({
               </label>
             </div>
           )}
-          <span className=" leading-[18px]">{node[desc]}</span>
+          <span className=" qbs-leading-[18px]">{node[desc]}</span>
         </div>
       </li>
 

@@ -1,6 +1,7 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
   content: [],
+  prefix: 'qbs-',
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './docs/**/*.{html,js}'],
   theme: {
     extend: {
