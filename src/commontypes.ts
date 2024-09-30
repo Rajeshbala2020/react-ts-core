@@ -8,12 +8,12 @@ export interface AutoSuggestionInputProps {
   required?: boolean;
   value?: string;
   onChange: (value?: ValueProps | ValueProps[]) => void;
-  data?: ValueProps[];
+  data?: any[];
   type?:
-    | 'custom_select'
-    | 'auto_complete'
-    | 'custom_search_select'
-    | 'auto_suggestion';
+    | "custom_select"
+    | "auto_complete"
+    | "custom_search_select"
+    | "auto_suggestion";
   placeholder?: string;
   getData?: (key?: string, nextBlock?: number) => any;
   errors?: any;

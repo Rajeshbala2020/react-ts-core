@@ -9,19 +9,18 @@ import React, {
 import ReactDOM from "react-dom";
 
 import { AutoSuggestionInputProps } from "./commontypes";
-import DropdownList from "./components/DropdownList";
 import InputActions from "./components/InputActions";
+import TreeNode from "./components/TreeNode";
 import { useSuggestions } from "./utilities/autosuggestions";
 import { debounce } from "./utilities/debounce";
 import { deepEqual } from "./utilities/deepEqual";
 import { default as Tooltip } from "./utilities/expandableTootltip";
-import { filterSuggestions } from "./utilities/filterSuggestions";
 import { Search, Spinner } from "./utilities/icons";
 
 type ValueProps = {
   [key: string]: string;
 };
-const ExpandableAutoComplete = forwardRef<
+const AutoCompleteWithTreeStructure = forwardRef<
   HTMLInputElement,
   AutoSuggestionInputProps
 >(
@@ -59,7 +58,7 @@ const ExpandableAutoComplete = forwardRef<
       textCount = 10,
       itemCount = 1,
       scrollRef,
-      isTreeDropdown = false,
+      isTreeDropdown = true,
     },
     ref
   ) => {
@@ -73,8 +72,15 @@ const ExpandableAutoComplete = forwardRef<
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
     // API call for suggestions through a custom hook
+    const [dropDownData, setDropDownData] = useState<ValueProps[]>(data);
     const inputRef = useRef(null);
     const dropRef = useRef(null);
+
+    useEffect(() => {
+      if (data) {
+        setDropDownData(data);
+      }
+    }, [data]);
     useImperativeHandle(ref, () => inputRef.current);
     const [dropdownStyle, setDropdownStyle] = useState({
       top: 0,
@@ -276,34 +282,6 @@ const ExpandableAutoComplete = forwardRef<
 
     // Filtering suggestions based on type and search value
     const selected: any = isMultiple ? selectedItems : inputValue;
-    const filteredData: ValueProps[] = filterSuggestions(
-      suggestions,
-      searchValue,
-      type,
-      desc,
-      selected,
-      async,
-      isTreeDropdown
-    );
-    const isSelected = (
-      item: ValueProps,
-      selectedItems: ValueProps[] | string
-    ): boolean => {
-      if (Array.isArray(selectedItems)) {
-        return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc]
-        );
-      } else {
-        return item[desc] === selectedItems;
-      }
-    };
-
-    const handleLoadMore = () => {
-      if (paginationEnabled) {
-        handlePickSuggestions(searchValue, nextPage + 1, true);
-        setNextPage(nextPage + 1);
-      }
-    };
 
     const handleOnClick = () => {
       !disabled && !readOnly ? setDropOpen(true) : "";
@@ -327,6 +305,119 @@ const ExpandableAutoComplete = forwardRef<
 
     const handleDropClose = (e: any) => {
       if (dropOpen) setDropOpen(false);
+    };
+    const toggleExpand = (id: string) => {
+      const newTreeData = updateTreeNode(dropDownData, id, (node) => {
+        node.expanded = !node.expanded;
+      });
+      setDropDownData(newTreeData);
+    };
+
+    // Function to handle checkbox change (single or multi-select)
+    const updateNode = (id: string, checked: boolean) => {
+      let newTreeData;
+      let checkedNodes: any[] = []; // Array to store the entire checked node objects
+
+      if (isMultiple) {
+        // Multi-select logic: update only the clicked node
+        newTreeData = updateTreeNode(dropDownData, id, (node) => {
+          node.checked = checked;
+
+          // Update the checked nodes array
+          if (checked) {
+            checkedNodes.push(node); // Add the entire node if checked
+          } else {
+            // Remove the node from the array if unchecked
+            checkedNodes = checkedNodes.filter(
+              (checkedNode) => checkedNode[descId] !== node[descId]
+            );
+          }
+        });
+
+        // Find all checked nodes in the newTreeData (in case you need all checked nodes at any point)
+        checkedNodes = [];
+        newTreeData.forEach((node) => {
+          getCheckedNodes(node, checkedNodes); // Recursively collect checked nodes
+        });
+        setSelectedItems(checkedNodes);
+        onChange(checkedNodes);
+      } else {
+        // Single-select logic: uncheck all other nodes and check only the clicked one
+        newTreeData = dropDownData.map((node) =>
+          updateAllNodes(node, id, checked)
+        );
+      }
+      setDropDownData(newTreeData);
+    };
+    const getCheckedNodes = (node: any, checkedNodes: any[]) => {
+      if (node.checked) {
+        checkedNodes.push(node); // Push the entire node object
+      }
+      if (node.children && node.children.length > 0) {
+        node.children.forEach((child: any) =>
+          getCheckedNodes(child, checkedNodes)
+        );
+      }
+    };
+
+    // Recursive function to update a specific node by ID
+    const updateTreeNode = (
+      nodes: any[],
+      id: string,
+      updateFn: (node: any) => void
+    ): any[] => {
+      return nodes.map((node) => {
+        if (node[descId] === id) {
+          updateFn(node);
+        }
+
+        if (node.children) {
+          node.children = updateTreeNode(node.children, id, updateFn);
+        }
+
+        return node;
+      });
+    };
+
+    // Recursive function to uncheck all other nodes in single-select mode
+    const updateAllNodes = (node: any, id: string, checked: boolean): any => {
+      // Reset all checked states to false, except for the selected node
+      node.checked = node[descId] === id ? checked : false;
+      if (node.checked) {
+        setInputValue(node[desc]);
+        onChange(node);
+      }
+      if (node.children) {
+        node.children = node.children.map((child: any) =>
+          updateAllNodes(child, id, checked)
+        );
+      }
+
+      return node;
+    };
+    const renderTree = (node: any, index: number) => {
+      return (
+        <div className=" ml-4 mt-4 flex flex-col gap-4">
+          <TreeNode
+            key={node[descId]}
+            node={node}
+            // handleMultiSelect={handleMultiSelect}
+            selected={selected}
+            isMultiple={isMultiple}
+            singleSelect={singleSelect}
+            idx={node[descId]}
+            updateNode={updateNode}
+            desc={desc}
+            descId={descId}
+            toggleExpand={toggleExpand}
+          >
+            {node.expanded &&
+              node.children?.map((childNode: any, index: number) =>
+                renderTree(childNode, index)
+              )}
+          </TreeNode>
+        </div>
+      );
     };
 
     return (
@@ -476,20 +567,33 @@ const ExpandableAutoComplete = forwardRef<
                   </div>
                 )}
 
-                <div className={`qbs-autocomplete-suggestions-sub `}>
-                  {filteredData?.length > 0 ? (
-                    filteredData.map((suggestion: ValueProps, idx: number) => (
-                      <DropdownList
-                        idx={idx}
-                        suggestion={suggestion}
-                        isSelected={isSelected}
-                        handleSuggestionClick={handleSuggestionClick}
-                        handleMultiSelect={handleMultiSelect}
+                <div
+                  className={`qbs-autocomplete-suggestions-sub ${
+                    isTreeDropdown ? " gap-4 min-height-[184px]" : ""
+                  }`}
+                >
+                  {dropDownData?.length > 0 ? (
+                    dropDownData.map((suggestion: any, idx: number) => (
+                      <TreeNode
+                        key={suggestion[descId]}
+                        node={suggestion}
+                        // isSelected={isSelected}
+                        // handleMultiSelect={handleMultiSelect}
                         selected={selected}
                         isMultiple={isMultiple}
                         singleSelect={singleSelect}
+                        idx={suggestion[descId]}
+                        updateNode={updateNode}
                         desc={desc}
-                      />
+                        descId={descId}
+                        toggleExpand={toggleExpand}
+                      >
+                        {suggestion.expanded &&
+                          suggestion.children?.map(
+                            (childNode: any, index: number) =>
+                              renderTree(childNode, index)
+                          )}
+                      </TreeNode>
                     ))
                   ) : (
                     <>
@@ -511,17 +615,6 @@ const ExpandableAutoComplete = forwardRef<
                       )}
                     </>
                   )}
-                  {paginationEnabled &&
-                    nextBlock !== 0 &&
-                    nextBlock !== undefined &&
-                    filteredData?.length > 0 && (
-                      <div
-                        className="loadMoreSection"
-                        onClick={() => handleLoadMore()}
-                      >
-                        <p style={{ margin: 2 }}>Load More</p>
-                      </div>
-                    )}
                 </div>
               </ul>,
               document.body
@@ -542,4 +635,4 @@ const ExpandableAutoComplete = forwardRef<
   }
 );
 
-export default React.memo(ExpandableAutoComplete);
+export default React.memo(AutoCompleteWithTreeStructure);
