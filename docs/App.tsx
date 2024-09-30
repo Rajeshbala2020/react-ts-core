@@ -89,7 +89,7 @@ export default function App() {
           <AutoCompleteWithTreeStructure
             label="Auto Suggestion"
             name="sample"
-            type="auto_suggestion"
+            type="custom_select"
             // async
             desc="name"
             isMultiple={true}

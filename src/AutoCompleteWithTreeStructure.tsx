@@ -569,7 +569,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
                 <div
                   className={`qbs-autocomplete-suggestions-sub ${
-                    isTreeDropdown ? " gap-4 min-height-[184px]" : ""
+                    isTreeDropdown ? " gap-4 min-h-[184px]" : ""
                   }`}
                 >
                   {dropDownData?.length > 0 ? (
