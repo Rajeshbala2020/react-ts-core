@@ -1,5 +1,6 @@
-import React from "react";
-import { DropSideIcon } from "./Icons";
+import React from 'react';
+
+import { DropSideIcon } from './Icons';
 
 const TreeNode: React.FC<any> = ({
   node,
@@ -14,7 +15,7 @@ const TreeNode: React.FC<any> = ({
 }) => {
   // Toggle the expanded state when clicking on the node
   const handleToggle = (node?: any) => {
-    console.log(node, "node");
+    console.log(node, 'node');
     toggleExpand(node[descId]);
   };
 
@@ -26,9 +27,9 @@ const TreeNode: React.FC<any> = ({
     <div>
       <li className="flex flex-col">
         <div
-          style={{ display: "flex" }}
+          style={{ display: 'flex' }}
           className={`items-start gap-4 flex-row ${
-            node?.children?.length > 0 ? "" : "ml-5"
+            node?.children?.length > 0 ? '' : 'ml-5'
           }`}
         >
           {/* Show an icon based on the expanded/collapsed state */}
@@ -37,7 +38,7 @@ const TreeNode: React.FC<any> = ({
             <span
               onClick={() => handleToggle(node)}
               className={`mt-1 cursor-pointer ${
-                node.expanded ? " rotate-90" : ""
+                node.expanded ? ' rotate-90' : ''
               }`}
             >
               <DropSideIcon />

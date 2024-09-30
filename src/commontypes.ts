@@ -10,10 +10,10 @@ export interface AutoSuggestionInputProps {
   onChange: (value?: ValueProps | ValueProps[]) => void;
   data?: any[];
   type?:
-    | "custom_select"
-    | "auto_complete"
-    | "custom_search_select"
-    | "auto_suggestion";
+    | 'custom_select'
+    | 'auto_complete'
+    | 'custom_search_select'
+    | 'auto_suggestion';
   placeholder?: string;
   getData?: (key?: string, nextBlock?: number) => any;
   errors?: any;
@@ -40,4 +40,6 @@ export interface AutoSuggestionInputProps {
   textCount?: number;
   itemCount?: number;
   isTreeDropdown?: boolean;
+  flatArray?: boolean;
+  parentField?: string;
 }

@@ -93,6 +93,7 @@ export default function App() {
             // async
             desc="name"
             isMultiple={true}
+            flatArray={true}
             singleSelect={false}
             expandable={true}
             isTreeDropdown={true}
