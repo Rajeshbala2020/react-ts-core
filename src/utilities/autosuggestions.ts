@@ -1,20 +1,21 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState } from "react";
 
 type ValueProps = {
   [key: string]: string;
 };
 
 type UseSuggestionsType = (
-  getData: (key?: string, next?: number) => Promise<ValueProps[]>,
+  getData: (key?: string, next?: number, tabValue?: number | string) => Promise<ValueProps[]>,
   initialData?: ValueProps[],
   dropOpen?: boolean,
   asyncFetch?: boolean,
   paginationEnabled?: boolean,
-  initialLoad?: boolean,
+  typeOnlyFetch?: boolean,
   inputValue?: string,
   isMultiple?: boolean,
   setNextPage?: (value: number) => void,
-  selectedItems?: any[]
+  selectedItems?: any[],
+  initialLoad?: boolean,
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
@@ -22,7 +23,8 @@ type UseSuggestionsType = (
   handlePickSuggestions: (
     value?: string,
     next?: number,
-    append?: boolean
+    append?: boolean, 
+    tabValue?: string | number
   ) => Promise<void>;
 };
 
@@ -33,10 +35,11 @@ export const useSuggestions: UseSuggestionsType = (
   asyncFetch = false,
   paginationEnabled = false,
   initialLoad = false,
-  inputValue = '',
+  inputValue = "",
   isMultiple,
   setNextPage,
-  selectedItems = []
+  selectedItems = [],
+  typeOnlyFetch = false
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -44,12 +47,15 @@ export const useSuggestions: UseSuggestionsType = (
   const handlePickSuggestions = async (
     value?: string,
     nextPage?: number,
-    appendData?: boolean
+    appendData?: boolean, 
+    tabValue?: string | number
   ) => {
     setIsLoading(true);
     try {
       const data = await (asyncFetch || initialLoad
-        ? getData(value, nextPage)
+        ? typeOnlyFetch && value === ""
+          ? Promise.resolve([])
+          : getData(value, nextPage, tabValue)
         : Promise.resolve(initialData));
       if (!data || data?.length === 0) {
         setNextPage(undefined);
@@ -57,7 +63,7 @@ export const useSuggestions: UseSuggestionsType = (
       const newSuggestions = appendData ? [...suggestions, ...data] : data;
       setSuggestions(newSuggestions);
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
     } finally {
       setIsLoading(false);
     }
@@ -67,14 +73,14 @@ export const useSuggestions: UseSuggestionsType = (
     if (dropOpen) {
       if (!isMultiple && (!inputValue || suggestions.length === 0)) {
         setNextPage(1);
-        handlePickSuggestions('', paginationEnabled ? 1 : undefined);
+        handlePickSuggestions("", paginationEnabled ? 1 : undefined);
       } else if (
         isMultiple &&
         (suggestions.length === 0 ||
           !selectedItems ||
           selectedItems?.length === 0)
       ) {
-        handlePickSuggestions('', paginationEnabled ? 1 : undefined);
+        handlePickSuggestions("", paginationEnabled ? 1 : undefined);
       }
     }
   }, [dropOpen]);

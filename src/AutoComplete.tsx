@@ -1,12 +1,19 @@
-import Tooltip from './utilities/tooltip';
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import Tooltip from "./utilities/tooltip";
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from "react";
 
-import { AutoSuggestionInputProps } from './commontypes';
-import { useSuggestions } from './utilities/autosuggestions';
-import { debounce } from './utilities/debounce';
-import { deepEqual } from './utilities/deepEqual';
-import { filterSuggestions } from './utilities/filterSuggestions';
-import { Close, DropArrow, Search, Spinner } from './utilities/icons';
+import { AutoSuggestionInputProps } from "./commontypes";
+import { useSuggestions } from "./utilities/autosuggestions";
+import { debounce } from "./utilities/debounce";
+import { deepEqual } from "./utilities/deepEqual";
+import { filterSuggestions } from "./utilities/filterSuggestions";
+import { Close, DropArrow, Search, Spinner } from "./utilities/icons";
 
 type ValueProps = {
   [key: string]: string;
@@ -24,14 +31,14 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       fullWidth = false,
       placeholder,
       id,
-      type = 'custom_select',
+      type = "custom_select",
       selectedItems: propsSeelctedItems = [],
       readOnly = false,
       disabled = false,
       value,
       isMultiple = false,
-      desc = 'name',
-      descId = 'id',
+      desc = "name",
+      descId = "id",
       singleSelect,
       className,
       async = false,
@@ -50,12 +57,12 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
     const [isInitialRender, setIsInitialRender] = useState(true);
 
     const [inputValue, setInputValue] = useState<string>(value);
-    const [searchValue, setSearchValue] = useState<string>('');
+    const [searchValue, setSearchValue] = useState<string>("");
     const [nextPage, setNextPage] = useState<number | undefined>(1);
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
     // API call for suggestions through a custom hook
-    const [dropdownPosition, setDropdownPosition] = useState('bottom');
+    const [dropdownPosition, setDropdownPosition] = useState("bottom");
     const inputRef = useRef(null);
     const dropRef = useRef(null);
     useImperativeHandle(ref, () => inputRef.current);
@@ -68,19 +75,19 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
         const spaceAbove = inputBoxRect.top;
         const spaceBelow = viewportHeight - inputBoxRect.bottom;
         if (spaceAbove > spaceBelow) {
-          setDropdownPosition('top');
+          setDropdownPosition("top");
         } else {
-          setDropdownPosition('bottom');
+          setDropdownPosition("bottom");
         }
       }
     };
 
     useEffect(() => {
-      window.addEventListener('resize', adjustDropdownPosition);
+      window.addEventListener("resize", adjustDropdownPosition);
       adjustDropdownPosition();
 
       return () => {
-        window.removeEventListener('resize', adjustDropdownPosition);
+        window.removeEventListener("resize", adjustDropdownPosition);
       };
     }, [dropOpen]);
 
@@ -101,19 +108,27 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
     // Handling the selection of a suggestion
     const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
       if (isMultiple) {
-        setSelectedItems((prev) => [...prev, suggestion]);
+        setSelectedItems((prev) => {
+          const isAdded = prev.some(
+            (item) => item[descId] === suggestion[descId]
+          );
+          if (isAdded) {
+            return prev.filter((item) => item[descId] !== suggestion[descId]);
+          } else {
+            return [...prev, suggestion];
+          }
+        });
       } else {
         setInputValue(suggestion[desc]);
+        setSearchValue("");
+        onChange(suggestion);
+        setDropOpen(false);
       }
-      setSearchValue('');
-      setInputValue(suggestion[desc]);
-      onChange(suggestion);
-      setDropOpen(false);
     }, []);
 
     // Adding debounce to avoid making API calls on every keystroke
     const handleChangeWithDebounce = debounce((value) => {
-      if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
+      if ((type === "auto_complete" || type === "auto_suggestion") && async) {
         handlePickSuggestions(value, 1);
       }
     }, 1000);
@@ -135,7 +150,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
           setInputValue(suggestion[desc]);
           onChange(suggestion);
         } else {
-          setInputValue('');
+          setInputValue("");
         }
       }
     };
@@ -145,7 +160,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
     }, [propsSeelctedItems]);
     // Effect to set the input value whenever `value` prop changes
     useEffect(() => {
-      setInputValue(value ?? '');
+      setInputValue(value ?? "");
     }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -154,8 +169,8 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       setSearchValue(value);
       handleChangeWithDebounce(value);
       if (!value) {
-        setInputValue('');
-        onChange({ [descId]: '', [desc]: '' });
+        setInputValue("");
+        onChange({ [descId]: "", [desc]: "" });
       }
     };
     const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -173,18 +188,18 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
 
     const handleClear = () => {
       if (searchValue) {
-        setSearchValue('');
+        setSearchValue("");
         setDropOpen(false);
       } else {
-        setInputValue('');
-        onChange({ [descId]: '', [desc]: '' });
+        setInputValue("");
+        onChange({ [descId]: "", [desc]: "" });
         setDropOpen(false);
       }
     };
 
     const generateClassName = useCallback(() => {
       return `qbs-textfield-default ${className} ${
-        errors && errors?.message ? 'textfield-error' : 'textfield'
+        errors && errors?.message ? "textfield-error" : "textfield"
       }`;
     }, [errors, name]);
     const handleRemoveSelectedItem = (index: number) => {
@@ -209,12 +224,12 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
           !dropdownRef.current.contains(event.target)
         ) {
           setDropOpen(false);
-          setSearchValue('');
+          setSearchValue("");
         }
       };
-      document.addEventListener('mousedown', handleClickOutside as any);
+      document.addEventListener("mousedown", handleClickOutside as any);
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside as any);
+        document.removeEventListener("mousedown", handleClickOutside as any);
       };
     }, []);
 
@@ -249,24 +264,24 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
     };
 
     const handleOnClick = () => {
-      !disabled && !readOnly ? setDropOpen(true) : '';
+      !disabled && !readOnly ? setDropOpen(true) : "";
     };
     const tooltipContent =
       selectedItems?.length > 1
         ? selectedItems
             ?.slice(1)
             .map((item) => item[desc])
-            .join(', ')
-        : '';
+            .join(", ")
+        : "";
 
     return (
-      <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+      <div className={fullWidth ? "fullWidth" : "autoWidth"} ref={dropdownRef}>
         {label && (
           <div
             style={{
               marginBottom: 5,
-              display: 'flex',
-              justifyContent: 'space-between',
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
             <label className={`labels label-text`}>
@@ -280,7 +295,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
         )}
         {/* Displaying selected items for multi-select */}
 
-        <div style={{ position: 'relative' }}>
+        <div style={{ position: "relative" }}>
           <div className="selected-items-container ">
             {selectedItems?.length > 0 && (
               <>
@@ -313,7 +328,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
             ref={inputRef}
             type="text"
             value={
-              type === 'auto_suggestion'
+              type === "auto_suggestion"
                 ? inputValue
                 : searchValue || inputValue
             }
@@ -322,9 +337,9 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
             onFocus={onFocus}
             onClick={() => handleOnClick()}
             className={generateClassName()}
-            placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+            placeholder={selectedItems?.length > 0 ? "" : placeholder ?? ""}
             readOnly={
-              readOnly || type === 'custom_select' || type == 'auto_suggestion'
+              readOnly || type === "custom_select" || type == "auto_suggestion"
             }
             disabled={disabled}
             data-testid="custom-autocomplete"
@@ -361,9 +376,9 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
               ref={dropRef}
               className={`qbs-autocomplete-suggestions ${dropdownPosition}`}
             >
-              {type == 'auto_suggestion' && (
+              {type == "auto_suggestion" && (
                 <div
-                  style={{ position: 'relative' }}
+                  style={{ position: "relative" }}
                   className="react-core-ts-search-container"
                 >
                   <span className="dropdown-search-icon">
@@ -395,9 +410,9 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                       key={idx.toString()}
                       className={`qbs-autocomplete-listitem-container ${
                         (isMultiple || singleSelect) &&
-                        'qbs-autocomplete-checkbox-container'
+                        "qbs-autocomplete-checkbox-container"
                       } ${
-                        isSelected(suggestion, selected) ? 'is-selected' : ''
+                        isSelected(suggestion, selected) ? "is-selected" : ""
                       }`}
                     >
                       {(isMultiple || singleSelect) && (
@@ -427,7 +442,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                       <li
                         key={idx}
                         className={`qbs-autocomplete-suggestions-item ${
-                          isSelected(suggestion, selected) ? 'is-selected' : ''
+                          isSelected(suggestion, selected) ? "is-selected" : ""
                         }`}
                         onClick={() => handleSuggestionClick(suggestion)}
                         data-testid={suggestion[desc]}
@@ -440,7 +455,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                   <>
                     {isLoading ? (
                       <div
-                        style={{ display: 'flex', justifyContent: 'center' }}
+                        style={{ display: "flex", justifyContent: "center" }}
                       >
                         <span>
                           <Spinner />
@@ -451,7 +466,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                         className="qbs-autocomplete-notfound"
                         onClick={handleBlur}
                       >
-                        {notDataMessage ?? 'No Results Found'}
+                        {notDataMessage ?? "No Results Found"}
                       </li>
                     )}
                   </>

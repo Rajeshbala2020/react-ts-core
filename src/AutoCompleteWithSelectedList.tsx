@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import ReactDOM from "react-dom";
 
-import { AutoSuggestionInputProps } from "./commontypes";
+import { AutoSuggestionInputProps, TabPops, ValueProps } from "./commontypes";
 import DropdownList from "./components/DropdownList";
 import InputActions from "./components/InputActions";
 import { useSuggestions } from "./utilities/autosuggestions";
@@ -16,12 +16,9 @@ import { debounce } from "./utilities/debounce";
 import { deepEqual } from "./utilities/deepEqual";
 import { default as Tooltip } from "./utilities/expandableTootltip";
 import { filterSuggestions } from "./utilities/filterSuggestions";
-import { Search, Spinner } from "./utilities/icons";
+import { DropArrow, Search, Spinner } from "./utilities/icons";
 
-type ValueProps = {
-  [key: string]: string;
-};
-const ExpandableAutoComplete = forwardRef<
+const AutoCompleteWithSelectedList = forwardRef<
   HTMLInputElement,
   AutoSuggestionInputProps
 >(
@@ -49,29 +46,37 @@ const ExpandableAutoComplete = forwardRef<
       className,
       async = false,
       paginationEnabled,
-      initialLoad,
+      initialLoad = false,
       actionLabel,
       handleAction,
       nextBlock,
       notDataMessage,
+      initialDataMessage,
       onFocus,
       expandable = false,
       textCount = 10,
       itemCount = 1,
       scrollRef,
-      isTreeDropdown = false,
+      countOnly = true,
+      typeOnlyFetch = false,
+      tab = [],
     },
     ref
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const dropdownSelectedRef = useRef<HTMLDivElement>(null);
+    const tabRef = useRef<HTMLUListElement>(null);
     // State Hooks Section
     const [isInitialRender, setIsInitialRender] = useState(true);
 
     const [inputValue, setInputValue] = useState<string>(value);
     const [searchValue, setSearchValue] = useState<string>("");
+    const [searchOldValue, setSearchOldValue] = useState<string>("");
     const [nextPage, setNextPage] = useState<number | undefined>(1);
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
+    const [showAllSelected, setShowAllSelected] = useState<boolean>(false);
+    const [activeTab, setActiveTab] = useState<number>(0);
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
     const dropRef = useRef(null);
@@ -94,7 +99,16 @@ const ExpandableAutoComplete = forwardRef<
         const spaceBelow = window.innerHeight - inputRect.bottom;
         const spaceAbove = inputRect.top + window.scrollY;
 
-        const dropdownHeight = 275; // Assume a fixed height or calculate based on content
+        let dropdownHeight = 275; // Assume a fixed height or calculate based on content
+        if (countOnly) {
+          if (dropdownSelectedRef?.current)
+            dropdownHeight += dropdownSelectedRef?.current?.clientHeight + 3;
+        }
+
+        if(tab.length > 0) {
+            if (tabRef?.current)
+                dropdownHeight += tabRef?.current?.clientHeight + 20;
+        }
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
@@ -128,7 +142,8 @@ const ExpandableAutoComplete = forwardRef<
       inputValue,
       isMultiple,
       setNextPage,
-      selectedItems
+      selectedItems,
+      typeOnlyFetch
       // nextBlock
     );
 
@@ -154,11 +169,20 @@ const ExpandableAutoComplete = forwardRef<
     }, []);
 
     // Adding debounce to avoid making API calls on every keystroke
-    const handleChangeWithDebounce = debounce((value) => {
+    const debouncedUpdate = useCallback(
+      debounce((value: string, tabVal?: number | string) => {
+        setSearchOldValue(value);
+        handlePickSuggestions(value, 1, false, tabVal);
+      }, 500),
+      []
+    );
+
+    const handleChangeWithDebounce = (value: string) => {
       if ((type === "auto_complete" || type === "auto_suggestion") && async) {
-        handlePickSuggestions(value, 1);
+        const activeTabVal = tab.length > 0 ? tab?.[activeTab].id : undefined
+        debouncedUpdate(value, activeTabVal);
       }
-    }, 1000);
+    };
 
     const handleMultiSelect = (e: any, suggestion: ValueProps) => {
       const { checked } = e.target;
@@ -207,12 +231,6 @@ const ExpandableAutoComplete = forwardRef<
       handleChangeWithDebounce(value);
     };
 
-    const handleBlur = () => {
-      setTimeout(() => {
-        setDropOpen(false);
-      }, 200);
-    };
-
     const handleClear = () => {
       if (searchValue) {
         setSearchValue("");
@@ -222,6 +240,11 @@ const ExpandableAutoComplete = forwardRef<
         onChange({ [descId]: "", [desc]: "" });
         setDropOpen(false);
       }
+    };
+
+    const handleClearSelected = () => {
+      setSelectedItems([]);
+      onChange({ [descId]: "", [desc]: "" });
     };
 
     const generateClassName = useCallback(() => {
@@ -252,7 +275,7 @@ const ExpandableAutoComplete = forwardRef<
           event.target.nodeName !== "svg"
         ) {
           setDropOpen(false);
-          setSearchValue("");
+          //setSearchValue("");
         }
       };
       document.addEventListener("mousedown", handleClickOutside as any);
@@ -291,7 +314,8 @@ const ExpandableAutoComplete = forwardRef<
       desc,
       selected,
       async,
-      isTreeDropdown
+      false,
+      true
     );
     const isSelected = (
       item: ValueProps,
@@ -321,6 +345,14 @@ const ExpandableAutoComplete = forwardRef<
       handleOnClick();
     };
 
+    const handleShowAllSelected = (enabled: boolean) => {
+      if (enabled) {
+        setShowAllSelected(true);
+      } else {
+        setShowAllSelected(false);
+      }
+    };
+
     const tooltipContent =
       selectedItems?.length > itemCount
         ? selectedItems
@@ -335,6 +367,84 @@ const ExpandableAutoComplete = forwardRef<
 
     const handleDropClose = (e: any) => {
       if (dropOpen) setDropOpen(false);
+    };
+
+    const getSelectedItems = (dropdown: boolean) => {
+      return (
+        <>
+          {selectedItems
+            .slice(
+              0,
+              selectedItems?.length > itemCount
+                ? showAllSelected
+                  ? selectedItems?.length
+                  : itemCount
+                : selectedItems?.length
+            )
+            .map((item, index) => (
+              <div key={index} className="selected-items-container">
+                <Tooltip
+                  title={item?.[desc]}
+                  enabled={item?.[desc]?.length > textCount}
+                >
+                  <div key={item.id} className="selected-item">
+                    {item?.[desc]?.length > textCount
+                      ? `${item?.[desc].substring(0, textCount)}...`
+                      : item?.[desc]}
+
+                    <button
+                      onClick={() => handleRemoveSelectedItem(index)}
+                      className="remove-item-btn"
+                      aria-label={`Remove ${item?.[desc]}`}
+                    >
+                      X
+                    </button>
+                  </div>
+                </Tooltip>
+              </div>
+            ))}
+          {selectedItems?.length > itemCount && !showAllSelected && (
+            <div className="selected-items-container">
+              <Tooltip title={tooltipContent} enabled={true}>
+                <div
+                  className={`selected-item-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${
+                    dropdown ? "qbs-cursor-pointer" : ""
+                  }`}
+                  onClick={() => {
+                    handleShowAllSelected(dropdown);
+                  }}
+                >
+                  +{selectedItems?.length - itemCount}{" "}
+                  <span className="qbs-hidden">more</span>
+                </div>
+              </Tooltip>
+            </div>
+          )}
+        </>
+      );
+    };
+
+    const getTabItems = () => {
+      return (
+        <ul className="qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2" ref={tabRef}>
+          {tab.map((item: TabPops, idx: number) => (
+            <li className="qbs-flex-1 qbs-tab-items" key={`tab-${idx}`}>
+              <span
+                className={`qbs-inline-block qbs-tab-item qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${
+                  activeTab === idx
+                    ? "qbs-tab-active-item"
+                    : ""
+                }`}
+                onClick={() => {
+                  setActiveTab(idx);
+                }}
+              >
+                {item.label}
+              </span>
+            </li>
+          ))}
+        </ul>
+      );
     };
 
     return (
@@ -359,49 +469,20 @@ const ExpandableAutoComplete = forwardRef<
         {/* Displaying selected items for multi-select */}
 
         <div
-          className={`${
+          className={`qbs-relative  qbs-autocomplete-selected-comp ${
             expandable ? "qbs-expandable-container" : "qbs-container"
           }`}
-          style={{ position: "relative" }}
         >
           {selectedItems?.length > 0 && (
             <>
-              {selectedItems
-                .slice(
-                  0,
-                  selectedItems?.length > itemCount
-                    ? itemCount
-                    : selectedItems?.length
-                )
-                .map((item, index) => (
-                  <div key={index} className="selected-items-container">
-                    <Tooltip
-                      title={item?.[desc]}
-                      enabled={item?.[desc]?.length > textCount}
-                    >
-                      <div key={item.id} className="selected-item">
-                        {item?.[desc]?.length > textCount
-                          ? `${item?.[desc].substring(0, textCount)}...`
-                          : item?.[desc]}
-
-                        <button
-                          onClick={() => handleRemoveSelectedItem(index)}
-                          className="remove-item-btn"
-                          aria-label={`Remove ${item?.[desc]}`}
-                        >
-                          X
-                        </button>
-                      </div>
-                    </Tooltip>
-                  </div>
-                ))}
-              {selectedItems?.length > itemCount && (
-                <div className="selected-items-container">
-                  <Tooltip title={tooltipContent} enabled={true}>
-                    <div className="selected-item-more">
-                      +{selectedItems?.length - itemCount} more
-                    </div>
-                  </Tooltip>
+              {!countOnly ? (
+                getSelectedItems(false)
+              ) : (
+                <div className="selected-items-container qbs-text-sm qbs-gap-1">
+                  <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
+                    {selectedItems?.length}
+                  </span>
+                  Item{selectedItems?.length > 1 && "s"} selected
                 </div>
               )}
             </>
@@ -455,6 +536,7 @@ const ExpandableAutoComplete = forwardRef<
             readOnly={readOnly}
             expandable={expandable}
             handleClear={handleClear}
+            countOnly={countOnly}
           />
           {/* Displaying Loading Spinner */}
 
@@ -462,11 +544,12 @@ const ExpandableAutoComplete = forwardRef<
 
           {dropOpen &&
             ReactDOM.createPortal(
-              <ul
+              <div
                 ref={dropRef}
                 style={{ ...dropdownStyle, minHeight: 192 }}
-                className={`qbs-autocomplete-suggestions`}
+                className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions`}
               >
+                <>{tab.length > 0 && getTabItems()}</>
                 {type == "auto_suggestion" && !expandable && (
                   <div
                     style={{ position: "relative" }}
@@ -497,25 +580,26 @@ const ExpandableAutoComplete = forwardRef<
                         isMultiple={isMultiple}
                         singleSelect={singleSelect}
                         desc={desc}
+                        key={suggestion[descId]}
                       />
                     ))
                   ) : (
                     <>
-                      {isLoading ? (
-                        <div
-                          style={{ display: "flex", justifyContent: "center" }}
-                        >
-                          <span>
+                      {isLoading ||
+                      (searchValue !== searchOldValue &&
+                        searchValue !== "" &&
+                        async) ? (
+                        <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-emp-h  qbs-py-80">
+                          <div className="qbs-pt-16">
                             <Spinner />
-                          </span>
+                          </div>
                         </div>
                       ) : (
-                        <li
-                          className="qbs-autocomplete-notfound"
-                          onClick={handleBlur}
-                        >
-                          {notDataMessage ?? "No Results Found"}
-                        </li>
+                        <div className="qbs-autocomplete-notfound qbs-text-center qbs-justify-center qbs-align-middle qbs-min-emp-h qbs-py-80">
+                          {searchValue !== ""
+                            ? notDataMessage ?? "No Results Found"
+                            : initialDataMessage ?? "Type to search"}
+                        </div>
                       )}
                     </>
                   )}
@@ -531,7 +615,47 @@ const ExpandableAutoComplete = forwardRef<
                       </div>
                     )}
                 </div>
-              </ul>,
+                <>
+                  {countOnly && selectedItems?.length > 0 && (
+                    <>
+                      <div
+                        className={`qbs-expandable-container qbs-dropdown-selected-container`}
+                        ref={dropdownSelectedRef}
+                      >
+                        <div className="qbs-flex qbs-w-full qbs-text-xs ">
+                          <div className="qbs-selected-lbs qbs-flex-grow">
+                            Selected Items
+                          </div>
+                          <div
+                            className="qbs-clear-link qbs-text-right qbs-cursor-pointer"
+                            onClick={handleClearSelected}
+                          >
+                            Clear
+                          </div>
+                        </div>
+
+                        {getSelectedItems(true)}
+
+                        <>
+                          {selectedItems?.length > itemCount &&
+                            showAllSelected && (
+                              <div className="qbs-readmore-collapse">
+                                <div
+                                  className="qbs-more-collapse"
+                                  onClick={() => {
+                                    setShowAllSelected(false);
+                                  }}
+                                >
+                                  <DropArrow className={`icon-button-rotate`} />
+                                </div>
+                              </div>
+                            )}
+                        </>
+                      </div>
+                    </>
+                  )}
+                </>
+              </div>,
               document.body
             )}
         </div>
@@ -550,4 +674,4 @@ const ExpandableAutoComplete = forwardRef<
   }
 );
 
-export default React.memo(ExpandableAutoComplete);
+export default React.memo(AutoCompleteWithSelectedList);
