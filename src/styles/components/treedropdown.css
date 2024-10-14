@@ -1,0 +1,63 @@
+.qbs-tree-list-container {
+  display: flex;
+  flex-direction: column;
+}
+.qbs-tree-list-container-sub {
+  display: flex;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 1rem; /* Corresponds to gap-4 in Tailwind */
+}
+
+.qbs-tree-list-container-sub .no-children {
+  margin-left: 1.75rem; /* Corresponds to ml-7 in Tailwind */
+}
+.qbs-tree-list-container-sub-icon {
+  margin-top: 0.25rem; /* Corresponds to mt-1 in Tailwind */
+  cursor: pointer;
+  padding-top: 0.5rem; /* Corresponds to py-2 in Tailwind */
+  padding-bottom: 0.5rem;
+  transition: transform 0.3s ease; /* Smooth rotation transition */
+}
+
+.qbs-tree-list-container-sub-icon.expanded {
+  transform: rotate(90deg); /* Corresponds to rotate-90 in Tailwind */
+}
+.qbs-tree-list-container-sub-container {
+  display: flex;
+  gap: 0.5rem; /* Corresponds to gap-2 in Tailwind */
+  padding: 0.5rem; /* Corresponds to p-2 in Tailwind */
+  flex-direction: row; /* Corresponds to flex-row in Tailwind */
+  width: 100%; /* Corresponds to w-full in Tailwind */
+}
+
+.qbs-tree-list-container-sub-container.checked {
+  background-color: rgba(
+    141,
+    194,
+    240,
+    0.15
+  ) !important; /* Corresponds to bg-green-200 in Tailwind */
+}
+.qbs-tree-list-container-sub-container.marginLeft {
+  margin-left: 28px; /* Corresponds to ml-2 in Tailwind */
+}
+.qbs-tree-list-container-sub- {
+  line-height: 18px; /* Corresponds to leading-[18px] in Tailwind */
+  font-size: 0.875rem; /* Corresponds to text-sm in Tailwind (14px) */
+}
+.qbs-tree-list-container-child {
+  margin-left: 1rem; /* Corresponds to ml-4 in Tailwind */
+  margin-top: 0.5rem; /* Corresponds to mt-2 in Tailwind */
+  display: flex; /* Corresponds to flex in Tailwind */
+  flex-direction: column; /* Corresponds to flex-col in Tailwind */
+  gap: 0.5rem; /* Corresponds to gap-2 in Tailwind */
+}
+.qbs-tree-list-container-sub-text {
+  line-height: 18px; /* Corresponds to leading-[18px] in Tailwind */
+  font-size: 14px; /* Corresponds to text-sm in Tailwind (14px) */
+  font-weight: 500;
+  letter-spacing: 0.28px;
+  font-family: 'Noto Sans';
+  color: #3d414a;
+}

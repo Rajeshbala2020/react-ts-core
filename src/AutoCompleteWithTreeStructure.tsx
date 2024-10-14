@@ -370,7 +370,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
     };
     const renderTree = (node: any, index: number) => {
       return (
-        <div className=" qbs-ml-4 qbs-mt-2 qbs-flex qbs-flex-col qbs-gap-2">
+        <div className="qbs-tree-list-container-child">
           <TreeNode
             key={node[descId]}
             node={node}
@@ -541,9 +541,11 @@ const AutoCompleteWithTreeStructure = forwardRef<
                 )}
 
                 <div
-                  className={`qbs-autocomplete-suggestions-sub ${
-                    isTreeDropdown ? ' qbs-gap-2 qbs-min-h-[184px]' : ''
-                  }`}
+                  style={{
+                    gap: isTreeDropdown ? '8px' : '0',
+                    minHeight: isTreeDropdown ? '184px' : '0',
+                  }}
+                  className={`qbs-autocomplete-suggestions-sub `}
                 >
                   {dropDownData?.length > 0 ? (
                     dropDownData.map((suggestion: any, idx: number) => (

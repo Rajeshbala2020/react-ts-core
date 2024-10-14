@@ -24,11 +24,10 @@ const TreeNode: React.FC<any> = ({
   };
   return (
     <div>
-      <li className=" qbs-flex qbs-flex-col">
+      <li className="qbs-tree-list-container">
         <div
-          style={{ display: 'flex' }}
-          className={`qbs-items-start qbs-gap-4 qbs-flex-row ${
-            node?.children?.length > 0 ? '' : 'ml-5'
+          className={`qbs-tree-list-container-sub ${
+            node?.children?.length > 0 ? '' : 'no-children'
           }`}
         >
           {/* Show an icon based on the expanded/collapsed state */}
@@ -36,14 +35,18 @@ const TreeNode: React.FC<any> = ({
           {node?.children && node?.children?.length > 0 && (
             <span
               onClick={() => handleToggle(node)}
-              className={`qbs-mt-1 qbs-cursor-pointer qbs-py-2 ${
-                node.expanded ? ' qbs-rotate-90' : ''
+              className={`qbs-tree-list-container-sub-icon ${
+                node.expanded ? 'expanded' : ''
               }`}
             >
               <DropSideIcon />
             </span>
           )}
-          <div className="qbs-flex qbs-gap-2 qbs-p-2 qbs-flex-row">
+          <div
+            className={`qbs-tree-list-container-sub-container ${
+              node?.checked ? 'checked' : ''
+            } ${node?.children?.length > 0 ? '' : ' marginLeft'}`}
+          >
             {(isMultiple || singleSelect) && (
               <div className="qbs-autocomplete-checkbox">
                 <input
@@ -68,7 +71,9 @@ const TreeNode: React.FC<any> = ({
                 </label>
               </div>
             )}
-            <span className=" qbs-leading-[18px]">{node[desc]}</span>
+            <span className="qbs-tree-list-container-sub-text">
+              {node[desc]}
+            </span>
           </div>
         </div>
       </li>
