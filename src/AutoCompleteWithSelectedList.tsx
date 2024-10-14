@@ -430,10 +430,10 @@ const AutoCompleteWithSelectedList = forwardRef<
           {tab.map((item: TabPops, idx: number) => (
             <li className="qbs-flex-1 qbs-tab-items" key={`tab-${idx}`}>
               <span
-                className={`qbs-inline-block qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${
+                className={`qbs-inline-block qbs-tab-item qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${
                   activeTab === idx
-                    ? "qbs-text-blue-600 qbs-border-blue-600 dark:qbs-text-blue-500 dark:qbs-border-blue-500"
-                    : " hover:qbs-text-gray-600 hover:qbs-border-gray-300 dark:hover:qbs-text-gray-300"
+                    ? "qbs-tab-active-item"
+                    : ""
                 }`}
                 onClick={() => {
                   setActiveTab(idx);
@@ -589,13 +589,13 @@ const AutoCompleteWithSelectedList = forwardRef<
                       (searchValue !== searchOldValue &&
                         searchValue !== "" &&
                         async) ? (
-                        <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-h-[183px]">
+                        <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-emp-h  qbs-py-80">
                           <div className="qbs-pt-16">
                             <Spinner />
                           </div>
                         </div>
                       ) : (
-                        <div className="qbs-autocomplete-notfound qbs-text-center qbs-justify-center qbs-align-middle qbs-min-h-[183px] qbs-py-[80px]">
+                        <div className="qbs-autocomplete-notfound qbs-text-center qbs-justify-center qbs-align-middle qbs-min-emp-h qbs-py-80">
                           {searchValue !== ""
                             ? notDataMessage ?? "No Results Found"
                             : initialDataMessage ?? "Type to search"}
@@ -639,9 +639,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                         <>
                           {selectedItems?.length > itemCount &&
                             showAllSelected && (
-                              <div className="qbs-cursor-pointer qbs-w-full qbs-text-center qbs-flex qbs-justify-center  qbs-readmore-collapse">
+                              <div className="qbs-readmore-collapse">
                                 <div
-                                  className=" qbs-min-w-6 qbs-min-h-6 qbs-p-2 hover:qbs-bg-gray-300 qbs-rounded-full qbs-cursor-pointer"
+                                  className="qbs-more-collapse"
                                   onClick={() => {
                                     setShowAllSelected(false);
                                   }}
