@@ -1,6 +1,6 @@
 {
   "name": "react-core-ts",
-  "version": "1.0.27",
+  "version": "1.0.43",
   "description": "React Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -8,7 +8,7 @@
     "start": "webpack serve --open --mode development",
     "build": "tsc && cp -R src/styles dist/styles",
     "test": "jest",
-    "prepublishOnly": "npm run build && rm -rf src"
+    "prepublishOnly": "npm run build"
   },
   "repository": {
     "type": "git",

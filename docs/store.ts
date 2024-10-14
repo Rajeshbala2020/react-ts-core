@@ -7,12 +7,12 @@ export const treeDropData = [
   {
     name: 'Port C - A key sub-port with heavy container traffic in the southern bay area',
     id: 1,
-    parentId: 22,
+    parentId: null,
   },
   {
     name: 'Port G - A small port used for local shipments and fishing operations',
     id: 2,
-    parentId: 1,
+    parentId: null,
   },
   {
     name: 'Port H - A minor local port focusing on fisheries and small-scale cargo',
@@ -22,7 +22,7 @@ export const treeDropData = [
   {
     name: 'Port I - A coastal port for regional trade and tourism operations',
     id: 4,
-    parentId: 1,
+    parentId: null,
   },
   {
     name: 'Port J - A harbor for tourist cruises and commercial boats',
