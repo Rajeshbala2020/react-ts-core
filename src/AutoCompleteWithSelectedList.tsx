@@ -99,15 +99,15 @@ const AutoCompleteWithSelectedList = forwardRef<
         const spaceBelow = window.innerHeight - inputRect.bottom;
         const spaceAbove = inputRect.top + window.scrollY;
 
-        let dropdownHeight = 275; // Assume a fixed height or calculate based on content
+        let dropdownHeight = 300; // Assume a fixed height or calculate based on content
         if (countOnly) {
           if (dropdownSelectedRef?.current)
-            dropdownHeight += dropdownSelectedRef?.current?.clientHeight + 3;
+            dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
         }
 
         if(tab.length > 0) {
             if (tabRef?.current)
-                dropdownHeight += tabRef?.current?.clientHeight + 20;
+                dropdownHeight += tabRef?.current?.clientHeight;
         }
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
@@ -482,7 +482,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                   <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                     {selectedItems?.length}
                   </span>
-                  Item{selectedItems?.length > 1 && "s"} selected
+                  Item{selectedItems?.length > 1 && "s"} Selected
                 </div>
               )}
             </>
@@ -589,13 +589,13 @@ const AutoCompleteWithSelectedList = forwardRef<
                       (searchValue !== searchOldValue &&
                         searchValue !== "" &&
                         async) ? (
-                        <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-emp-h  qbs-py-80">
+                        <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-emp-h">
                           <div className="qbs-pt-16">
                             <Spinner />
                           </div>
                         </div>
                       ) : (
-                        <div className="qbs-autocomplete-notfound qbs-text-center qbs-justify-center qbs-align-middle qbs-min-emp-h qbs-py-80">
+                        <div className="qbs-autocomplete-notfound qbs-text-center qbs-justify-center qbs-align-middle qbs-min-emp-h">
                           {searchValue !== ""
                             ? notDataMessage ?? "No Results Found"
                             : initialDataMessage ?? "Type to search"}
@@ -630,7 +630,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                             className="qbs-clear-link qbs-text-right qbs-cursor-pointer"
                             onClick={handleClearSelected}
                           >
-                            Clear
+                            Clear all
                           </div>
                         </div>
 
