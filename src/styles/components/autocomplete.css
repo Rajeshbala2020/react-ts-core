@@ -192,6 +192,18 @@ body * {
   gap: 5px;
 }
 
+.qbs-dropdown-selected-container {
+  border: 0px;
+  border-top: 1px solid #d6d8dc;
+  min-height: 35px;
+  margin-top: 2px;
+  padding-top: 10px;
+}
+
+.qbs-dropdown-selected-container .qbs-clear-link {
+  color: #e76458;
+}
+
 .qbs-textfield-default.expandable {
   height: auto;
   border: none;
@@ -348,6 +360,11 @@ ul {
   left: 0;
 }
 
+.selected-items-container .badge {
+  background-color: #c63a3a;
+  color: #fff;
+}
+
 .selected-item-more {
   display: flex;
   align-items: center;
@@ -422,7 +439,7 @@ span.dropdown-search-icon {
 
 .qbs-autocomplete-checkbox-container .qbs-autocomplete-suggestions-item {
   padding: 0;
-  pointer-events: none;
+  /* pointer-events: none; */
 }
 
 .qbs-autocomplete-checkbox-container:hover {

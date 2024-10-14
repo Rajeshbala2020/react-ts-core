@@ -2,6 +2,7 @@ import React, { useState } from "react";
 
 import {
   AutoComplete,
+  AutoCompleteWithSelectedList,
   AutoCompleteWithTreeStructure,
   ExpandableAutoComplete,
 } from "../src/index";
@@ -44,6 +45,23 @@ export default function App() {
         return result;
       });
   };
+
+  const getDataWithTab = (keyName?: string, next?: number, tab?: number | string) => {
+    console.log(tab)
+    return fetch(
+      keyName
+        ? `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10&title_like=${keyName}`
+        : `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10`
+    )
+      .then((res) => res.json())
+      .then((res) => {
+        setNexBlock(nexBlock + 1);
+        const result = res.map((item: any) => {
+          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
+        });
+        return result;
+      });
+  };
   return (
     <React.Fragment>
       <div
@@ -79,11 +97,18 @@ export default function App() {
             initialLoad={true}
             itemCount={5}
             // nextBlock={nexBlock}
-            placeholder="Auto Suggestion Suggestion Suggestion Suggestion"
-            selectedItems={[{ name: "test", id: "1" }]}
+            placeholder="Auto Suggestion"
+            selectedItems={[]}
             getData={getData}
             onChange={(e) => console.log(e, "onchange")}
           />
+        </div>
+        <div className="autocomplete-section">
+          <h2>TreeView Auto Suggestion</h2>
+          <p>
+            Able to select, expand/collapse child items based on the suggections
+            data
+          </p>
         </div>
         <div style={{ width: 800 }}>
           <AutoCompleteWithTreeStructure
@@ -103,10 +128,77 @@ export default function App() {
             initialLoad={false}
             itemCount={5}
             // nextBlock={nexBlock}
-            placeholder="Auto Suggestion Suggestion Suggestion Suggestion"
+            placeholder="Auto Suggestion"
             selectedItems={[{ name: "test", id: "1" }]}
             // getData={getData}
             onChange={(e) => console.log(e, "onchange")}
+          />
+        </div>
+
+        <div className="autocomplete-section">
+          <h2>Auto Suggestion with Selected list</h2>
+          <p>
+            Selected items will be displayed in the suggestion box, with options
+            to expand/collapse and clear them. The select box will show the
+            total number of things selected.
+          </p>
+        </div>
+        <div style={{ width: 300 }}>
+          <AutoCompleteWithSelectedList
+            label="Auto Suggestion With Data"
+            name="sample"
+            type="auto_suggestion"
+            // async
+            desc="name"
+            isMultiple={true}
+            singleSelect={false}
+            descId="id"
+            data={treeDropData}
+            paginationEnabled={false}
+            initialLoad={false}
+            itemCount={3}
+            placeholder="Auto Suggestion"
+            selectedItems={[]}
+            onChange={(e) => console.log(e, "onchange")}
+            countOnly={true}
+          />
+        </div>
+        <div style={{ width: 300 }}>
+          <AutoCompleteWithSelectedList
+            label="Auto Suggestion API Data"
+            name="sample"
+            type="auto_suggestion"
+            async={true}
+            desc="name"
+            isMultiple={true}
+            typeOnlyFetch={true}
+            descId="id"
+            getData={getData}
+            itemCount={3}
+            placeholder="Auto Suggestion"
+            selectedItems={[]}
+            onChange={(e) => console.log(e, "onchange")}
+            countOnly={true}
+          />
+        </div>
+
+        <div style={{ width: 300 }}>
+          <AutoCompleteWithSelectedList
+            label="Auto Suggestion API Data With Tab"
+            name="sample"
+            type="auto_suggestion"
+            async={true}
+            desc="name"
+            isMultiple={true}
+            typeOnlyFetch={true}
+            descId="id"
+            getData={getDataWithTab}
+            itemCount={3}
+            placeholder="Auto Suggestion"
+            selectedItems={[]}
+            onChange={(e) => console.log(e, "onchange")}
+            countOnly={true}
+            tab={[{id: 1, label: "Tab 1"}, {id: 2, label: "Tab 2"}]}
           />
         </div>
         <div className="autocomplete-section">
@@ -289,7 +381,7 @@ export default function App() {
             initialLoad={true}
             itemCount={5}
             // nextBlock={nexBlock}
-            placeholder="Auto Suggestion Suggestion Suggestion Suggestion"
+            placeholder="Auto Suggestion"
             selectedItems={[{ name: "test", id: "1" }]}
             getData={getData}
             onChange={(e) => console.log(e, "onchange")}

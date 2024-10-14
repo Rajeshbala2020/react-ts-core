@@ -5,6 +5,7 @@ type ValueProps = {
   inputValue: string;
   searchValue: string;
   dropOpen: boolean;
+  countOnly?: boolean;
   handleDropOpen: (e: any) => void;
   handleDropClose: (e: any) => void;
   disabled: boolean;
@@ -22,10 +23,11 @@ const InputActions: React.FC<ValueProps> = ({
   readOnly,
   expandable,
   handleClear,
+  countOnly
 }) => {
   return (
     <div className="qbs-autocomplete-close-icon">
-      {(inputValue || searchValue) && !disabled && !readOnly && !expandable && (
+      {(inputValue || searchValue) && !disabled && !readOnly && !expandable && !countOnly && (
         <button
           onClick={handleClear}
           className="icon-button"

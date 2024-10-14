@@ -1,5 +1,9 @@
-type ValueProps = {
+export type ValueProps = {
   [key: string]: string;
+};
+export type TabPops = {
+  id: number | string;
+  label: string;
 };
 export interface AutoSuggestionInputProps {
   id?: string;
@@ -10,12 +14,12 @@ export interface AutoSuggestionInputProps {
   onChange: (value?: ValueProps | ValueProps[]) => void;
   data?: any[];
   type?:
-    | 'custom_select'
-    | 'auto_complete'
-    | 'custom_search_select'
-    | 'auto_suggestion';
+    | "custom_select"
+    | "auto_complete"
+    | "custom_search_select"
+    | "auto_suggestion";
   placeholder?: string;
-  getData?: (key?: string, nextBlock?: number) => any;
+  getData?: (key?: string, nextBlock?: number, tabValue?: number | string) => any;
   errors?: any;
   name: string;
   readOnly?: boolean;
@@ -33,6 +37,7 @@ export interface AutoSuggestionInputProps {
   handleAction?: () => void;
   actionLabel?: string;
   notDataMessage?: string;
+  initialDataMessage?:string;
   selectedItems?: any[];
   onFocus?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
   dopDownRef?: HTMLInputElement;
@@ -42,4 +47,7 @@ export interface AutoSuggestionInputProps {
   isTreeDropdown?: boolean;
   flatArray?: boolean;
   parentField?: string;
+  countOnly?: boolean; // only show selected items count
+  typeOnlyFetch?: boolean; // async only call when typed any value
+  tab?: TabPops[];
 }

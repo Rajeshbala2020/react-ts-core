@@ -67,6 +67,48 @@ function ExampleExpandableComponent() {
   );
 }
 
+
+```
+You can also use the `AutoCompleteWithSelectedList` component, which will allow you to show all selected items at the bottom part of the suggection box. Also enabled these features along with this component, selected items count, clear all and expand more and tab menu features
+
+```jsx
+import { AutoCompleteWithSelectedList } from 'react-core-ts';
+
+function ExampleSelectedListComponent() {
+  return (
+    <AutoCompleteWithSelectedList
+      label="Search"
+      onChange={handleChange}
+      getData={fetchSuggestions}
+      placeholder="Type to search..."
+      type="auto_suggestion"
+      selectedItems={selectedItems}
+      async={true}
+      isMultiple={true}
+      countOnly={true}
+    />
+  );
+}
+
+function ExampleSelectedListWithTabComponent() {
+  return (
+    <AutoCompleteWithSelectedList
+      label="Search"
+      onChange={handleChange}
+      getData={fetchSuggestions}
+      placeholder="Type to search..."
+      type="auto_suggestion"
+      selectedItems={selectedItems}
+      async={true}
+      isMultiple={true}
+      countOnly={true}
+      typeOnlyFetch={true}
+      tab={tabMenu}
+    />
+  );
+}
+
+
 ```
 ## Props
 
@@ -94,13 +136,21 @@ You can pass the following props to the `AutoComplete` component:
 - **async** _(boolean)_: If true, indicates that the `getData` function is asynchronous.
 - **nextBlock** _(function or boolean)_: Function for pagination or boolean to determine if pagination is enabled.
 - **paginationEnabled** _(boolean)_: If true, pagination for suggestions is enabled.
+- **notDataMessage** _(string)_: Custom `"No Results Found` message.
 
 Additional props for the `ExpandableAutoComplete` component:
 
 - **expandable** _(boolean)_: If true, enable the expandable feature.
 - **textCount** _(number)_: Selected chip item text count; the default value will be `10`. If the text count is higher than this, it will show `...` prefix.
 - **itemCount** _(number)_: Selected items count; the default value will be `1`. If more than this count is selected, then will show a `+ count more` button with tooltip.
+- **initialDataMessage** _(string)_: Custom intial empty message `Type to search`.
 
+
+Additional props for the `AutoCompleteWithSelectedList` component:
+
+- **countOnly** _(boolean)_: If true, only shows selected items count.
+- **typeOnlyFetch** _(boolean)_: If true, suggections only list when user types on the search box. This works only if `async: true`.
+- **tab** _(Array)_:  Local data source for tabs, format should be `{id: nummber | string, label: string }`
 
 ## Contribution
 

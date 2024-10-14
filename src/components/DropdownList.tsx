@@ -25,7 +25,7 @@ const DropdownList: React.FC<ValueProps> = ({
   return (
     <div
       key={idx.toString()}
-      className={`qbs-autocomplete-listitem-container  ${
+      className={`qbs-autocomplete-listitem-container ${
         (isMultiple || singleSelect) && 'qbs-autocomplete-checkbox-container'
       } ${isSelected(suggestion, selected) ? 'is-selected' : ''}`}
     >
@@ -53,7 +53,7 @@ const DropdownList: React.FC<ValueProps> = ({
           </label>
         </div>
       )}
-      <li
+      <div
         key={idx}
         className={`qbs-autocomplete-suggestions-item ${
           isSelected(suggestion, selected) ? 'is-selected' : ''
@@ -62,7 +62,7 @@ const DropdownList: React.FC<ValueProps> = ({
         data-testid={suggestion[desc]}
       >
         {suggestion[desc]}
-      </li>
+      </div>
     </div>
   );
 };
