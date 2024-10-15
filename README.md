@@ -151,6 +151,7 @@ Additional props for the `AutoCompleteWithSelectedList` component:
 - **countOnly** _(boolean)_: If true, only shows selected items count.
 - **typeOnlyFetch** _(boolean)_: If true, suggections only list when user types on the search box. This works only if `async: true`.
 - **tab** _(Array)_:  Local data source for tabs, format should be `{id: nummber | string, label: string }`
+- **clearTabSwitch** _(boolean)_: If true, clear all search results, selected items and search key when tab is switching.
 
 ## Contribution
 

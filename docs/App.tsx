@@ -46,8 +46,12 @@ export default function App() {
       });
   };
 
-  const getDataWithTab = (keyName?: string, next?: number, tab?: number | string) => {
-    console.log(tab)
+  const getDataWithTab = (
+    keyName?: string,
+    next?: number,
+    tab?: number | string
+  ) => {
+    console.log(tab);
     return fetch(
       keyName
         ? `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10&title_like=${keyName}`
@@ -198,7 +202,11 @@ export default function App() {
             selectedItems={[]}
             onChange={(e) => console.log(e, "onchange")}
             countOnly={true}
-            tab={[{id: 1, label: "Tab 1"}, {id: 2, label: "Tab 2"}]}
+            tab={[
+              { id: 1, label: "Tab 1" },
+              { id: 2, label: "Tab 2" },
+            ]}
+            clearTabSwitch={true}
           />
         </div>
         <div className="autocomplete-section">
