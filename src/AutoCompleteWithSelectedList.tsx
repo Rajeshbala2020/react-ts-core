@@ -60,7 +60,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       countOnly = true,
       typeOnlyFetch = false,
       tab = [],
-      clearTabSwitch = false
+      clearTabSwitch = false,
     },
     ref
   ) => {
@@ -344,9 +344,8 @@ const AutoCompleteWithSelectedList = forwardRef<
     const onInputFocus = () => {
       if (countOnly) {
         setTimeout(() => {
-            if (inputSearchRef.current) inputSearchRef.current.focus();
-        }, 10)
-       
+          if (inputSearchRef.current) inputSearchRef.current.focus();
+        }, 10);
       } else {
         if (inputRef.current) inputRef.current.focus();
       }
@@ -378,16 +377,16 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const handleTabClick = (index: number) => {
-        if(activeTab !== index) {
-            if(clearTabSwitch) {
-                handleClearSelected()
-                setSearchValue("");
-                setInputValue("");
-                handlePickSuggestions("", 1);
-            }
-            setActiveTab(index);
+      if (activeTab !== index) {
+        if (clearTabSwitch) {
+          handleClearSelected();
+          setSearchValue("");
+          setInputValue("");
+          handlePickSuggestions("", 1);
         }
-    }
+        setActiveTab(index);
+      }
+    };
 
     const getSelectedItems = (dropdown: boolean) => {
       return (
@@ -457,7 +456,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                   activeTab === idx ? "qbs-tab-active-item" : ""
                 }`}
                 onClick={() => {
-                  handleTabClick(idx)
+                  handleTabClick(idx);
                 }}
               >
                 {item.label}

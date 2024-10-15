@@ -118,5 +118,5 @@
   display: none;
 }
 .qbs-autocomplete-selected-suggestions .qbs-autocomplete-suggestions-sub {
-    min-height: 184px;
+  min-height: 184px;
 }

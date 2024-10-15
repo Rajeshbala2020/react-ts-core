@@ -19,7 +19,11 @@ export interface AutoSuggestionInputProps {
     | "custom_search_select"
     | "auto_suggestion";
   placeholder?: string;
-  getData?: (key?: string, nextBlock?: number, tabValue?: number | string) => any;
+  getData?: (
+    key?: string,
+    nextBlock?: number,
+    tabValue?: number | string
+  ) => any;
   errors?: any;
   name: string;
   readOnly?: boolean;
@@ -37,7 +41,7 @@ export interface AutoSuggestionInputProps {
   handleAction?: () => void;
   actionLabel?: string;
   notDataMessage?: string;
-  initialDataMessage?:string;
+  initialDataMessage?: string;
   selectedItems?: any[];
   onFocus?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
   dopDownRef?: HTMLInputElement;
@@ -50,5 +54,5 @@ export interface AutoSuggestionInputProps {
   countOnly?: boolean; // only show selected items count
   typeOnlyFetch?: boolean; // async only call when typed any value
   tab?: TabPops[];
-  clearTabSwitch?: boolean
+  clearTabSwitch?: boolean;
 }

@@ -5,7 +5,11 @@ type ValueProps = {
 };
 
 type UseSuggestionsType = (
-  getData: (key?: string, next?: number, tabValue?: number | string) => Promise<ValueProps[]>,
+  getData: (
+    key?: string,
+    next?: number,
+    tabValue?: number | string
+  ) => Promise<ValueProps[]>,
   initialData?: ValueProps[],
   dropOpen?: boolean,
   asyncFetch?: boolean,
@@ -15,7 +19,7 @@ type UseSuggestionsType = (
   isMultiple?: boolean,
   setNextPage?: (value: number) => void,
   selectedItems?: any[],
-  initialLoad?: boolean,
+  initialLoad?: boolean
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
@@ -23,7 +27,7 @@ type UseSuggestionsType = (
   handlePickSuggestions: (
     value?: string,
     next?: number,
-    append?: boolean, 
+    append?: boolean,
     tabValue?: string | number
   ) => Promise<void>;
 };
@@ -47,7 +51,7 @@ export const useSuggestions: UseSuggestionsType = (
   const handlePickSuggestions = async (
     value?: string,
     nextPage?: number,
-    appendData?: boolean, 
+    appendData?: boolean,
     tabValue?: string | number
   ) => {
     setIsLoading(true);
@@ -80,7 +84,7 @@ export const useSuggestions: UseSuggestionsType = (
           !selectedItems ||
           selectedItems?.length === 0)
       ) {
-        if(!typeOnlyFetch && !inputValue)
+        if (!typeOnlyFetch && !inputValue)
           handlePickSuggestions("", paginationEnabled ? 1 : undefined);
       }
     }
