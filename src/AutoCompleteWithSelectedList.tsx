@@ -152,9 +152,10 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
       if (isMultiple) {
         setSelectedItems((prev) => {
-          const isAdded = prev.some(
-            (item) => item[descId] === suggestion[descId]
-          );
+          const isAdded =
+            prev && prev.length > 0
+              ? prev.some((item) => item[descId] === suggestion[descId])
+              : false;
           if (isAdded) {
             return prev.filter((item) => item[descId] !== suggestion[descId]);
           } else {
@@ -238,14 +239,16 @@ const AutoCompleteWithSelectedList = forwardRef<
         setDropOpen(false);
       } else {
         setInputValue("");
-        onChange({ [descId]: "", [desc]: "" });
+        if (isMultiple) onChange([]);
+        else onChange({ [descId]: "", [desc]: "" });
         setDropOpen(false);
       }
     };
 
     const handleClearSelected = () => {
       setSelectedItems([]);
-      onChange({ [descId]: "", [desc]: "" });
+      if (isMultiple) onChange([]);
+      else onChange({ [descId]: "", [desc]: "" });
     };
 
     const generateClassName = useCallback(() => {
