@@ -60,6 +60,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       countOnly = true,
       typeOnlyFetch = false,
       tab = [],
+      clearTabSwitch = false
     },
     ref
   ) => {
@@ -80,6 +81,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
     const dropRef = useRef(null);
+    const inputSearchRef = useRef(null);
     useImperativeHandle(ref, () => inputRef.current);
     const [dropdownStyle, setDropdownStyle] = useState({
       top: 0,
@@ -105,9 +107,8 @@ const AutoCompleteWithSelectedList = forwardRef<
             dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
         }
 
-        if(tab.length > 0) {
-            if (tabRef?.current)
-                dropdownHeight += tabRef?.current?.clientHeight;
+        if (tab.length > 0) {
+          if (tabRef?.current) dropdownHeight += tabRef?.current?.clientHeight;
         }
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
@@ -179,7 +180,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const handleChangeWithDebounce = (value: string) => {
       if ((type === "auto_complete" || type === "auto_suggestion") && async) {
-        const activeTabVal = tab.length > 0 ? tab?.[activeTab].id : undefined
+        const activeTabVal = tab.length > 0 ? tab?.[activeTab].id : undefined;
         debouncedUpdate(value, activeTabVal);
       }
     };
@@ -341,7 +342,14 @@ const AutoCompleteWithSelectedList = forwardRef<
       !disabled && !readOnly ? setDropOpen(true) : "";
     };
     const onInputFocus = () => {
-      if (inputRef.current) inputRef.current.focus();
+      if (countOnly) {
+        setTimeout(() => {
+            if (inputSearchRef.current) inputSearchRef.current.focus();
+        }, 10)
+       
+      } else {
+        if (inputRef.current) inputRef.current.focus();
+      }
       handleOnClick();
     };
 
@@ -368,6 +376,18 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleDropClose = (e: any) => {
       if (dropOpen) setDropOpen(false);
     };
+
+    const handleTabClick = (index: number) => {
+        if(activeTab !== index) {
+            if(clearTabSwitch) {
+                handleClearSelected()
+                setSearchValue("");
+                setInputValue("");
+                handlePickSuggestions("", 1);
+            }
+            setActiveTab(index);
+        }
+    }
 
     const getSelectedItems = (dropdown: boolean) => {
       return (
@@ -426,17 +446,18 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const getTabItems = () => {
       return (
-        <ul className="qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2" ref={tabRef}>
+        <ul
+          className="qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2"
+          ref={tabRef}
+        >
           {tab.map((item: TabPops, idx: number) => (
             <li className="qbs-flex-1 qbs-tab-items" key={`tab-${idx}`}>
               <span
                 className={`qbs-inline-block qbs-tab-item qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${
-                  activeTab === idx
-                    ? "qbs-tab-active-item"
-                    : ""
+                  activeTab === idx ? "qbs-tab-active-item" : ""
                 }`}
                 onClick={() => {
-                  setActiveTab(idx);
+                  handleTabClick(idx)
                 }}
               >
                 {item.label}
@@ -478,7 +499,10 @@ const AutoCompleteWithSelectedList = forwardRef<
               {!countOnly ? (
                 getSelectedItems(false)
               ) : (
-                <div className="selected-items-container qbs-text-sm qbs-gap-1">
+                <div
+                  className="selected-items-container qbs-text-sm qbs-gap-1"
+                  onClick={() => onInputFocus()}
+                >
                   <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                     {selectedItems?.length}
                   </span>
@@ -563,6 +587,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                       onChange={handleSuggestionChange}
                       value={searchValue}
                       placeholder="Search"
+                      ref={inputSearchRef}
                     />
                   </div>
                 )}

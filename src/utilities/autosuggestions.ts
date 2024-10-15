@@ -80,7 +80,8 @@ export const useSuggestions: UseSuggestionsType = (
           !selectedItems ||
           selectedItems?.length === 0)
       ) {
-        handlePickSuggestions("", paginationEnabled ? 1 : undefined);
+        if(!typeOnlyFetch && !inputValue)
+          handlePickSuggestions("", paginationEnabled ? 1 : undefined);
       }
     }
   }, [dropOpen]);

@@ -199,6 +199,7 @@ export default function App() {
             onChange={(e) => console.log(e, "onchange")}
             countOnly={true}
             tab={[{id: 1, label: "Tab 1"}, {id: 2, label: "Tab 2"}]}
+            clearTabSwitch={true}
           />
         </div>
         <div className="autocomplete-section">

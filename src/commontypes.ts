@@ -50,4 +50,5 @@ export interface AutoSuggestionInputProps {
   countOnly?: boolean; // only show selected items count
   typeOnlyFetch?: boolean; // async only call when typed any value
   tab?: TabPops[];
+  clearTabSwitch?: boolean
 }
