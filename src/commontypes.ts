@@ -14,10 +14,10 @@ export interface AutoSuggestionInputProps {
   onChange: (value?: ValueProps | ValueProps[]) => void;
   data?: any[];
   type?:
-    | "custom_select"
-    | "auto_complete"
-    | "custom_search_select"
-    | "auto_suggestion";
+    | 'custom_select'
+    | 'auto_complete'
+    | 'custom_search_select'
+    | 'auto_suggestion';
   placeholder?: string;
   getData?: (
     key?: string,
@@ -55,4 +55,20 @@ export interface AutoSuggestionInputProps {
   typeOnlyFetch?: boolean; // async only call when typed any value
   tab?: TabPops[];
   clearTabSwitch?: boolean;
+}
+export interface IconsProps {
+  name: any;
+  className?: string;
+  onClick?: (e: any) => void;
+  color?: string;
+  type?: string;
+  isWrapper?: boolean;
+  viewBox?: boolean;
+  svgClassName?: string;
+  custDimension?: number;
+  style?: any;
+  hasCustomSize?: boolean;
+  onMouseDown?: (e: any) => void;
+  onMouseUp?: (e: any) => void;
+  onMouseLeave?: (e: any) => void;
 }

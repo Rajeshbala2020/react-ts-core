@@ -151,7 +151,18 @@ const AutoCompleteWithTreeStructure = forwardRef<
         handlePickSuggestions(value, 1);
       }
     }, 1000);
-
+    const isSelected = (
+      item: ValueProps,
+      selectedItems: ValueProps[] | string
+    ): boolean => {
+      if (Array.isArray(selectedItems)) {
+        return selectedItems.some(
+          (selectedItem) => selectedItem[desc] === item[desc]
+        );
+      } else {
+        return item[desc] === selectedItems;
+      }
+    };
     useEffect(() => {
       if (!deepEqual(selectedItems, propsSeelctedItems))
         setSelectedItems(propsSeelctedItems);
@@ -315,6 +326,10 @@ const AutoCompleteWithTreeStructure = forwardRef<
         setSelectedItems(checkedNodes);
         onChange(checkedNodes);
       } else {
+        if (!checked) {
+          setInputValue('');
+          onChange({ id: '', name: '' });
+        }
         // Single-select logic: uncheck all other nodes and check only the clicked one
         newTreeData = dropDownData.map((node) =>
           updateAllNodes(node, id, checked)
@@ -376,6 +391,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
             node={node}
             // handleMultiSelect={handleMultiSelect}
             selected={selected}
+            isSelected={isSelected}
             isMultiple={isMultiple}
             singleSelect={singleSelect}
             idx={node[descId]}
@@ -393,6 +409,16 @@ const AutoCompleteWithTreeStructure = forwardRef<
       );
     };
 
+    const handleerror = (error: any) => {
+      if (
+        (errors && errors.message === 'required') ||
+        errors.message === 'Required'
+      ) {
+        return `${label} is required`;
+      } else {
+        return error?.message;
+      }
+    };
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (
@@ -552,7 +578,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                       <TreeNode
                         key={suggestion[descId]}
                         node={suggestion}
-                        // isSelected={isSelected}
+                        isSelected={isSelected}
                         // handleMultiSelect={handleMultiSelect}
                         selected={selected}
                         isMultiple={isMultiple}
@@ -597,14 +623,15 @@ const AutoCompleteWithTreeStructure = forwardRef<
         </div>
 
         {/* Displaying Validation Error */}
-        {errors && (
+        {/* {errors && (
+          // 
           <div
             className="text-error text-error-label mt-[1px]"
             data-testid="autocomplete-error"
           >
-            {errors.message}
+            {handleerror(errors)}
           </div>
-        )}
+        )} */}
       </div>
     );
   }

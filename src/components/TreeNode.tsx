@@ -12,6 +12,8 @@ const TreeNode: React.FC<any> = ({
   updateNode,
   children,
   descId,
+  isSelected,
+  selected,
 }) => {
   // Toggle the expanded state when clicking on the node
   const handleToggle = (node?: any) => {
@@ -44,7 +46,7 @@ const TreeNode: React.FC<any> = ({
           )}
           <div
             className={`qbs-tree-list-container-sub-container ${
-              node?.checked ? 'checked' : ''
+              isSelected(node, selected) ? 'checked' : ''
             } ${node?.children?.length > 0 ? '' : ' marginLeft'}`}
           >
             {(isMultiple || singleSelect) && (
@@ -52,7 +54,7 @@ const TreeNode: React.FC<any> = ({
                 <input
                   onChange={(e) => handleCheckbox(e, node)} // Pass correct node to the handler
                   type="checkbox"
-                  checked={node.checked}
+                  checked={isSelected(node, selected)}
                   id={`qbs-checkbox-${idx.toString()}`}
                 />
                 <label htmlFor={`qbs-checkbox-${idx.toString()}`}>

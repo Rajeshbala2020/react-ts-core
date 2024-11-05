@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
 import {
   AutoComplete,
   AutoCompleteWithSelectedList,
   AutoCompleteWithTreeStructure,
   ExpandableAutoComplete,
-} from "../src/index";
+} from '../src/index';
+import { treeDropData } from './store';
 
-import "../src/styles/global.css";
-import { treeDropData } from "./store";
+import '../src/styles/global.css';
 
 export default function App() {
   const [dropData, setDropData] = useState();
@@ -25,7 +25,7 @@ export default function App() {
       .then((res) => {
         setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
-          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
+          return { ...item, ['name']: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -40,7 +40,7 @@ export default function App() {
       .then((res) => {
         setPrev(prev + 1);
         const result = res.map((item: any) => {
-          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
+          return { ...item, ['name']: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -61,7 +61,7 @@ export default function App() {
       .then((res) => {
         setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
-          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
+          return { ...item, ['name']: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -70,12 +70,12 @@ export default function App() {
     <React.Fragment>
       <div
         style={{
-          display: "flex",
-          flexDirection: "column",
+          display: 'flex',
+          flexDirection: 'column',
           gap: 20,
           padding: 20,
 
-          overflowY: "scroll",
+          overflowY: 'scroll',
         }}
       >
         <div className="autocomplete-section">
@@ -104,7 +104,7 @@ export default function App() {
             placeholder="Auto Suggestion"
             selectedItems={[]}
             getData={getData}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
           />
         </div>
         <div className="autocomplete-section">
@@ -133,9 +133,9 @@ export default function App() {
             itemCount={5}
             // nextBlock={nexBlock}
             placeholder="Auto Suggestion"
-            selectedItems={[{ name: "test", id: "1" }]}
+            selectedItems={[{ name: 'test', id: '1' }]}
             // getData={getData}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
           />
         </div>
 
@@ -163,7 +163,7 @@ export default function App() {
             itemCount={3}
             placeholder="Auto Suggestion"
             selectedItems={[]}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
             countOnly={true}
           />
         </div>
@@ -181,7 +181,7 @@ export default function App() {
             itemCount={3}
             placeholder="Auto Suggestion"
             selectedItems={[]}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
             countOnly={true}
           />
         </div>
@@ -200,11 +200,11 @@ export default function App() {
             itemCount={3}
             placeholder="Auto Suggestion"
             selectedItems={[]}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
             countOnly={true}
             tab={[
-              { id: 1, label: "Tab 1" },
-              { id: 2, label: "Tab 2" },
+              { id: 1, label: 'Tab 1' },
+              { id: 2, label: 'Tab 2' },
             ]}
             clearTabSwitch={true}
           />
@@ -225,15 +225,15 @@ export default function App() {
             descId="id"
             type="custom_select"
             data={[
-              { name: "test", id: "1" },
-              { name: "test1", id: "2" },
+              { name: 'test', id: '1' },
+              { name: 'test1', id: '2' },
 
-              { name: "test2", id: "3" },
+              { name: 'test2', id: '3' },
 
-              { name: "test3", id: "4" },
+              { name: 'test3', id: '4' },
             ]}
             // getData={getData}
-            onChange={() => console.log("onchange")}
+            onChange={() => console.log('onchange')}
           />
         </div>
         <div className="autocomplete-section">
@@ -257,7 +257,7 @@ export default function App() {
             placeholder="Auto Complete"
             // data={[{ name: 'test', id: '1' }]}
             getData={getData}
-            onChange={() => console.log("onchange")}
+            onChange={() => console.log('onchange')}
           />
         </div>
         <div style={{ width: 300 }}>
@@ -271,7 +271,7 @@ export default function App() {
             placeholder="Auto Complete"
             // data={[{ name: 'test', id: '1' }]}
             getData={getDatas}
-            onChange={() => console.log("onchange")}
+            onChange={() => console.log('onchange')}
           />
         </div>
         <div className="autocomplete-section">
@@ -293,18 +293,18 @@ export default function App() {
             descId="id"
             type="custom_search_select"
             data={[
-              { name: "Apple", id: "1" },
-              { name: "Banana", id: "2" },
-              { name: "Cherry", id: "3" },
-              { name: "Date", id: "4" },
-              { name: "Fig", id: "5" },
-              { name: "Grape", id: "6" },
-              { name: "Honeydew", id: "7" },
-              { name: "Kiwi", id: "8" },
-              { name: "Lemon", id: "9" },
-              { name: "Mango", id: "10" },
+              { name: 'Apple', id: '1' },
+              { name: 'Banana', id: '2' },
+              { name: 'Cherry', id: '3' },
+              { name: 'Date', id: '4' },
+              { name: 'Fig', id: '5' },
+              { name: 'Grape', id: '6' },
+              { name: 'Honeydew', id: '7' },
+              { name: 'Kiwi', id: '8' },
+              { name: 'Lemon', id: '9' },
+              { name: 'Mango', id: '10' },
             ]}
-            onChange={() => console.log("onchange")}
+            onChange={() => console.log('onchange')}
           />
         </div>
         <div className="autocomplete-section">
@@ -327,7 +327,7 @@ export default function App() {
             placeholder="Auto Suggestion"
             // data={[{ name: 'test', id: '1' }]}
             getData={getData}
-            onChange={() => console.log("onchange")}
+            onChange={() => console.log('onchange')}
           />
         </div>
         <div style={{ width: 300 }}>
@@ -341,10 +341,10 @@ export default function App() {
             isMultiple
             descId="id"
             placeholder="Auto Suggestion"
-            selectedItems={[{ name: "test", id: "1" }]}
+            selectedItems={[{ name: 'test', id: '1' }]}
             // data={[{ name: 'test', id: '1' }]}
             getData={getData}
-            onChange={(value) => console.log(value, "onchange")}
+            onChange={(value) => console.log(value, 'onchange')}
           />
         </div>
         <div style={{ width: 300 }}>
@@ -360,9 +360,9 @@ export default function App() {
             initialLoad={true}
             // nextBlock={nexBlock}
             placeholder="Auto Suggestion"
-            selectedItems={[{ name: "test", id: "1" }]}
+            selectedItems={[{ name: 'test', id: '1' }]}
             getData={getData}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
           />
         </div>
 
@@ -390,9 +390,9 @@ export default function App() {
             itemCount={5}
             // nextBlock={nexBlock}
             placeholder="Auto Suggestion"
-            selectedItems={[{ name: "test", id: "1" }]}
+            selectedItems={[{ name: 'test', id: '1' }]}
             getData={getData}
-            onChange={(e) => console.log(e, "onchange")}
+            onChange={(e) => console.log(e, 'onchange')}
           />
         </div>
       </div>
