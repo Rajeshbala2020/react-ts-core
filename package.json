@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@babel/plugin-transform-typescript": "^7.22.15",
+    "react-hook-form": "^7.53.1",
     "source-map-loader": "^4.0.1"
   }
 }

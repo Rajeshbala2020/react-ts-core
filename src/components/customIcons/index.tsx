@@ -1,6 +1,7 @@
-import { iconMapping } from './IconList'
-import { IconsProps } from '../../commontypes'
 import React from 'react'
+
+import { IconsProps } from '../../commontypes'
+import { iconMapping } from './IconList'
 
 const handleGetDimension = (type: string) => {
   switch (type) {
@@ -41,7 +42,7 @@ const CustomIcons: React.FC<IconsProps> = ({
     return null
   }
   const dimension = custDimension ?? handleGetDimension(type)
-  const viewBoxBlock = viewBox ? 0 0 ${dimension} ${dimension} : 0 0 24 24
+  const viewBoxBlock = viewBox ? `0 0 ${dimension} ${dimension}` : `0 0 24 24`
   return (
     <>
       {isWrapper ? (
@@ -52,7 +53,7 @@ const CustomIcons: React.FC<IconsProps> = ({
           onMouseDown={onMouseDown}
           onMouseLeave={onMouseLeave}
           style={style}
-          className={text-center  ${className}}
+          className={`text-center  ${className}`}
         >
           <svg
             width={hasCustomSize ? handleGetDimension(type) : dimension}

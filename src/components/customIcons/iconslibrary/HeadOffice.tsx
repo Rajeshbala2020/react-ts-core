@@ -1,0 +1,13 @@
+const HeadOffice = () => {
+  return (
+    <path
+      d="M2 21H21.5M3.5 3V21M14 3V21M20 7.5V21M6.5 6.75H7.25M6.5 9.75H7.25M6.5 12.75H7.25M10.25 6.75H11M10.25 9.75H11M10.25 12.75H11M6.5 21V17.625C6.5 17.004 7.004 16.5 7.625 16.5H9.875C10.496 16.5 11 17.004 11 17.625V21M2.75 3H14.75M14 7.5H20.75M17 11.25H17.008V11.258H17V11.25ZM17 14.25H17.008V14.258H17V14.25ZM17 17.25H17.008V17.258H17V17.25Z"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  )
+}
+
+export default HeadOffice
