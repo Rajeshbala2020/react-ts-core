@@ -1,3 +1,5 @@
+import { FieldErrors, UseFormRegister } from "react-hook-form";
+
 export type ValueProps = {
   [key: string]: string;
 };
@@ -14,10 +16,10 @@ export interface AutoSuggestionInputProps {
   onChange: (value?: ValueProps | ValueProps[]) => void;
   data?: any[];
   type?:
-    | 'custom_select'
-    | 'auto_complete'
-    | 'custom_search_select'
-    | 'auto_suggestion';
+    | "custom_select"
+    | "auto_complete"
+    | "custom_search_select"
+    | "auto_suggestion";
   placeholder?: string;
   getData?: (
     key?: string,
@@ -71,4 +73,104 @@ export interface IconsProps {
   onMouseDown?: (e: any) => void;
   onMouseUp?: (e: any) => void;
   onMouseLeave?: (e: any) => void;
+}
+export interface IconProps {
+  stroke?: number;
+  className?: string;
+  color?: string;
+  width?: number;
+  height?: number;
+}
+export interface TextFieldProps {
+  id: string;
+  name: string;
+  label?: string;
+  type?: string;
+  decimal?: boolean;
+  fullwidth?: boolean;
+  step?: number;
+  disabled?: boolean;
+  uppercase?: boolean;
+  readOnly?: boolean;
+  placeholder?: string;
+  required?: boolean;
+  labelTitle?: string;
+  fieldEdit?: boolean;
+  size?: "xs" | "sm" | "md" | "lg" | "xxs";
+  edited?: boolean;
+  onEditComplete?: () => void;
+  value?: string;
+  onEditCancel?: () => void;
+  adorement?: JSX.Element | string | undefined;
+  autoComplete?: boolean;
+  autoFocus?: boolean;
+  register?: any;
+  setFocus?: any;
+  errors?: FieldErrors;
+  isValid?: boolean;
+  isTooltip?: boolean;
+  className?: string;
+  showValidityCheck?: boolean;
+  maxLength?: number;
+  max?: number;
+  min?: number;
+  minLength?: number;
+  keyRegexPattern?: string;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  adjustFieldLabel?: string;
+  backGround?: any; //added for set background colour according to the form
+  prefixes?: any;
+  onPrefixChange?: (e: any) => void;
+  prefixValue?: any;
+  onStepUp?: () => void;
+  onStepDown?: () => void;
+  width?: number;
+  adorementPosition?: "start" | "end";
+  hideLabel?: boolean;
+  defaultData?: string[];
+  onCreatableChange?: (e: string[]) => void;
+}
+
+export interface TextAreaProps {
+  id: string;
+  name: string;
+  label?: string;
+  rows?: number;
+  fullwidth?: boolean;
+  className?: string;
+  disabled?: boolean;
+  placeholder?: string;
+  required?: boolean;
+  fieldEdit?: boolean;
+  edited?: boolean;
+  value?: string;
+  onEditComplete?: () => void;
+  onEditCancel?: () => void;
+  adorement?: JSX.Element;
+  autoComplete?: boolean;
+  autoFocus?: boolean;
+  hideLabel?: boolean;
+  minLength?: number;
+  maxLength?: number;
+  register?: any;
+  onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+
+  setFocus?: any;
+  errors?: FieldErrors;
+  boxHeight?: string;
+  boxMinHeight?: number | string;
+}
+export interface CheckboxProps {
+  id: string;
+  name: string;
+  label?: string;
+  disabled?: boolean;
+  intermediate?: boolean;
+  labalClass?: string;
+  className?: string;
+  checked?: boolean;
+  register?: UseFormRegister<any>;
+  handleChange?: (e: any) => void;
+  value?: string | number;
 }
