@@ -174,3 +174,13 @@ export interface CheckboxProps {
   handleChange?: (e: any) => void;
   value?: string | number;
 }
+export interface RadioProps {
+  id: string;
+  name: string;
+  label?: string;
+  value?: string | number;
+  checked?: boolean;
+  disabled?: boolean;
+  customLabel?: boolean;
+  handleChange?: (e: any) => void;
+}
