@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useRef, useState } from "react";
 import { FieldErrors } from "react-hook-form";
-import { debounce } from "./utilities/debounce";
-import { applyPositionClass } from "./utilities/getPosition";
 
 import CustomIcons from "./components/customIcons";
 import Spinner from "./components/loader/Spinner";
 import Portal from "./components/portal";
+import { debounce } from "./utilities/debounce";
+import { applyPositionClass } from "./utilities/getPosition";
 
 type valueProps = {
   id?: string | number;
@@ -487,7 +487,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
         bottom = spaceBelow + 43;
       } else {
-        top = inputRect.top + window.scrollY;
+        top = inputRect.top + window.scrollY + inputRect.height;
       }
       setDropPosition({
         left: inputRect.left + window.scrollX,
