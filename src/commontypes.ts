@@ -130,6 +130,8 @@ export interface TextFieldProps {
   hideLabel?: boolean;
   defaultData?: string[];
   onCreatableChange?: (e: string[]) => void;
+  infoTitle?: string;
+  showInfo?: boolean;
 }
 
 export interface TextAreaProps {

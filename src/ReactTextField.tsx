@@ -33,8 +33,9 @@ const TextField: React.FC<TextFieldProps> = ({
   onStepUp, //new requirement number steper
   onStepDown, //new requirement number steper
   onChange,
-
+  infoTitle,
   onBlur,
+  showInfo,
   errors,
   keyRegexPattern,
   backGround, //added for set background colour according to the form
@@ -278,7 +279,10 @@ const TextField: React.FC<TextFieldProps> = ({
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
         )}
-        <div className={`w-full ${prefixes ? 'flex' : ''}`}>
+        {isHovered && infoTitle && (
+          <span className="tooltip-info">{infoTitle} </span>
+        )}
+        <div className={`w-full ${prefixes ? "flex" : ""}`}>
           {prefixes && renderPrefix()}
           <div
             className={`flex relative ${fullwidth ? 'w-full' : 'w-auto'}`}
@@ -407,6 +411,17 @@ const TextField: React.FC<TextFieldProps> = ({
                       onMouseLeave={() => setIsHovered(false)}
                     >
                       <CustomIcons name="alert" type="medium" />
+                    </div>
+                  )}
+                  {infoTitle &&showInfo && (
+                    <div
+                      className={` text-error-label relative bg-white cursor-pointer ${generateClassName(
+                        "message"
+                      )}`}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <CustomIcons name="infoCircle" type="medium" />
                     </div>
                   )}
                   {isValid && (
