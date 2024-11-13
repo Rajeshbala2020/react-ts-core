@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
-import ModernAutoComplete from "./ReactAutoComplete";
-import { applyPositionClass } from "./utilities/getPosition";
 
 import { TextFieldProps } from "./commontypes";
 import CustomIcons from "./components/customIcons";
+import ModernAutoComplete from "./ReactAutoComplete";
+import { applyPositionClass } from "./utilities/getPosition";
 
 const TextField: React.FC<TextFieldProps> = ({
   name,
@@ -33,8 +33,9 @@ const TextField: React.FC<TextFieldProps> = ({
   onStepUp, //new requirement number steper
   onStepDown, //new requirement number steper
   onChange,
-
+  infoTitle,
   onBlur,
+  showInfo,
   errors,
   keyRegexPattern,
   backGround, //added for set background colour according to the form
@@ -278,6 +279,9 @@ const TextField: React.FC<TextFieldProps> = ({
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
         )}
+        {isHovered && infoTitle && (
+          <span className="tooltip-info">{infoTitle} </span>
+        )}
         <div className={`w-full ${prefixes ? "flex" : ""}`}>
           {prefixes && renderPrefix()}
           <div
@@ -407,6 +411,17 @@ const TextField: React.FC<TextFieldProps> = ({
                       onMouseLeave={() => setIsHovered(false)}
                     >
                       <CustomIcons name="alert" type="medium" />
+                    </div>
+                  )}
+                  {infoTitle &&showInfo && (
+                    <div
+                      className={` text-error-label relative bg-white cursor-pointer ${generateClassName(
+                        "message"
+                      )}`}
+                      onMouseEnter={() => setIsHovered(true)}
+                      onMouseLeave={() => setIsHovered(false)}
+                    >
+                      <CustomIcons name="infoCircle" type="medium" />
                     </div>
                   )}
                   {isValid && (
