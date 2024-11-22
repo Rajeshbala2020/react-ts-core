@@ -62,6 +62,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       isTreeDropdown = true,
       flatArray = false,
       parentField = 'parentId',
+      errorFlag,
     },
     ref
   ) => {
@@ -208,7 +209,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
     const generateClassName = useCallback(() => {
       return `qbs-textfield-default ${className} ${
-        errors && errors?.message ? 'textfield-error' : 'textfield'
+        errors && errors?.message ? 'textfield-error' : 'tree-textfield'
       } ${expandable ? 'expandable' : ''}`;
     }, [errors, name]);
     const handleRemoveSelectedItem = (index: number) => {
@@ -535,6 +536,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
             handleDropClose={handleDropClose}
             disabled={disabled}
             readOnly={readOnly}
+            error={errorFlag}
             expandable={expandable}
             handleClear={handleClear}
           />

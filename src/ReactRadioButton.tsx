@@ -11,6 +11,7 @@ const Radio: React.FC<RadioProps> = ({
   handleChange,
   disabled = false,
   customLabel,
+  prefixNode,
 }) => {
   const radioRef = useRef<HTMLInputElement>(null);
   const onChange = (e: any) => {
@@ -23,14 +24,14 @@ const Radio: React.FC<RadioProps> = ({
   };
   return (
     <div
-      className={`labels label-text flex items-center justify-start ${
-        !customLabel && "gap-0"
-      }  ${disabled ? " opacity-70" : ""} `}
+      className={`labels label-text flex items-center justify-start custom-radio-container ${
+        !customLabel && 'gap-0'
+      }  ${disabled ? ' opacity-70' : ''} `}
     >
       <div>
         <label
           className={`radio-button ${
-            disabled ? "cursor-not-allowed" : "cursor-pointer"
+            disabled ? 'cursor-not-allowed' : 'cursor-pointer'
           }`}
         >
           <input
@@ -45,11 +46,12 @@ const Radio: React.FC<RadioProps> = ({
             onChange={onChange}
           />
           <span className="radio"></span>
-        </label>{" "}
+        </label>{' '}
       </div>
+      {prefixNode && <div>{prefixNode}</div>}
       <div
         className={`text-common font-normal cursor-pointer ${
-          checked ? "text-secondary" : ""
+          checked ? 'text-secondary' : ''
         }`}
         onClick={labelClick}
       >

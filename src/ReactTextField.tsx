@@ -271,7 +271,7 @@ const TextField: React.FC<TextFieldProps> = ({
   const textFieldRef = useRef<HTMLDivElement>(null); // Ref for the text field div
 
   useEffect(() => {
-    applyPositionClass(textFieldRef);
+    applyPositionClass(textFieldRef, isHovered);
   }, [isHovered]);
   return (
     <div ref={textFieldRef} className={` ${fullwidth ? 'w-full' : 'w-auto'}`}>
@@ -282,7 +282,7 @@ const TextField: React.FC<TextFieldProps> = ({
         {isHovered && infoTitle && (
           <span className="tooltip-info">{infoTitle} </span>
         )}
-        <div className={`w-full ${prefixes ? "flex" : ""}`}>
+        <div className={`w-full ${prefixes ? 'flex' : ''}`}>
           {prefixes && renderPrefix()}
           <div
             className={`flex relative ${fullwidth ? 'w-full' : 'w-auto'}`}
@@ -337,6 +337,7 @@ const TextField: React.FC<TextFieldProps> = ({
               )}
             </div>
             {(adorement ||
+              (showInfo && infoTitle) ||
               step ||
               (!isValid && isTooltip && errors && errors[name]) ||
               isValid) && (
@@ -368,38 +369,36 @@ const TextField: React.FC<TextFieldProps> = ({
                   )}
 
                   {step && (
-                    <>
-                      <div className="ml-2">
-                        <CustomIcons
-                          name="TreeUp_Arrow"
-                          className={`text-gray-500 hover:text-dark cursor-pointer ${
-                            isDisabled ? 'hidden' : 'block'
-                          }`}
-                          type="medium"
-                          onClick={() => {
-                            handleClick('up');
-                          }}
-                          onMouseDown={() => handleMouseDown('up')}
-                          onMouseUp={handleMouseUp}
-                          onMouseLeave={handleMouseUp}
-                          viewBox={true}
-                        />
-                        <CustomIcons
-                          name="TreeDown_Arrow"
-                          className={`text-gray-500 hover:text-dark cursor-pointer ${
-                            isDisabled ? 'hidden' : 'block'
-                          }`}
-                          type="medium"
-                          onClick={() => {
-                            handleClick('down');
-                          }}
-                          onMouseDown={() => handleMouseDown('down')}
-                          onMouseUp={handleMouseUp}
-                          onMouseLeave={handleMouseUp}
-                          viewBox={true}
-                        />
-                      </div>
-                    </>
+                    <div className="ml-2">
+                      <CustomIcons
+                        name="TreeUp_Arrow"
+                        className={`text-gray-500 hover:text-dark cursor-pointer ${
+                          isDisabled ? 'hidden' : 'block'
+                        }`}
+                        type="medium"
+                        onClick={() => {
+                          handleClick('up');
+                        }}
+                        onMouseDown={() => handleMouseDown('up')}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        viewBox={true}
+                      />
+                      <CustomIcons
+                        name="TreeDown_Arrow"
+                        className={`text-gray-500 hover:text-dark cursor-pointer ${
+                          isDisabled ? 'hidden' : 'block'
+                        }`}
+                        type="medium"
+                        onClick={() => {
+                          handleClick('down');
+                        }}
+                        onMouseDown={() => handleMouseDown('down')}
+                        onMouseUp={handleMouseUp}
+                        onMouseLeave={handleMouseUp}
+                        viewBox={true}
+                      />
+                    </div>
                   )}
 
                   {!isValid && isTooltip && errors && errors[name] && (
@@ -413,11 +412,9 @@ const TextField: React.FC<TextFieldProps> = ({
                       <CustomIcons name="alert" type="medium" />
                     </div>
                   )}
-                  {infoTitle &&showInfo && (
+                  {infoTitle && showInfo && (
                     <div
-                      className={` text-error-label relative bg-white cursor-pointer ${generateClassName(
-                        "message"
-                      )}`}
+                      className={`  relative bg-white cursor-pointer text-[#667085] `}
                       onMouseEnter={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
                     >

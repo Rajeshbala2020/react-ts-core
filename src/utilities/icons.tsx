@@ -8,7 +8,7 @@ export const DropArrow: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
       viewBox="0 0 24 24"
       strokeWidth="1.5"
       stroke="currentColor"
-      style={{ width: 15 }}
+      style={{ width: 20, height: 20 }}
       className={className}
       name="toggle"
     >
@@ -27,9 +27,9 @@ export const Close: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"
-      strokeWidth="1.5"
+      strokeWidth="2"
       stroke="currentColor"
-      style={{ width: 15 }}
+      style={{ width: 20, height: 20 }}
     >
       <path
         strokeLinecap="round"

@@ -1,4 +1,4 @@
-import { FieldErrors, UseFormRegister } from "react-hook-form";
+import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 export type ValueProps = {
   [key: string]: string;
@@ -16,10 +16,10 @@ export interface AutoSuggestionInputProps {
   onChange: (value?: ValueProps | ValueProps[]) => void;
   data?: any[];
   type?:
-    | "custom_select"
-    | "auto_complete"
-    | "custom_search_select"
-    | "auto_suggestion";
+    | 'custom_select'
+    | 'auto_complete'
+    | 'custom_search_select'
+    | 'auto_suggestion';
   placeholder?: string;
   getData?: (
     key?: string,
@@ -57,6 +57,7 @@ export interface AutoSuggestionInputProps {
   typeOnlyFetch?: boolean; // async only call when typed any value
   tab?: TabPops[];
   clearTabSwitch?: boolean;
+  errorFlag?: boolean;
 }
 export interface IconsProps {
   name: any;
@@ -96,7 +97,7 @@ export interface TextFieldProps {
   required?: boolean;
   labelTitle?: string;
   fieldEdit?: boolean;
-  size?: "xs" | "sm" | "md" | "lg" | "xxs";
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xxs';
   edited?: boolean;
   onEditComplete?: () => void;
   value?: string;
@@ -126,7 +127,7 @@ export interface TextFieldProps {
   onStepUp?: () => void;
   onStepDown?: () => void;
   width?: number;
-  adorementPosition?: "start" | "end";
+  adorementPosition?: 'start' | 'end';
   hideLabel?: boolean;
   defaultData?: string[];
   onCreatableChange?: (e: string[]) => void;
@@ -185,4 +186,5 @@ export interface RadioProps {
   disabled?: boolean;
   customLabel?: boolean;
   handleChange?: (e: any) => void;
+  prefixNode?: React.ReactNode;
 }
