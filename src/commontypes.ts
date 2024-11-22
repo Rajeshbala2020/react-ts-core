@@ -58,6 +58,9 @@ export interface AutoSuggestionInputProps {
   tab?: TabPops[];
   clearTabSwitch?: boolean;
   errorFlag?: boolean;
+  selectedRowLimit?: number // used for showing selected items rows limit, will show scroll if more items added
+  topMargin?: number // adjust dropdown postion manually if any overlap issue
+  currentTab?: number // current active tab
 }
 export interface IconsProps {
   name: any;

@@ -120,3 +120,9 @@
 .qbs-autocomplete-selected-suggestions .qbs-autocomplete-suggestions-sub {
   min-height: 184px;
 }
+.selected-items-outer-container {
+  display: flex;
+  gap: 5px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+}
