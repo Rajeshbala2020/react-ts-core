@@ -248,8 +248,9 @@ const ExpandableAutoComplete = forwardRef<
         if (
           dropRef.current &&
           event.target instanceof Node &&
-          !dropRef.current.contains(event.target) &&
-          event.target.nodeName !== "svg"
+          !dropRef.current.contains(event.target)
+          // &&
+          // event.target.nodeName !== "svg"
         ) {
           setDropOpen(false);
           setSearchValue("");
