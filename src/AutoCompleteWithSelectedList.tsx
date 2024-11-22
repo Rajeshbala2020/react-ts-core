@@ -61,6 +61,9 @@ const AutoCompleteWithSelectedList = forwardRef<
       typeOnlyFetch = false,
       tab = [],
       clearTabSwitch = false,
+      selectedRowLimit = 2,
+      topMargin = 0,
+      currentTab = 0
     },
     ref
   ) => {
@@ -77,7 +80,10 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
     const [showAllSelected, setShowAllSelected] = useState<boolean>(false);
-    const [activeTab, setActiveTab] = useState<number>(0);
+    const [expandArrowClick, setExpandArrowClick] = useState<
+      number | undefined
+    >(1);
+    const [activeTab, setActiveTab] = useState<number>(currentTab);
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
     const dropRef = useRef(null);
@@ -115,7 +121,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             inputRect.top + window.scrollY + inputRect.height;
         } else {
           dropdownPosition.top =
-            inputRect.top + window.scrollY - dropdownHeight + 73;
+            inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
         }
 
         setDropdownStyle({
@@ -131,7 +137,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       return () => {
         window.removeEventListener("resize", adjustDropdownPosition);
       };
-    }, [dropOpen, selectedItems]);
+    }, [dropOpen, selectedItems, expandArrowClick]);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -356,11 +362,17 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const handleShowAllSelected = (enabled: boolean) => {
+      setExpandArrowClick(expandArrowClick + 1);
       if (enabled) {
         setShowAllSelected(true);
       } else {
         setShowAllSelected(false);
       }
+    };
+
+    const handleCollapseArrowClick = () => {
+      setExpandArrowClick(expandArrowClick + 1);
+      setShowAllSelected(false);
     };
 
     const tooltipContent =
@@ -391,9 +403,16 @@ const AutoCompleteWithSelectedList = forwardRef<
       }
     };
 
+    const getSelectedRowLimit = () => {
+      return selectedRowLimit * 33 + 5;
+    };
+
     const getSelectedItems = (dropdown: boolean) => {
       return (
-        <>
+        <div
+          className="selected-items-outer-container"
+          style={{ maxHeight: `${getSelectedRowLimit()}px` }}
+        >
           {selectedItems
             .slice(
               0,
@@ -442,7 +461,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               </Tooltip>
             </div>
           )}
-        </>
+        </div>
       );
     };
 
@@ -670,7 +689,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                                 <div
                                   className="qbs-more-collapse"
                                   onClick={() => {
-                                    setShowAllSelected(false);
+                                    handleCollapseArrowClick();
                                   }}
                                 >
                                   <DropArrow className={`icon-button-rotate`} />

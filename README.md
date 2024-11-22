@@ -152,6 +152,9 @@ Additional props for the `AutoCompleteWithSelectedList` component:
 - **typeOnlyFetch** _(boolean)_: If true, suggections only list when user types on the search box. This works only if `async: true`.
 - **tab** _(Array)_:  Local data source for tabs, format should be `{id: nummber | string, label: string }`
 - **clearTabSwitch** _(boolean)_: If true, clear all search results, selected items and search key when tab is switching.
+- **selectedRowLimit** _(number)_: Rows count for Selected items; the default value will be `2`. If more than this count is selected, then will show the scroll bar.
+- **topMargin** _(number)_: Can adjust the dropdown top margin manually.
+- **currentTab** _(number)_: Current active tab index
 
 ## Contribution
 
