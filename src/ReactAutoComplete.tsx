@@ -634,18 +634,14 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                 }
               }}
             />
-            {label && isModern && (
+            {isModern && (
               <label
                 htmlFor={id}
                 onClick={() => onLabelClick()}
                 className={generateClassName('label')}
               >
-                {label}
-                {required && label ? (
-                  <span className="text-error"> *</span>
-                ) : (
-                  <></>
-                )}
+                {label ? label : ''}
+                {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}
           </div>
