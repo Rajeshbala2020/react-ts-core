@@ -209,6 +209,11 @@ body * {
   margin-top: 2px;
   padding-top: 10px;
 }
+.qbs-dropdown-selected-preview {
+  .qbs-dropdown-selected-container {
+    border-top: 0px;
+  }
+}
 
 .qbs-dropdown-selected-container .qbs-clear-link {
   color: #e76458;

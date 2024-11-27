@@ -252,15 +252,17 @@ const ExpandableAutoComplete = forwardRef<
           // &&
           // event.target.nodeName !== "svg"
         ) {
-          setDropOpen(false);
-          setSearchValue("");
+          setTimeout(() => {
+            setDropOpen(false);
+            setSearchValue("");
+          }, 200);
         }
       };
       document.addEventListener("mousedown", handleClickOutside as any);
       window.addEventListener("scroll", handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"]'
+        'div[style*="overflow"], .overflow-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener("scroll", handleClickOutside as any)

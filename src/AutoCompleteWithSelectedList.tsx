@@ -63,7 +63,9 @@ const AutoCompleteWithSelectedList = forwardRef<
       clearTabSwitch = false,
       selectedRowLimit = 2,
       topMargin = 0,
-      currentTab = 0
+      currentTab = 0,
+      selectedLabel = "",
+      viewMode = false,
     },
     ref
   ) => {
@@ -285,7 +287,9 @@ const AutoCompleteWithSelectedList = forwardRef<
           // &&
           // event.target.nodeName !== "svg"
         ) {
-          setDropOpen(false);
+          setTimeout(() => {
+            setDropOpen(false);
+          }, 200);
           //setSearchValue("");
         }
       };
@@ -293,7 +297,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       window.addEventListener("scroll", handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"]'
+        'div[style*="overflow"], .overflow-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener("scroll", handleClickOutside as any)
@@ -349,17 +353,21 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const handleOnClick = () => {
-      !disabled && !readOnly ? setDropOpen(true) : "";
+      !disabled && !readOnly && !expandable && !dropOpen
+        ? setDropOpen(true)
+        : "";
     };
     const onInputFocus = () => {
-      if (countOnly) {
-        setTimeout(() => {
-          if (inputSearchRef.current) inputSearchRef.current.focus();
-        }, 10);
-      } else {
-        if (inputRef.current) inputRef.current.focus();
+      if (!dropOpen) {
+        if (countOnly) {
+          setTimeout(() => {
+            if (inputSearchRef.current) inputSearchRef.current.focus();
+          }, 10);
+        } else {
+          if (inputRef.current) inputRef.current.focus();
+        }
+        handleOnClick();
       }
-      handleOnClick();
     };
 
     const handleShowAllSelected = (enabled: boolean) => {
@@ -433,7 +441,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                     {item?.[desc]?.length > textCount
                       ? `${item?.[desc].substring(0, textCount)}...`
                       : item?.[desc]}
-
+                    {!viewMode && (
                     <button
                       onClick={() => handleRemoveSelectedItem(index)}
                       className="remove-item-btn"
@@ -441,6 +449,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                     >
                       X
                     </button>
+                    )}
                   </div>
                 </Tooltip>
               </div>
@@ -528,7 +537,13 @@ const AutoCompleteWithSelectedList = forwardRef<
                   <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                     {selectedItems?.length}
                   </span>
-                  Item{selectedItems?.length > 1 && "s"} Selected
+                  <span className="selected-label-text">
+                    {selectedLabel !== "" ? (
+                      selectedLabel
+                    ) : (
+                      <>Item{selectedItems?.length > 1 && "s"} Selected</>
+                    )}
+                  </span>
                 </div>
               )}
             </>
@@ -592,29 +607,39 @@ const AutoCompleteWithSelectedList = forwardRef<
             ReactDOM.createPortal(
               <div
                 ref={dropRef}
-                style={{ ...dropdownStyle, minHeight: 192 }}
-                className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions`}
+                style={{ ...dropdownStyle, minHeight: viewMode ? 100 : 192 }}
+                className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
+                  viewMode ? "qbs-dropdown-selected-preview" : ""
+                }`}
               >
-                <>{tab.length > 0 && getTabItems()}</>
-                {type == "auto_suggestion" && !expandable && (
-                  <div
-                    style={{ position: "relative" }}
-                    className="react-core-ts-search-container"
-                  >
-                    <span className="dropdown-search-icon">
-                      <Search />
-                    </span>
-                    <input
-                      className="dropdown-search-input"
-                      onChange={handleSuggestionChange}
-                      value={searchValue}
-                      placeholder="Search"
-                      ref={inputSearchRef}
-                    />
-                  </div>
+                {!viewMode && (
+                  <>
+                    <>{tab.length > 0 && getTabItems()}</>
+                    {type == "auto_suggestion" && !expandable && (
+                      <div
+                        style={{ position: "relative" }}
+                        className="react-core-ts-search-container"
+                      >
+                        <span className="dropdown-search-icon">
+                          <Search />
+                        </span>
+                        <input
+                          className="dropdown-search-input"
+                          onChange={handleSuggestionChange}
+                          value={searchValue}
+                          placeholder="Search"
+                          ref={inputSearchRef}
+                        />
+                      </div>
+                    )}
+                  </>
                 )}
 
-                <div className={`qbs-autocomplete-suggestions-sub `}>
+                <div
+                  className={`qbs-autocomplete-suggestions-sub ${
+                    viewMode ? "hidden" : ""
+                  }`}
+                >
                   {filteredData?.length > 0 ? (
                     filteredData.map((suggestion: ValueProps, idx: number) => (
                       <DropdownList
@@ -669,12 +694,14 @@ const AutoCompleteWithSelectedList = forwardRef<
                         className={`qbs-expandable-container qbs-dropdown-selected-container`}
                         ref={dropdownSelectedRef}
                       >
-                        <div className="qbs-flex qbs-w-full qbs-text-xs ">
+                        <div className={`qbs-flex qbs-w-full qbs-text-xs`}>
                           <div className="qbs-selected-lbs qbs-flex-grow">
                             Selected Items
                           </div>
                           <div
-                            className="qbs-clear-link qbs-text-right qbs-cursor-pointer"
+                            className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${
+                              viewMode ? "hidden" : ""
+                            }`}
                             onClick={handleClearSelected}
                           >
                             Clear all

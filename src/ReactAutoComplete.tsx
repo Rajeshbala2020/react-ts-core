@@ -327,7 +327,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       const mainElement = document.querySelector('main');
       mainElement?.addEventListener('scroll', handleScroll);
 
-      const gridElements = document.querySelectorAll('.k-grid-content');
+      const gridElements = document.querySelectorAll('.k-grid-content, .overflow-auto');
       gridElements.forEach((gridElement: any) => {
         gridElement.addEventListener('scroll', handleScroll);
       });
