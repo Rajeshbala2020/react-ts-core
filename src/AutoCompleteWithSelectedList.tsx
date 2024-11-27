@@ -611,6 +611,8 @@ const AutoCompleteWithSelectedList = forwardRef<
                 style={{ ...dropdownStyle, minHeight: viewMode ? 100 : 192 }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? "qbs-dropdown-selected-preview" : ""
+                } ${
+                  viewMode && selectedItems?.length === 0 ? "hidden" : ""
                 }`}
               >
                 {!viewMode && (
