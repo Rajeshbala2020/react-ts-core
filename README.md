@@ -155,6 +155,8 @@ Additional props for the `AutoCompleteWithSelectedList` component:
 - **selectedRowLimit** _(number)_: Rows count for Selected items; the default value will be `2`. If more than this count is selected, then will show the scroll bar.
 - **topMargin** _(number)_: Can adjust the dropdown top margin manually.
 - **currentTab** _(number)_: Current active tab index
+- **seselectedLabel** _(string)_: Able to change the "Item selected" label
+- **viewMode** _(boolean)_: If true, only shows selected items preview.
 
 ## Contribution
 

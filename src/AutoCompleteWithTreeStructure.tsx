@@ -5,18 +5,18 @@ import React, {
   useImperativeHandle,
   useRef,
   useState,
-} from 'react';
-import ReactDOM from 'react-dom';
+} from "react";
+import ReactDOM from "react-dom";
 
-import { AutoSuggestionInputProps } from './commontypes';
-import InputActions from './components/InputActions';
-import TreeNode from './components/TreeNode';
-import { useSuggestions } from './utilities/autosuggestions';
-import { buildTree } from './utilities/convertFlatArraytoTreeStructure';
-import { debounce } from './utilities/debounce';
-import { deepEqual } from './utilities/deepEqual';
-import { default as Tooltip } from './utilities/expandableTootltip';
-import { Search, Spinner } from './utilities/icons';
+import { AutoSuggestionInputProps } from "./commontypes";
+import InputActions from "./components/InputActions";
+import TreeNode from "./components/TreeNode";
+import { useSuggestions } from "./utilities/autosuggestions";
+import { buildTree } from "./utilities/convertFlatArraytoTreeStructure";
+import { debounce } from "./utilities/debounce";
+import { deepEqual } from "./utilities/deepEqual";
+import { default as Tooltip } from "./utilities/expandableTootltip";
+import { Search, Spinner } from "./utilities/icons";
 
 type ValueProps = {
   [key: string]: string;
@@ -37,14 +37,14 @@ const AutoCompleteWithTreeStructure = forwardRef<
       fullWidth = false,
       placeholder,
       id,
-      type = 'custom_select',
+      type = "custom_select",
       selectedItems: propsSeelctedItems = [],
       readOnly = false,
       disabled = false,
       value,
       isMultiple = false,
-      desc = 'name',
-      descId = 'id',
+      desc = "name",
+      descId = "id",
       singleSelect,
       className,
       async = false,
@@ -61,7 +61,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       scrollRef,
       isTreeDropdown = true,
       flatArray = false,
-      parentField = 'parentId',
+      parentField = "parentId",
       errorFlag,
     },
     ref
@@ -71,7 +71,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
     const [isInitialRender, setIsInitialRender] = useState(true);
 
     const [inputValue, setInputValue] = useState<string>(value);
-    const [searchValue, setSearchValue] = useState<string>('');
+    const [searchValue, setSearchValue] = useState<string>("");
     const [nextPage, setNextPage] = useState<number | undefined>(1);
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
@@ -124,11 +124,11 @@ const AutoCompleteWithTreeStructure = forwardRef<
     };
 
     useEffect(() => {
-      window.addEventListener('resize', adjustDropdownPosition);
+      window.addEventListener("resize", adjustDropdownPosition);
       adjustDropdownPosition();
 
       return () => {
-        window.removeEventListener('resize', adjustDropdownPosition);
+        window.removeEventListener("resize", adjustDropdownPosition);
       };
     }, [dropOpen, selectedItems]);
 
@@ -148,7 +148,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
     // Adding debounce to avoid making API calls on every keystroke
     const handleChangeWithDebounce = debounce((value) => {
-      if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
+      if ((type === "auto_complete" || type === "auto_suggestion") && async) {
         handlePickSuggestions(value, 1);
       }
     }, 1000);
@@ -170,7 +170,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
     }, [propsSeelctedItems]);
     // Effect to set the input value whenever `value` prop changes
     useEffect(() => {
-      setInputValue(value ?? '');
+      setInputValue(value ?? "");
     }, [value]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -179,7 +179,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       setSearchValue(value);
       handleChangeWithDebounce(value);
       if (!value) {
-        setInputValue('');
+        setInputValue("");
         // onChange({ [descId]: '', [desc]: '' });
       }
     };
@@ -198,19 +198,19 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
     const handleClear = () => {
       if (searchValue) {
-        setSearchValue('');
+        setSearchValue("");
         setDropOpen(false);
       } else {
-        setInputValue('');
-        onChange({ [descId]: '', [desc]: '' });
+        setInputValue("");
+        onChange({ [descId]: "", [desc]: "" });
         setDropOpen(false);
       }
     };
 
     const generateClassName = useCallback(() => {
       return `qbs-textfield-default ${className} ${
-        errors && errors?.message ? 'textfield-error' : 'tree-textfield'
-      } ${expandable ? 'expandable' : ''}`;
+        errors && errors?.message ? "textfield-error" : "tree-textfield"
+      } ${expandable ? "expandable" : ""}`;
     }, [errors, name]);
     const handleRemoveSelectedItem = (index: number) => {
       setSelectedItems((prev) => {
@@ -235,31 +235,34 @@ const AutoCompleteWithTreeStructure = forwardRef<
           // &&
           // event.target.nodeName !== 'svg'
         ) {
-          setDropOpen(false);
-          setSearchValue('');
+          setTimeout(() => {
+            setDropOpen(false);
+            setSearchValue("");
+          }, 200);
         }
       };
-      document.addEventListener('mousedown', handleClickOutside as any);
-      window.addEventListener('scroll', handleClickOutside as any);
+      document.addEventListener("mousedown", handleClickOutside as any);
+      window.addEventListener("scroll", handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"]'
+        'div[style*="overflow"], .overflow-auto'
       );
       scrollableDivs.forEach((div) =>
-        div.addEventListener('scroll', handleClickOutside as any)
+        div.addEventListener("scroll", handleClickOutside as any)
       );
       if (scrollRef && scrollRef.current && scrollRef.current !== null) {
-        scrollRef.current.addEventListener('scroll', handleClickOutside as any);
+        scrollRef.current.addEventListener("scroll", handleClickOutside as any);
       }
+
       return () => {
-        document.removeEventListener('mousedown', handleClickOutside as any);
-        window.removeEventListener('scroll', handleClickOutside as any);
+        document.removeEventListener("mousedown", handleClickOutside as any);
+        window.removeEventListener("scroll", handleClickOutside as any);
         scrollableDivs.forEach((div) =>
-          div.removeEventListener('scroll', handleClickOutside as any)
+          div.removeEventListener("scroll", handleClickOutside as any)
         );
         if (scrollRef && scrollRef.current && scrollRef.current !== null) {
           scrollRef.current.removeEventListener(
-            'scroll',
+            "scroll",
             handleClickOutside as any
           );
         }
@@ -270,7 +273,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
     const selected: any = isMultiple ? selectedItems : inputValue;
 
     const handleOnClick = () => {
-      !disabled && !readOnly ? setDropOpen(true) : '';
+      !disabled && !readOnly ? setDropOpen(true) : "";
     };
     const onInputFocus = () => {
       if (inputRef.current) inputRef.current.focus();
@@ -282,8 +285,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
         ? selectedItems
             ?.slice(itemCount)
             .map((item) => item[desc])
-            .join(', ')
-        : '';
+            .join(", ")
+        : "";
 
     const handleDropOpen = (e: any) => {
       if (!dropOpen) setDropOpen(true);
@@ -329,8 +332,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
         onChange(checkedNodes);
       } else {
         if (!checked) {
-          setInputValue('');
-          onChange({ id: '', name: '' });
+          setInputValue("");
+          onChange({ id: "", name: "" });
         }
         // Single-select logic: uncheck all other nodes and check only the clicked one
         newTreeData = dropDownData.map((node) =>
@@ -413,8 +416,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
     const handleerror = (error: any) => {
       if (
-        (errors && errors.message === 'required') ||
-        errors.message === 'Required'
+        (errors && errors.message === "required") ||
+        errors.message === "Required"
       ) {
         return `${label} is required`;
       } else {
@@ -422,13 +425,13 @@ const AutoCompleteWithTreeStructure = forwardRef<
       }
     };
     return (
-      <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+      <div className={fullWidth ? "fullWidth" : "autoWidth"} ref={dropdownRef}>
         {label && (
           <div
             style={{
               marginBottom: 5,
-              display: 'flex',
-              justifyContent: 'space-between',
+              display: "flex",
+              justifyContent: "space-between",
             }}
           >
             <label className={`labels label-text`}>
@@ -444,9 +447,9 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
         <div
           className={`${
-            expandable ? 'qbs-expandable-container' : 'qbs-container'
+            expandable ? "qbs-expandable-container" : "qbs-container"
           }`}
-          style={{ position: 'relative' }}
+          style={{ position: "relative" }}
         >
           {selectedItems?.length > 0 && (
             <>
@@ -493,12 +496,12 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
           <div
             className={`qbs-textfield-expandable ${
-              !expandable ? 'qbs-normal' : ''
+              !expandable ? "qbs-normal" : ""
             }`}
             data-value={
               selectedItems?.length > 0 || searchValue
                 ? searchValue
-                : placeholder ?? ''
+                : placeholder ?? ""
             }
             onClick={() => onInputFocus()}
           >
@@ -507,7 +510,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
               ref={inputRef}
               type="text"
               value={
-                type === 'auto_suggestion' && !expandable
+                type === "auto_suggestion" && !expandable
                   ? inputValue
                   : searchValue || inputValue
               }
@@ -516,11 +519,11 @@ const AutoCompleteWithTreeStructure = forwardRef<
               onFocus={onFocus}
               onClick={() => handleOnClick()}
               className={generateClassName()}
-              placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+              placeholder={selectedItems?.length > 0 ? "" : placeholder ?? ""}
               readOnly={
                 readOnly ||
-                type === 'custom_select' ||
-                (type == 'auto_suggestion' && !expandable)
+                type === "custom_select" ||
+                (type == "auto_suggestion" && !expandable)
               }
               disabled={disabled}
               data-testid="custom-autocomplete"
@@ -552,9 +555,9 @@ const AutoCompleteWithTreeStructure = forwardRef<
                 style={{ ...dropdownStyle, minHeight: 192 }}
                 className={`qbs-autocomplete-suggestions`}
               >
-                {type == 'auto_suggestion' && !expandable && (
+                {type == "auto_suggestion" && !expandable && (
                   <div
-                    style={{ position: 'relative' }}
+                    style={{ position: "relative" }}
                     className="react-core-ts-search-container"
                   >
                     <span className="dropdown-search-icon">
@@ -571,8 +574,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
                 <div
                   style={{
-                    gap: isTreeDropdown ? '8px' : '0',
-                    minHeight: isTreeDropdown ? '184px' : '0',
+                    gap: isTreeDropdown ? "8px" : "0",
+                    minHeight: isTreeDropdown ? "184px" : "0",
                   }}
                   className={`qbs-autocomplete-suggestions-sub `}
                 >
@@ -603,7 +606,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                     <>
                       {isLoading ? (
                         <div
-                          style={{ display: 'flex', justifyContent: 'center' }}
+                          style={{ display: "flex", justifyContent: "center" }}
                         >
                           <span>
                             <Spinner />
@@ -614,7 +617,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                           className="qbs-autocomplete-notfound"
                           onClick={handleBlur}
                         >
-                          {notDataMessage ?? 'No Results Found'}
+                          {notDataMessage ?? "No Results Found"}
                         </li>
                       )}
                     </>

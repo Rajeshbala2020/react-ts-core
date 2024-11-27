@@ -61,6 +61,8 @@ export interface AutoSuggestionInputProps {
   selectedRowLimit?: number // used for showing selected items rows limit, will show scroll if more items added
   topMargin?: number // adjust dropdown postion manually if any overlap issue
   currentTab?: number // current active tab
+  selectedLabel?: string // Able to change the "Item selected" label
+  viewMode?: boolean // show only selected items
 }
 export interface IconsProps {
   name: any;
