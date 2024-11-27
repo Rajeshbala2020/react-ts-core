@@ -1,6 +1,6 @@
-import React from 'react';
+import React from "react";
 
-import { Close, DropArrow } from '../utilities/icons';
+import { Close, DropArrow } from "../utilities/icons";
 
 type ValueProps = {
   inputValue: string;
@@ -14,6 +14,7 @@ type ValueProps = {
   expandable: boolean;
   handleClear: () => void;
   error?: boolean;
+  viewMode?: boolean;
 };
 const InputActions: React.FC<ValueProps> = ({
   inputValue,
@@ -27,14 +28,14 @@ const InputActions: React.FC<ValueProps> = ({
   handleClear,
   countOnly,
   error,
-  
+  viewMode,
 }) => {
   return (
     <div
       className={`${
         error
-          ? 'qbs-autocomplete-witherror-close-icon'
-          : 'qbs-autocomplete-close-icon'
+          ? "qbs-autocomplete-witherror-close-icon"
+          : "qbs-autocomplete-close-icon"
       } `}
     >
       {(inputValue || searchValue) &&
@@ -63,7 +64,7 @@ const InputActions: React.FC<ValueProps> = ({
         </button>
       ) : (
         <button
-          disabled={disabled || readOnly}
+          disabled={(disabled || readOnly) && !viewMode}
           type="button"
           className="icon-button text-[#667085] "
           onClick={(e) => handleDropOpen(e)}

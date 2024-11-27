@@ -109,7 +109,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         const spaceBelow = window.innerHeight - inputRect.bottom;
         const spaceAbove = inputRect.top + window.scrollY;
 
-        let dropdownHeight = 300; // Assume a fixed height or calculate based on content
+        let dropdownHeight = viewMode ? 160 : 300; // Assume a fixed height or calculate based on content
         if (countOnly) {
           if (dropdownSelectedRef?.current)
             dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
@@ -353,7 +353,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const handleOnClick = () => {
-      !disabled && !readOnly && !expandable && !dropOpen
+      (!disabled && !readOnly && !expandable && !dropOpen) || viewMode
         ? setDropOpen(true)
         : "";
     };
@@ -442,13 +442,13 @@ const AutoCompleteWithSelectedList = forwardRef<
                       ? `${item?.[desc].substring(0, textCount)}...`
                       : item?.[desc]}
                     {!viewMode && (
-                    <button
-                      onClick={() => handleRemoveSelectedItem(index)}
-                      className="remove-item-btn"
-                      aria-label={`Remove ${item?.[desc]}`}
-                    >
-                      X
-                    </button>
+                      <button
+                        onClick={() => handleRemoveSelectedItem(index)}
+                        className="remove-item-btn"
+                        aria-label={`Remove ${item?.[desc]}`}
+                      >
+                        X
+                      </button>
                     )}
                   </div>
                 </Tooltip>
@@ -538,7 +538,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                     {selectedItems?.length}
                   </span>
                   <span className="selected-label-text">
-                    {selectedLabel !== "" ? (
+                    {selectedLabel && selectedLabel !== "" ? (
                       selectedLabel
                     ) : (
                       <>Item{selectedItems?.length > 1 && "s"} Selected</>
@@ -598,6 +598,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             expandable={expandable}
             handleClear={handleClear}
             countOnly={countOnly}
+            viewMode={viewMode}
           />
           {/* Displaying Loading Spinner */}
 
