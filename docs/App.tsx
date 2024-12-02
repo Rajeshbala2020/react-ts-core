@@ -437,6 +437,31 @@ export default function App() {
               onChange={(e) => console.log(e, 'onchange')}
             />
           </div>
+          <div style={{ width: 300 }}>
+            <AutoCompleteWithSelectedList
+              label="Auto Suggestion With Data"
+              name="sample"
+              type="auto_suggestion"
+              // async
+              desc="name"
+              isMultiple={true}
+              singleSelect={false}
+              viewMode={true}
+              descId="id"
+              data={treeDropData}
+              paginationEnabled={false}
+              initialLoad={false}
+              itemCount={3}
+              placeholder="Auto Suggestion"
+              selectedItems={[
+                { id: 's', name: 'test' },
+                { id: 's1', name: 'test1' },
+                { id: 's2', name: 'test2' },
+              ]}
+              onChange={(e) => console.log(e, 'onchange')}
+              countOnly={true}
+            />
+          </div>
         </div>
       </div>
     </React.Fragment>

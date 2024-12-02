@@ -171,7 +171,6 @@ body * {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: white; /* bg-white */
 }
 .qbs-textfield-default {
   width: 100%;
@@ -232,7 +231,7 @@ body * {
   overflow: hidden;
 }
 .qbs-expandable-container .qbs-textfield-expandable::after {
-  content: attr(data-value) " ";
+  content: attr(data-value) ' ';
   visibility: hidden;
   white-space: pre;
   grid-area: 1 / 2;
@@ -594,7 +593,7 @@ span.dropdown-search-icon {
 
 .qbs-table-tooltip .tooltiptext::after,
 .tooltiptext::after {
-  content: "";
+  content: '';
   position: absolute;
   border-width: 5px;
   border-style: solid;
