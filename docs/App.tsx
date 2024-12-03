@@ -446,7 +446,7 @@ export default function App() {
               desc="name"
               isMultiple={true}
               singleSelect={false}
-              viewMode={true}
+              viewMode={false}
               descId="id"
               data={treeDropData}
               paginationEnabled={false}
@@ -454,9 +454,13 @@ export default function App() {
               itemCount={3}
               placeholder="Auto Suggestion"
               selectedItems={[
-                { id: 's', name: 'test' },
-                { id: 's1', name: 'test1' },
-                { id: 's2', name: 'test2' },
+                { id: 1, name: 'testssdfsdfsdfsd sdvsdf' },
+                { id: 2, name: 'test1 slkdflksmflksd' },
+                { id: 3, name: 'test2 lsdfkslkdfmlksdf' },
+                { id: 4, name: 'test3 lksdmflkmsflkms' },
+                { id: 5, name: 'test4lskdmflksldkf sdf' },
+                { id: 6, name: 'test5lksdlkf sdf' },
+                { id: 7, name: 'test6lksdlf sdf' },
               ]}
               onChange={(e) => console.log(e, 'onchange')}
               countOnly={true}
