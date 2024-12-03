@@ -81,7 +81,6 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [nextPage, setNextPage] = useState<number | undefined>(1);
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
-
     const [showAllSelected, setShowAllSelected] = useState<boolean>(false);
     const [expandArrowClick, setExpandArrowClick] = useState<
       number | undefined
@@ -92,8 +91,8 @@ const AutoCompleteWithSelectedList = forwardRef<
     const dropRef = useRef(null);
     const inputSearchRef = useRef(null);
     useImperativeHandle(ref, () => inputRef.current);
-    const [dropdownStyle, setDropdownStyle] = useState<any>({
-      top: undefined,
+    const [dropdownStyle, setDropdownStyle] = useState({
+      top: 0,
       left: 0,
       width: 200,
     });
@@ -108,32 +107,28 @@ const AutoCompleteWithSelectedList = forwardRef<
         };
         // Check if there's enough space below the input for the dropdown
         const spaceBelow = window.innerHeight - inputRect.bottom;
-        let dropdownHeight = viewMode ? 160 : 380; // Assume a fixed height or calculate based on content
+        const spaceAbove = inputRect.top + window.scrollY;
 
-        if (countOnly && !viewMode) {
-          // if (dropdownSelectedRef?.current) {
-          //   dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
-          // }
-          dropdownHeight += type === 'auto_suggestion' ? 220 : 192;
+        let dropdownHeight = viewMode ? 160 : 300; // Assume a fixed height or calculate based on content
+        if (countOnly) {
+          if (dropdownSelectedRef?.current)
+            dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
         }
 
         if (tab.length > 0) {
           if (tabRef?.current) dropdownHeight += tabRef?.current?.clientHeight;
         }
-        console.log(dropdownHeight);
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
         } else {
-          dropdownPosition.top = viewMode
-            ? inputRect.top + window.scrollY - dropdownHeight + 18 + topMargin
-            : inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
+          dropdownPosition.top =
+            inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
         }
-        setTimeout(() => {
-          setDropdownStyle({
-            ...dropdownPosition,
-          });
-        }, 100);
+
+        setDropdownStyle({
+          ...dropdownPosition,
+        });
       }
     };
 
@@ -144,7 +139,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       return () => {
         window.removeEventListener('resize', adjustDropdownPosition);
       };
-    }, [selectedItems, expandArrowClick, dropOpen]);
+    }, [dropOpen, selectedItems, expandArrowClick]);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -231,7 +226,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      // setDropOpen(true);
+      setDropOpen(true);
       setSearchValue(value);
       handleChangeWithDebounce(value);
       if (!value) {
@@ -288,8 +283,9 @@ const AutoCompleteWithSelectedList = forwardRef<
         if (
           dropRef.current &&
           event.target instanceof Node &&
-          !dropRef.current.contains(event.target) &&
-          event.target.nodeName !== 'svg'
+          !dropRef.current.contains(event.target)
+          // &&
+          // event.target.nodeName !== "svg"
         ) {
           setTimeout(() => {
             setDropOpen(false);
@@ -301,7 +297,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       window.addEventListener('scroll', handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto '
+        'div[style*="overflow"], .overflow-auto ,overflow-y-auto overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener('scroll', handleClickOutside as any)
@@ -366,7 +362,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         if (countOnly) {
           setTimeout(() => {
             if (inputSearchRef.current) inputSearchRef.current.focus();
-          }, 100);
+          }, 10);
         } else {
           if (inputRef.current) inputRef.current.focus();
         }
@@ -396,13 +392,11 @@ const AutoCompleteWithSelectedList = forwardRef<
             .join(', ')
         : '';
 
-    const handleDropOpen = async (e: any) => {
-      e.stopPropagation();
+    const handleDropOpen = (e: any) => {
       if (!dropOpen) setDropOpen(true);
     };
 
     const handleDropClose = (e: any) => {
-      e.stopPropagation();
       if (dropOpen) setDropOpen(false);
     };
 
@@ -614,14 +608,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             ReactDOM.createPortal(
               <div
                 ref={dropRef}
-                style={{
-                  ...dropdownStyle,
-                  minHeight: viewMode
-                    ? 160
-                    : type === 'auto_suggestion'
-                    ? 164
-                    : 192,
-                }}
+                style={{ ...dropdownStyle, minHeight: viewMode ? 100 : 192 }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? 'qbs-dropdown-selected-preview' : ''
                 } ${viewMode && selectedItems?.length === 0 ? 'hidden' : ''}`}
@@ -702,20 +689,13 @@ const AutoCompleteWithSelectedList = forwardRef<
                     )}
                 </div>
                 <>
-                  {/* {countOnly && selectedItems?.length > 0 && ( */}
-                  <>
-                    <div
-                      style={{
-                        minHeight: viewMode ? 160 : 192,
-                        maxHeight: viewMode ? 160 : 192,
-                      }}
-                      className={`qbs-expandable-container qbs-dropdown-selected-container`}
-                      ref={dropdownSelectedRef}
-                    >
-                      {selectedItems?.length > 0 ? (
-                        <div
-                          className={`qbs-flex qbs-w-full qbs-text-xs items-center`}
-                        >
+                  {countOnly && selectedItems?.length > 0 && (
+                    <>
+                      <div
+                        className={`qbs-expandable-container qbs-dropdown-selected-container`}
+                        ref={dropdownSelectedRef}
+                      >
+                        <div className={`qbs-flex qbs-w-full qbs-text-xs`}>
                           <div className="qbs-selected-lbs qbs-flex-grow">
                             Selected Items
                           </div>
@@ -728,33 +708,27 @@ const AutoCompleteWithSelectedList = forwardRef<
                             Clear all
                           </div>
                         </div>
-                      ) : (
-                        <div className="w-full flex items-center justify-center">
-                          {' '}
-                          No Items Selected
-                        </div>
-                      )}
 
-                      {getSelectedItems(true)}
+                        {getSelectedItems(true)}
 
-                      <>
-                        {selectedItems?.length > itemCount &&
-                          showAllSelected && (
-                            <div className="qbs-readmore-collapse">
-                              <div
-                                className="qbs-more-collapse"
-                                onClick={() => {
-                                  handleCollapseArrowClick();
-                                }}
-                              >
-                                <DropArrow className={`icon-button-rotate`} />
+                        <>
+                          {selectedItems?.length > itemCount &&
+                            showAllSelected && (
+                              <div className="qbs-readmore-collapse">
+                                <div
+                                  className="qbs-more-collapse"
+                                  onClick={() => {
+                                    handleCollapseArrowClick();
+                                  }}
+                                >
+                                  <DropArrow className={`icon-button-rotate`} />
+                                </div>
                               </div>
-                            </div>
-                          )}
-                      </>
-                    </div>
-                  </>
-                  {/* )} */}
+                            )}
+                        </>
+                      </div>
+                    </>
+                  )}
                 </>
               </div>,
               document.body

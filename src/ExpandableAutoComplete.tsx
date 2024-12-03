@@ -262,7 +262,7 @@ const ExpandableAutoComplete = forwardRef<
       window.addEventListener("scroll", handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto'
+        'div[style*="overflow"], .overflow-auto ,overflow-y-auto overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener("scroll", handleClickOutside as any)
