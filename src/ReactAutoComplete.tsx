@@ -16,6 +16,7 @@ type valueProps = {
   param2?: string | number | null;
   param3?: string | number | null;
   param4?: string | number | null;
+  from?: number
 };
 interface AutoSuggestionInputProps {
   id?: string;
@@ -148,7 +149,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     handleValChange(value);
     if (!value) {
       setInputValue('');
-      onChange({ id: undefined, name: '' });
+      onChange({ id: undefined, name: '', from: 2 });
     }
   };
 
@@ -156,7 +157,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     debounce(
       (value: string) => {
         setDropOpen(true);
-        onChange({ id: undefined, name: '' });
+        onChange({ id: undefined, name: '', from: 1 });
         if (value.trim() === '' && type === 'auto_complete') {
           setSuggestions([]);
           if (autoFilter) {
@@ -327,7 +328,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       const mainElement = document.querySelector('main');
       mainElement?.addEventListener('scroll', handleScroll);
 
-      const gridElements = document.querySelectorAll('.k-grid-content, .overflow-auto');
+      const gridElements = document.querySelectorAll('.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto');
       gridElements.forEach((gridElement: any) => {
         gridElement.addEventListener('scroll', handleScroll);
       });
@@ -349,7 +350,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const handleClear = () => {
     setDropOpen(false);
     setInputValue('');
-    onChange({ id: undefined, name: '' });
+    onChange({ id: undefined, name: '', from: 3 });
     onLabelClick();
   };
 
@@ -517,7 +518,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <ul
-          className=" absolute h-auto max-h-40 pl-[10px] overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
+          className=" absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
           style={dropPosition}
         >
           {filteredData?.length > 0 ? (
@@ -528,7 +529,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                     value?.id === suggestion?.id
                       ? 'bg-blue-navy text-white'
                       : 'hover:bg-table-hover'
-                  } cursor-pointer p-1  text-xxs ps-3.5`}
+                  } cursor-pointer p-1  text-xxs ps-3.5 pl-[10px]`}
                   key={suggestion?.id}
                   data-testid={suggestion.name}
                   onClick={() => handleSuggestionClick(suggestion)}

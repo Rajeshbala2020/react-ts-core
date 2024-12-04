@@ -232,7 +232,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      setDropOpen(true);
+      setVisibleDrop();
       setSearchValue(value);
       handleChangeWithDebounce(value);
       if (!value) {
@@ -242,7 +242,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
     const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      setDropOpen(true);
+      setVisibleDrop();
       setSearchValue(value);
       handleChangeWithDebounce(value);
     };
@@ -303,7 +303,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       window.addEventListener('scroll', handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto ,overflow-y-auto overflow-x-auto'
+        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener('scroll', handleClickOutside as any)
@@ -360,7 +360,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const handleOnClick = () => {
       (!disabled && !readOnly && !expandable && !dropOpen) || viewMode
-        ? setDropOpen(true)
+        ? setVisibleDrop()
         : '';
     };
     const onInputFocus = () => {
@@ -399,12 +399,16 @@ const AutoCompleteWithSelectedList = forwardRef<
         : '';
 
     const handleDropOpen = (e: any) => {
+      setVisibleDrop()
+    };
+
+    const setVisibleDrop = () => {
       setVisible(false);
       if (!dropOpen) setDropOpen(true);
       setTimeout(() => {
         setVisible(true);
-      }, 100);
-    };
+      }, 200);
+    }
 
     const handleDropClose = (e: any) => {
       if (dropOpen) setDropOpen(false);
@@ -620,6 +624,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                 style={{
                   ...dropdownStyle,
                   minHeight: viewMode ? 100 : 192,
+                  visibility: visible ? 'visible' : 'hidden',
                 }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? 'qbs-dropdown-selected-preview' : ''

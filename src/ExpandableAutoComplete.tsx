@@ -262,7 +262,7 @@ const ExpandableAutoComplete = forwardRef<
       window.addEventListener("scroll", handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto ,overflow-y-auto overflow-x-auto'
+        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener("scroll", handleClickOutside as any)
@@ -338,6 +338,12 @@ const ExpandableAutoComplete = forwardRef<
 
     const handleDropClose = (e: any) => {
       if (dropOpen) setDropOpen(false);
+    };
+
+    const handleClearSelected = () => {
+      setSelectedItems([]);
+      if (isMultiple) onChange([]);
+      else onChange({ [descId]: '', [desc]: '' });
     };
 
     return (
@@ -445,6 +451,15 @@ const ExpandableAutoComplete = forwardRef<
               data-testid="custom-autocomplete"
             />
           </div>
+
+          {selectedItems?.length > 1 && (
+            <div
+              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 bottom-1`}
+              onClick={handleClearSelected}
+            >
+              Clear all
+            </div>
+          )}
 
           {/* Icons for Clearing Input or Toggling Dropdown */}
 
