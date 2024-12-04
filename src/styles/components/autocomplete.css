@@ -105,7 +105,11 @@ body * {
   border-radius: 8px;
   background: #fff;
   box-shadow: 0px 8px 20px 0px rgba(0, 0, 0, 0.15);
-  transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+  transform: translateY(0); /* Default position */
+  transition: transform 0.3s ease-in-out, opacity 0.3s ease-in-out;
+  opacity: 1;
+
+  /* Ensure content doesn't overflow during transition */
 }
 .qbs-autocomplete-suggestions.bottom {
   top: 100%; /* Position below the input */

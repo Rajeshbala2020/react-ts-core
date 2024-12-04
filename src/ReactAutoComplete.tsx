@@ -517,7 +517,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <ul
-          className=" absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
+          className=" absolute h-auto max-h-40 pl-[10px] overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
           style={dropPosition}
         >
           {filteredData?.length > 0 ? (

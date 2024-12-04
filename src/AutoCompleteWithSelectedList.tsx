@@ -85,6 +85,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [expandArrowClick, setExpandArrowClick] = useState<
       number | undefined
     >(1);
+    const [visible, setVisible] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState<number>(currentTab);
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
@@ -125,10 +126,15 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
         }
-
-        setDropdownStyle({
-          ...dropdownPosition,
-        });
+        // setDropdownStyle({
+        //   ...dropdownPosition,
+        // });
+        setDropdownStyle((prevStyle) => ({
+          ...prevStyle,
+          transform: `translateY(${dropdownPosition.top}px)`,
+          left: inputRect.left + window.scrollX,
+          width: inputRect.width,
+        }));
       }
     };
 
@@ -366,7 +372,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         } else {
           if (inputRef.current) inputRef.current.focus();
         }
-        handleOnClick();
+        // handleOnClick();
       }
     };
 
@@ -393,7 +399,11 @@ const AutoCompleteWithSelectedList = forwardRef<
         : '';
 
     const handleDropOpen = (e: any) => {
+      setVisible(false);
       if (!dropOpen) setDropOpen(true);
+      setTimeout(() => {
+        setVisible(true);
+      }, 100);
     };
 
     const handleDropClose = (e: any) => {
@@ -415,7 +425,6 @@ const AutoCompleteWithSelectedList = forwardRef<
     const getSelectedRowLimit = () => {
       return selectedRowLimit * 33 + 5;
     };
-
     const getSelectedItems = (dropdown: boolean) => {
       return (
         <div
@@ -608,7 +617,10 @@ const AutoCompleteWithSelectedList = forwardRef<
             ReactDOM.createPortal(
               <div
                 ref={dropRef}
-                style={{ ...dropdownStyle, minHeight: viewMode ? 100 : 192 }}
+                style={{
+                  ...dropdownStyle,
+                  minHeight: viewMode ? 100 : 192,
+                }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? 'qbs-dropdown-selected-preview' : ''
                 } ${viewMode && selectedItems?.length === 0 ? 'hidden' : ''}`}
