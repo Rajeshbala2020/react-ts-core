@@ -232,7 +232,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      setVisibleDrop();
+      //setVisibleDrop();
       setSearchValue(value);
       handleChangeWithDebounce(value);
       if (!value) {
@@ -242,7 +242,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
     const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
-      setVisibleDrop();
+      //setVisibleDrop();
       setSearchValue(value);
       handleChangeWithDebounce(value);
     };
@@ -680,7 +680,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                         searchValue !== '' &&
                         async) ? (
                         <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-emp-h">
-                          <div className="qbs-pt-16">
+                          <div className="qbs-pt-16 qbs-autocomplete-loader">
                             <Spinner />
                           </div>
                         </div>
