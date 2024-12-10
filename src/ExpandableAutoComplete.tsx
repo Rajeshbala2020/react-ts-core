@@ -522,6 +522,7 @@ const ExpandableAutoComplete = forwardRef<
                       {isLoading ? (
                         <div
                           style={{ display: "flex", justifyContent: "center" }}
+                          className="qbs-autocomplete-loader"
                         >
                           <span>
                             <Spinner />
