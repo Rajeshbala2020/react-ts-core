@@ -6,6 +6,7 @@ import {
   AutoCompleteWithTreeStructure,
   ExpandableAutoComplete,
 } from '../src/index';
+import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
 import { treeDropData } from './store';
 
@@ -464,6 +465,16 @@ export default function App() {
               ]}
               onChange={(e) => console.log(e, 'onchange')}
               countOnly={true}
+            />
+          </div>
+          <div className="col-md-6">
+            <ModernTextArea
+              id="ids"
+              name="name"
+              placeholder="efsdf"
+              label="sdfsdfsd"
+              value=""
+              onChange={(e) => console.log(e, 'onchange')}
             />
           </div>
         </div>
