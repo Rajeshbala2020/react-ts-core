@@ -489,7 +489,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
         bottom = spaceBelow + 43;
       } else {
-        top = inputRect.top + window.scrollY + inputRect.height;
+        top = inputRect.top + window.scrollY + inputRect.height + 2;
       }
       setDropPosition({
         left: inputRect.left + window.scrollX,
@@ -508,7 +508,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     if (inputValue && filteredData?.length === 0 && !isLoading) {
       const timer = setTimeout(() => {
         setShowNoResults(true);
-      }, 300); // Delay in milliseconds
+      }, 500); // Delay in milliseconds
       return () => clearTimeout(timer);
     } else {
       setShowNoResults(false);
@@ -518,7 +518,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <ul
-          className=" absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
+          className="autocomplete-suggections absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
           style={dropPosition}
         >
           {filteredData?.length > 0 ? (
@@ -539,7 +539,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               ))}
             </>
           ) : (
-            showNoResults && (
+            showNoResults && !isLoading && (
               <li
                 className={`$ cursor-pointer p-1 rounded-sm text-xxs`}
                 onClick={handleClose}
