@@ -93,9 +93,32 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
             ' text-grey-dark border-input-light focus:border-blue-navy   focus:outline-none  focus:ring-0';
         }
         break;
+      //   case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
+      //     className += ` modern-input-label peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-6 z-1 origin-[0] px-0
+      // peer-placeholder-shown:translate-y-0 peer-placeholder-shown:top-[60%] peer-focus:top-2
+      // peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto  ${
+      //   isDisabled ? 'cursor-pointer' : 'cursor-text peer-focus:cursor-pointer'
+      // } ${
+      //       !isDisabled || !checkIsEmptyField()
+      //         ? 'active-input-label-bg'
+      //         : isDisabled && !checkIsEmptyField()
+      //         ? 'disabled-input-label-bg'
+      //         : ''
+      //     } ${
+      //       checkIsEmptyField()
+      //         ? 'modern-input-label-size'
+      //         : 'modern-input-peer-focus-label-size'
+      //     }`;
+
+      //     if (errors && errors[name]) {
+      //       className += ' text-error-light ';
+      //     } else {
+      //       className += ' text-grey-dark peer-focus:text-blue-navy';
+      //     }
+      //     break;
       case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
-        className += ` modern-input-label peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-6 z-1 origin-[0] px-0 
-    peer-placeholder-shown:translate-y-0 peer-placeholder-shown:top-[60%] peer-focus:top-2 
+        className += ` modern-input-label peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-2 z-1 origin-[0] px-0 
+    peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2
     peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto  ${
       isDisabled ? 'cursor-pointer' : 'cursor-text peer-focus:cursor-pointer'
     } ${
@@ -116,24 +139,7 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
           className += ' text-grey-dark peer-focus:text-blue-navy';
         }
         break;
-      // case 'label':
-      //   className += `modern-input-label   peer-focus:modern-input-peer-focus-label-size
-      //     px-0
-      //       absolute text-sm  duration-300 transform -translate-y-4  top-2 z-1 origin-[0]    peer-placeholder-shown:-translate-y-1 peer-placeholder-shown:top-[16px] peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
-      //         isDisabled
-      //           ? 'cursor-pointer'
-      //           : 'cursor-text peer-focus:cursor-pointer'
-      //       } ${!isDisabled || !checkIsEmptyField() ? 'bg-white' : ''} ${
-      //     checkIsEmptyField()
-      //       ? 'modern-input-label-size'
-      //       : 'modern-input-peer-focus-label-size'
-      //   } `;
-      //   if (errors && errors[name]) {
-      //     className += ' text-error-light ';
-      //   } else {
-      //     className += ' text-grey-dark peer-focus:text-blue-navy';
-      //   }
-      //   break;
+
       case 'message':
         className = ' text-error-icon ';
         break;

@@ -1,11 +1,6 @@
 import React, { useState } from 'react';
 
-import {
-  AutoComplete,
-  AutoCompleteWithSelectedList,
-  AutoCompleteWithTreeStructure,
-  ExpandableAutoComplete,
-} from '../src/index';
+import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTreeStructure, ExpandableAutoComplete } from '../src/index';
 import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
 import { treeDropData } from './store';
