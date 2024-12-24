@@ -22,7 +22,7 @@ const TreeNode: React.FC<any> = ({
 
   const handleCheckbox = (e: any, dataItem: any) => {
     const { checked } = e.target;
-    updateNode(dataItem[descId], checked);
+    updateNode(dataItem[descId], checked, dataItem);
   };
   return (
     <div>

@@ -15,11 +15,11 @@ export function buildTree(data: any[], idField: string, parentField: string) {
       // Find the parent and add the node as a child
       const parent = nodeMap.get(node[parentField]);
       if (parent) {
-        parent.children.push(node);
+        parent.children.push({ ...node, checked: false });
       }
     } else {
       // No parentId means it's a root node
-      tree.push(node);
+      tree.push({ ...node, checked: false });
     }
   });
 

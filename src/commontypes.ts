@@ -58,11 +58,12 @@ export interface AutoSuggestionInputProps {
   tab?: TabPops[];
   clearTabSwitch?: boolean;
   errorFlag?: boolean;
-  selectedRowLimit?: number // used for showing selected items rows limit, will show scroll if more items added
-  topMargin?: number // adjust dropdown postion manually if any overlap issue
-  currentTab?: number // current active tab
-  selectedLabel?: string // Able to change the "Item selected" label
-  viewMode?: boolean // show only selected items
+  selectedRowLimit?: number; // used for showing selected items rows limit, will show scroll if more items added
+  topMargin?: number; // adjust dropdown postion manually if any overlap issue
+  currentTab?: number; // current active tab
+  selectedLabel?: string; // Able to change the "Item selected" label
+  viewMode?: boolean; // show only selected items
+  handleUpdateParent?: (val:boolean) => void;
 }
 export interface IconsProps {
   name: any;
