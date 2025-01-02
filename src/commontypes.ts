@@ -63,7 +63,7 @@ export interface AutoSuggestionInputProps {
   currentTab?: number; // current active tab
   selectedLabel?: string; // Able to change the "Item selected" label
   viewMode?: boolean; // show only selected items
-  handleUpdateParent?: (val:boolean) => void;
+  handleUpdateParent?: (val: boolean, level?: string) => void;
 }
 export interface IconsProps {
   name: any;

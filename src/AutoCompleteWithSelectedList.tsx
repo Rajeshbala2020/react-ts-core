@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps, TabPops, ValueProps } from './commontypes';
@@ -66,15 +59,16 @@ const AutoCompleteWithSelectedList = forwardRef<
       currentTab = 0,
       selectedLabel = '',
       viewMode = false,
+      handleUpdateParent,
     },
     ref
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const dropdownSelectedRef = useRef<HTMLDivElement>(null);
     const tabRef = useRef<HTMLUListElement>(null);
+    const dropLevelRef = useRef<string>('bottom');
     // State Hooks Section
     const [isInitialRender, setIsInitialRender] = useState(true);
-
     const [inputValue, setInputValue] = useState<string>(value);
     const [searchValue, setSearchValue] = useState<string>('');
     const [searchOldValue, setSearchOldValue] = useState<string>('');
@@ -120,9 +114,11 @@ const AutoCompleteWithSelectedList = forwardRef<
           if (tabRef?.current) dropdownHeight += tabRef?.current?.clientHeight;
         }
         if (spaceBelow >= dropdownHeight) {
+          dropLevelRef.current = 'bottom';
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
         } else {
+          dropLevelRef.current = 'top';
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
         }
@@ -243,8 +239,9 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       //setVisibleDrop();
-      setSearchValue(value);
-      handleChangeWithDebounce(value);
+      const trimStart = value.trimStart();
+      setSearchValue(trimStart);
+      handleChangeWithDebounce(trimStart);
     };
 
     const handleClear = () => {
@@ -399,7 +396,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         : '';
 
     const handleDropOpen = (e: any) => {
-      setVisibleDrop()
+      setVisibleDrop();
     };
 
     const setVisibleDrop = () => {
@@ -408,7 +405,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       setTimeout(() => {
         setVisible(true);
       }, 200);
-    }
+    };
 
     const handleDropClose = (e: any) => {
       if (dropOpen) setDropOpen(false);
@@ -511,7 +508,9 @@ const AutoCompleteWithSelectedList = forwardRef<
         </ul>
       );
     };
-
+    useEffect(() => {
+      handleUpdateParent?.(dropOpen, dropLevelRef.current)
+    }, [dropOpen, dropLevelRef.current]);
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (

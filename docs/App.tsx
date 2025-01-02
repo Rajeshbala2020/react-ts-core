@@ -139,9 +139,9 @@ export default function App() {
               type="custom_select"
               // async
               desc="name"
-              isMultiple={true}
+              isMultiple={false}
               flatArray={true}
-              singleSelect={false}
+              singleSelect={true}
               expandable={true}
               isTreeDropdown={true}
               descId="id"

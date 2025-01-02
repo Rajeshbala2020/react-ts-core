@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -80,7 +73,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
     const [dropDownData, setDropDownData] = useState<ValueProps[]>(data);
     const inputRef = useRef(null);
     const dropRef = useRef(null);
-
+    const dropLevelRef = useRef<string>('bottom');
     useEffect(() => {
       if (data) {
         if (flatArray) {
@@ -91,6 +84,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       }
     }, [data, dropOpen]);
     useImperativeHandle(ref, () => inputRef.current);
+
     const [dropdownStyle, setDropdownStyle] = useState({
       top: 0,
       left: 0,
@@ -113,9 +107,11 @@ const AutoCompleteWithTreeStructure = forwardRef<
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
+          dropLevelRef.current = 'bottom';
         } else {
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73;
+          dropLevelRef.current = 'top';
         }
 
         setDropdownStyle({
@@ -210,8 +206,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
       }
     };
     useEffect(() => {
-      handleUpdateParent?.(dropOpen);
-    }, [dropOpen]);
+      handleUpdateParent?.(dropOpen, dropLevelRef.current)
+    }, [dropOpen, dropLevelRef.current]);
     const generateClassName = useCallback(() => {
       return `qbs-textfield-default ${className} ${
         errors && errors?.message ? 'textfield-error' : 'tree-textfield'
@@ -576,7 +572,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
               <ul
                 ref={dropRef}
                 style={{ ...dropdownStyle, minHeight: 192 }}
-                className={`qbs-autocomplete-suggestions`}
+                className={`qbs-autocomplete-suggestions `}
               >
                 {type == 'auto_suggestion' && !expandable && (
                   <div
@@ -600,7 +596,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                     gap: isTreeDropdown ? '8px' : '0',
                     minHeight: isTreeDropdown ? '184px' : '0',
                   }}
-                  className={`qbs-autocomplete-suggestions-sub `}
+                  className={`qbs-autocomplete-suggestions-sub padding-class `}
                 >
                   {dropDownData?.length > 0 ? (
                     dropDownData.map((suggestion: any, idx: number) => (

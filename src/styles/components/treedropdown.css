@@ -6,7 +6,7 @@
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 1rem; /* Corresponds to gap-4 in Tailwind */
+  gap: 7px;
 }
 
 .qbs-tree-list-container-sub .no-children {
@@ -25,7 +25,7 @@
 }
 .qbs-tree-list-container-sub-container {
   display: flex;
-  gap: 0.5rem; /* Corresponds to gap-2 in Tailwind */
+  gap: 15px; /* Corresponds to gap-2 in Tailwind */
   padding: 0.5rem; /* Corresponds to p-2 in Tailwind */
   flex-direction: row; /* Corresponds to flex-row in Tailwind */
   width: 100%; /* Corresponds to w-full in Tailwind */

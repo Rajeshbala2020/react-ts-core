@@ -30,7 +30,7 @@ const TreeNode: React.FC<any> = ({
         <div
           className={`qbs-tree-list-container-sub ${
             node?.children?.length > 0 ? '' : 'no-children'
-          }`}
+          } `}
         >
           {/* Show an icon based on the expanded/collapsed state */}
 
