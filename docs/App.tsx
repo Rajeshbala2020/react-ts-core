@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTreeStructure, ExpandableAutoComplete } from '../src/index';
+import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete } from '../src/index';
 import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
 import { treeDropData } from './store';
@@ -85,14 +85,14 @@ export default function App() {
           }}
         >
           <div style={{ width: 300 }}>
-            <TextField
+            <ModernAutoComplete
               name="sample"
               label="TextField"
               id="id"
-              type="text"
-              adorementPosition="start"
+              type="auto_complete"
               placeholder="TextField"
               required
+              getData={getData}
               onChange={(e) => console.log(e, 'onchange')}
             />
           </div>
