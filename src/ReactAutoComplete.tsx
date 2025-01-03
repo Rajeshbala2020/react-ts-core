@@ -513,12 +513,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const [showNoResults, setShowNoResults] = useState(false);
 
   useEffect(() => {
-    if (
-      inputValue &&
-      filteredData?.length === 0 &&
-      !isLoading &&
-      showNoResults
-    ) {
+    if (inputValue && filteredData?.length === 0 && !isLoading) {
       const timer = setTimeout(() => {
         setShowNoResults(true);
       }, 500); // Delay in milliseconds
@@ -526,7 +521,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     } else {
       setShowNoResults(false);
     }
-  }, [inputValue, filteredData, isLoading]);
+  }, [inputValue, filteredData, isLoading, timerRef]);
+
   const setDropDown = () => {
     return (
       (filteredData?.length > 0 || showNoResults) && (
