@@ -90,7 +90,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
 
   const [isDisabled, setIsDisabled] = useState<boolean>(disabled);
   const [showClose, setShowClose] = useState(false);
-
+  const [showToolTip, setShowTooltip] = useState(false);
+  const [tooltipIsHovered, setTooltipIsHovered] = useState(false);
   const [suggestions, setSuggestions] = useState<any>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
@@ -513,7 +514,12 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const [showNoResults, setShowNoResults] = useState(false);
 
   useEffect(() => {
-    if (inputValue && filteredData?.length === 0 && !isLoading && timerRef.current === 1) {
+    if (
+      inputValue &&
+      filteredData?.length === 0 &&
+      !isLoading &&
+      timerRef.current === 1
+    ) {
       const timer = setTimeout(() => {
         setShowNoResults(true);
       }, 500); // Delay in milliseconds
@@ -593,7 +599,34 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       setShowClose(shouldShowClose);
     }
   }, [value, disabled, readOnly]);
+  useEffect(() => {
+    // Check if input content overflows
+    const checkOverflow = () => {
+      if (inputRef.current) {
+        const { scrollWidth, clientWidth } = inputRef.current;
+        setShowTooltip(scrollWidth > clientWidth);
+      }
+    };
 
+    if (inputRef.current) {
+      inputRef.current.addEventListener("input", checkOverflow);
+      checkOverflow(); // Initial check
+    }
+
+    return () => {
+      if (inputRef.current) {
+        inputRef.current.removeEventListener("input", checkOverflow);
+      }
+    };
+  }, [inputValue]);
+
+  const handleMouseEnter = () => {
+    setTooltipIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setTooltipIsHovered(false);
+  };
   return (
     <div
       className={` flex-grow  ${fullWidth ? "w-full" : "w-auto"}`}
@@ -611,12 +644,19 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
         )}
+        {tooltipIsHovered && showToolTip && !dropOpen && (
+          <div className={`tooltip-info`}>{inputValue}</div>
+        )}
 
         <div
           className={`flex relative ${fullWidth ? "w-full" : "w-auto"}`}
           style={{ width: width }}
         >
-          <div className="relative w-full">
+          <div
+            className="relative w-full"
+            onMouseEnter={() => handleMouseEnter()}
+            onMouseLeave={() => handleMouseLeave()}
+          >
             <input
               id={id}
               type="text"
