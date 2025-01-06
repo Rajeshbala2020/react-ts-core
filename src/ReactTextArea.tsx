@@ -124,10 +124,10 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
              ? 'cursor-pointer'
              : 'cursor-text peer-focus:cursor-pointer'
          } ${
-          !isDisabled || !checkIsEmptyField()
-            ? 'active-input-label-bg'
-            : isDisabled && !checkIsEmptyField()
+          isDisabled && !checkIsEmptyField()
             ? 'disabled-input-label-bg'
+            : !isDisabled || !checkIsEmptyField()
+            ? 'active-input-label-bg'
             : ''
         } ${
           checkIsEmptyField()
