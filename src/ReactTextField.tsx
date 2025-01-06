@@ -140,11 +140,11 @@ const TextField: React.FC<TextFieldProps> = ({
     peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto  ${
       isDisabled ? 'cursor-pointer' : 'cursor-text peer-focus:cursor-pointer'
     } ${
-          !isDisabled || !checkIsEmptyField()
-            ? 'active-input-label-bg'
-            : isDisabled && !checkIsEmptyField()
+          isDisabled && !checkIsEmptyField()
             ? 'disabled-input-label-bg'
-            : ''
+            : !isDisabled || !checkIsEmptyField()
+            ? 'active-input-label-bg'
+            :  ''
         } ${
           checkIsEmptyField()
             ? 'modern-input-label-size'

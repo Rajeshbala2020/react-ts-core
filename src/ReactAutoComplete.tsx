@@ -410,10 +410,10 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               ? "cursor-pointer"
               : "cursor-text peer-focus:cursor-pointer"
           } ${
-          !isDisabled || !checkIsEmptyField()
-            ? "active-input-label-bg"
-            : isDisabled && !checkIsEmptyField()
+          isDisabled && !checkIsEmptyField()
             ? "disabled-input-label-bg"
+            : !isDisabled || !checkIsEmptyField()
+            ? "active-input-label-bg"
             : ""
         } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
           isDisabled
