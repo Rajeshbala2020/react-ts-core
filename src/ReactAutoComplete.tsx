@@ -97,6 +97,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const adorementRef = useRef<HTMLDivElement>(null);
   const dropdownref = useRef<HTMLDivElement>(null);
   const dropBtnRef = useRef<HTMLButtonElement>(null);
+  const dropdownMenuRef = useRef<HTMLUListElement>(null);
   const timerRef = useRef<number>(0); // To fix the no results found issue on second type
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
@@ -529,10 +530,42 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     }
   }, [inputValue, filteredData, isLoading, timerRef.current]);
 
+  useEffect(() => {
+    const idleTimeoutPopup = document.getElementById("confirm-popup");
+    const dropdownMenu = dropdownMenuRef.current;
+
+    if (!idleTimeoutPopup || !dropdownMenu) {
+      console.warn("Idle timeout popup or dropdown menu not found.");
+      return;
+    }
+
+    // Observer for idle timeout popup visibility
+    const observer = new MutationObserver(() => {
+      const isPopupVisible =
+        idleTimeoutPopup.style.display !== "none" &&
+        idleTimeoutPopup.style.visibility !== "hidden";
+      if (isPopupVisible && dropOpen) {
+        dropdownMenu.style.zIndex = "40";
+      } else {
+        dropdownMenu.style.zIndex = "50"; // Reset to default or previous value
+      }
+    });
+
+    // Start observing the popup for changes in attributes
+    observer.observe(idleTimeoutPopup, {
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+
+    // Cleanup on component unmount
+    return () => observer.disconnect();
+  }, [dropOpen]);
+
   const setDropDown = () => {
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <ul
+          ref={dropdownMenuRef}
           className="autocomplete-suggections absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
           style={dropPosition}
         >
@@ -627,6 +660,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const handleMouseLeave = () => {
     setTooltipIsHovered(false);
   };
+
   return (
     <div
       className={` flex-grow  ${fullWidth ? "w-full" : "w-auto"}`}
