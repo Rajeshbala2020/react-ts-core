@@ -283,12 +283,12 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     useEffect(() => {
       const handleClickOutside = (event: any) => {
+      
         if (
           dropRef.current &&
           event.target instanceof Node &&
-          !dropRef.current.contains(event.target)
-          // &&
-          // event.target.nodeName !== "svg"
+          !dropRef.current.contains(event.target) &&
+          event.target?.id !== 'drop-arrow-icon'
         ) {
           setTimeout(() => {
             setDropOpen(false);
@@ -509,7 +509,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       );
     };
     useEffect(() => {
-      handleUpdateParent?.(dropOpen, dropLevelRef.current)
+      handleUpdateParent?.(dropOpen, dropLevelRef.current);
     }, [dropOpen, dropLevelRef.current]);
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>

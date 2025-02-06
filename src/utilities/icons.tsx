@@ -3,6 +3,7 @@ import React from 'react';
 export const DropArrow: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   return (
     <svg
+      id="drop-arrow-icon"
       xmlns="http://www.w3.org/2000/svg"
       fill="none"
       viewBox="0 0 24 24"

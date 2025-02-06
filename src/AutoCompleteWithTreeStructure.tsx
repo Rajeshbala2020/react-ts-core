@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -206,7 +213,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       }
     };
     useEffect(() => {
-      handleUpdateParent?.(dropOpen, dropLevelRef.current)
+      handleUpdateParent?.(dropOpen, dropLevelRef.current);
     }, [dropOpen, dropLevelRef.current]);
     const generateClassName = useCallback(() => {
       return `qbs-textfield-default ${className} ${
@@ -233,9 +240,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
         if (
           dropRef.current &&
           event.target instanceof Node &&
-          !dropRef.current.contains(event.target)
-          // &&
-          // event.target.nodeName !== 'svg'
+          !dropRef.current.contains(event.target) &&
+          event.target?.id !== 'drop-arrow-icon'
         ) {
           setTimeout(() => {
             setDropOpen(false);

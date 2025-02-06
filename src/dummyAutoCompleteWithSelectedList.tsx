@@ -289,7 +289,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropRef.current &&
           event.target instanceof Node &&
           !dropRef.current.contains(event.target) &&
-          event.target.nodeName !== 'svg'
+          event.target?.id !== 'drop-arrow-icon'
         ) {
           setTimeout(() => {
             setDropOpen(false);
