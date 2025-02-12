@@ -223,6 +223,14 @@ body * {
   color: #e76458;
 }
 
+.qbs-dropdown-selected-container .qbs-done-link,
+.qbs-expandable-container .qbs-done-link {
+  color: #336cfc;
+  margin-left: 10px;
+}
+
+
+
 .qbs-textfield-default.expandable {
   height: auto;
   border: none;

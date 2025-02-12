@@ -723,6 +723,14 @@ const AutoCompleteWithSelectedList = forwardRef<
                           >
                             Clear all
                           </div>
+                          <div
+                            className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${
+                              viewMode ? 'hidden' : ''
+                            }`}
+                            onClick={()=>{setDropOpen(false)}}
+                          >
+                            Done
+                          </div>
                         </div>
 
                         {getSelectedItems(true)}
