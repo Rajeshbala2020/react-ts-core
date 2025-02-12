@@ -64,6 +64,8 @@ export interface AutoSuggestionInputProps {
   selectedLabel?: string; // Able to change the "Item selected" label
   viewMode?: boolean; // show only selected items
   handleUpdateParent?: (val: boolean, level?: string) => void;
+  isSeachable?: boolean; // show search input
+  customDropOffset?: number; // adjust dropdown postion manually if any overlap issue
 }
 export interface IconsProps {
   name: any;

@@ -1,22 +1,16 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
+import DropdownList from './components/DropdownList';
 import InputActions from './components/InputActions';
 import TreeNode from './components/TreeNode';
 import { useSuggestions } from './utilities/autosuggestions';
 import { buildTree } from './utilities/convertFlatArraytoTreeStructure';
-import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
 import { default as Tooltip } from './utilities/expandableTootltip';
 import { Search, Spinner } from './utilities/icons';
+import useDynamicHeight from './utilities/useDynamicHeight';
 
 type ValueProps = {
   [key: string]: string;
@@ -64,6 +58,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
       parentField = 'parentId',
       errorFlag,
       handleUpdateParent,
+      isSeachable = false,
+      customDropOffset=300
     },
     ref
   ) => {
@@ -150,12 +146,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
       // nextBlock
     );
 
-    // Adding debounce to avoid making API calls on every keystroke
-    const handleChangeWithDebounce = debounce((value) => {
-      if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
-        handlePickSuggestions(value, 1);
-      }
-    }, 1000);
     const isSelected = (
       item: ValueProps,
       selectedItems: ValueProps[] | string
@@ -183,7 +173,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       const { value } = e.target;
       setDropOpen(true);
       setSearchValue(value);
-      handleChangeWithDebounce(value);
+      // handleChangeWithDebounce(value);
       if (!value) {
         setInputValue('');
         // onChange({ [descId]: '', [desc]: '' });
@@ -193,7 +183,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       const { value } = e.target;
       setDropOpen(true);
       setSearchValue(value);
-      handleChangeWithDebounce(value);
+      searchPortsFlat(value);
     };
 
     const handleBlur = () => {
@@ -323,28 +313,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
       let checkedNodes: any[] = []; // Array to store the entire checked node objects
 
       if (isMultiple) {
-        // Multi-select logic: update only the clicked node
-        // newTreeData = updateTreeNode(dropDownData, id, (node) => {
-        //   node.checked = checked;
-
-        //   // Update the checked nodes array
-        //   if (checked) {
-        //     checkedNodes.push(node); // Add the entire node if checked
-        //   } else {
-        //     // Remove the node from the array if unchecked
-        //     checkedNodes = checkedNodes.filter(
-        //       (checkedNode) => checkedNode[descId] !== node[descId]
-        //     );
-        //   }
-        // });
-
-        // // Find all checked nodes in the newTreeData (in case you need all checked nodes at any point)
-        // checkedNodes = [];
-        // newTreeData.forEach((node) => {
-        //   getCheckedNodes(node, checkedNodes); // Recursively collect checked nodes
-        // });
-        // setSelectedItems(checkedNodes);
-        // onChange(checkedNodes);
         let selectedData = [...selectedItems];
         if (checked) {
           selectedData.push(dataItem);
@@ -438,17 +406,73 @@ const AutoCompleteWithTreeStructure = forwardRef<
         </div>
       );
     };
+    const [filteredData, setFilteredData] = useState([]);
+    const searchPortsFlat = (query: string) => {
+      const lowerQuery = query.toLowerCase();
+      const result: any[] = [];
 
-    const handleerror = (error: any) => {
-      if (
-        (errors && errors.message === 'required') ||
-        errors.message === 'Required'
-      ) {
-        return `${label} is required`;
+      const searchRecursive = (port: any) => {
+        if (port[desc].toLowerCase().includes(lowerQuery)) {
+          result.push({
+            [descId]: port[descId],
+            [desc]: port[desc],
+            parentId: port.parentId,
+          });
+        }
+        port.children?.forEach(searchRecursive);
+      };
+
+      dropDownData.forEach(searchRecursive);
+      result;
+      setFilteredData(result);
+    };
+
+    const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
+      if (isMultiple) {
+        setSelectedItems((prev) => {
+          const isAdded = prev.some(
+            (item) => item[descId] === suggestion[descId]
+          );
+          if (isAdded) {
+            return prev.filter((item) => item[descId] !== suggestion[descId]);
+          } else {
+            return [...prev, suggestion];
+          }
+        });
       } else {
-        return error?.message;
+        setInputValue(suggestion[desc]);
+        setSearchValue('');
+        onChange(suggestion);
+        setDropOpen(false);
+      }
+    }, []);
+    const handleMultiSelect = (e: any, suggestion: ValueProps) => {
+      const { checked } = e.target;
+      if (isMultiple) {
+        if (checked) {
+          setSelectedItems((prev) => [...prev, suggestion]);
+        } else {
+          setSelectedItems((prev) => {
+            return prev.filter(
+              (item, i) => item[descId] !== suggestion[descId]
+            );
+          });
+        }
+      } else {
+        if (checked) {
+          setInputValue(suggestion[desc]);
+          onChange(suggestion);
+        } else {
+          setInputValue('');
+        }
       }
     };
+    useDynamicHeight(
+      '.qbs-autocomplete-suggestions-sub',
+      customDropOffset ?? 300,
+      dropOpen
+    );
+
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (
@@ -537,7 +561,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
               value={
                 type === 'auto_suggestion' && !expandable
                   ? inputValue
-                  : searchValue || inputValue
+                  : inputValue
               }
               onChange={handleChange}
               // onBlur={handleBlur}
@@ -580,7 +604,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                 style={{ ...dropdownStyle, minHeight: 192 }}
                 className={`qbs-autocomplete-suggestions `}
               >
-                {type == 'auto_suggestion' && !expandable && (
+                {isSeachable && (
                   <div
                     style={{ position: 'relative' }}
                     className="react-core-ts-search-container"
@@ -604,7 +628,22 @@ const AutoCompleteWithTreeStructure = forwardRef<
                   }}
                   className={`qbs-autocomplete-suggestions-sub padding-class `}
                 >
-                  {dropDownData?.length > 0 ? (
+                  {searchValue ? (
+                    filteredData.map((suggestion: ValueProps, idx: number) => (
+                      <DropdownList
+                        idx={idx}
+                        suggestion={suggestion}
+                        isSelected={isSelected}
+                        handleSuggestionClick={handleSuggestionClick}
+                        handleMultiSelect={handleMultiSelect}
+                        selected={selected}
+                        isMultiple={isMultiple}
+                        singleSelect={singleSelect}
+                        desc={desc}
+                        key={suggestion[descId]}
+                      />
+                    ))
+                  ) : dropDownData?.length > 0 ? (
                     dropDownData.map((suggestion: any, idx: number) => (
                       <TreeNode
                         key={suggestion[descId]}
