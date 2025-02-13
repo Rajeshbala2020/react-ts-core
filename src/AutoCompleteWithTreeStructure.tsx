@@ -59,7 +59,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       errorFlag,
       handleUpdateParent,
       isSeachable = false,
-      customDropOffset=300
+      customDropOffset = 300,
     },
     ref
   ) => {
@@ -469,7 +469,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
     };
     useDynamicHeight(
       '.qbs-autocomplete-suggestions-sub',
-      customDropOffset ?? 300,
+      customDropOffset ?? 200,
       dropOpen
     );
 
