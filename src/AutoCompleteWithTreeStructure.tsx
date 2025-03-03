@@ -70,6 +70,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
       showIcon,
       handleShowIcon,
       hasDisableSelection,
+      inputType = 'text',
+      onFocusTreeDropdown,
     },
     ref
   ) => {
@@ -600,6 +602,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
             className={`qbs-textfield-expandable ${
               !expandable ? 'qbs-normal' : ''
             }`}
+            style={{ width: inputType === 'text' ? '100%' : 'auto' }}
             data-value={
               selectedItems?.length > 0 || searchValue
                 ? searchValue
@@ -607,29 +610,59 @@ const AutoCompleteWithTreeStructure = forwardRef<
             }
             onClick={() => onInputFocus()}
           >
-            <input
-              id={id}
-              ref={inputRef}
-              type="text"
-              value={
-                type === 'auto_suggestion' && !expandable
-                  ? inputValue
-                  : inputValue
-              }
-              onChange={handleChange}
-              // onBlur={handleBlur}
-              onFocus={onFocus}
-              onClick={() => handleOnClick()}
-              className={generateClassName()}
-              placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
-              readOnly={
-                readOnly ||
-                type === 'custom_select' ||
-                (type == 'auto_suggestion' && !expandable)
-              }
-              disabled={disabled}
-              data-testid="custom-autocomplete"
-            />
+            {inputType === 'text' ? (
+              <input
+                id={id}
+                ref={inputRef}
+                type="text"
+                value={
+                  type === 'auto_suggestion' && !expandable
+                    ? inputValue
+                    : inputValue
+                }
+                onChange={handleChange}
+                // onBlur={handleBlur}
+                onFocus={onFocus}
+                onClick={() => handleOnClick()}
+                className={generateClassName()}
+                placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+                readOnly={
+                  readOnly ||
+                  type === 'custom_select' ||
+                  (type == 'auto_suggestion' && !expandable)
+                }
+                disabled={disabled}
+                data-testid="custom-autocomplete"
+              />
+            ) : (
+              <textarea
+                id={id}
+                ref={inputRef}
+                value={inputValue}
+                // onChange={handleChange}
+                onFocus={onFocusTreeDropdown}
+                onClick={() => handleOnClick()}
+                className={`${generateClassName()} resize-none overflow-y-auto`}
+                placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+                readOnly={
+                  readOnly ||
+                  type === 'custom_select' ||
+                  (type == 'auto_suggestion' && !expandable)
+                }
+                disabled={disabled}
+                data-testid="custom-autocomplete"
+                rows={4} // Set initial rows to 4
+                style={{
+                  height: 'auto', // Allow it to expand
+                  minHeight: '80px', // Approx. 4 lines of text
+                  maxHeight: '160px', // Restrict max height to prevent large expansion
+                  overflowY: 'auto', // Add scrollbar when exceeding 4 lines
+                  wordWrap: 'break-word', // Ensure long words wrap correctly
+                  whiteSpace: 'pre-wrap', // Preserve line breaks & spacing
+                  paddingRight:'43px !important'
+                }}
+              />
+            )}
           </div>
 
           {/* Icons for Clearing Input or Toggling Dropdown */}

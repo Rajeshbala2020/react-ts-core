@@ -40,6 +40,7 @@
   width: 100%; /* Corresponds to w-full in Tailwind */
   color: #3d414a;
 }
+
 .qbs-tree-list-container-sub-container:hover {
   color: #003c71;
   background-color: rgba(141, 194, 240, 0.15) !important;
@@ -54,7 +55,9 @@
   color: #003c71;
   /* background-color: rgba(141, 194, 240, 0.15) !important; */
 }
-.qbs-tree-list-container-sub-container.checked {
+
+.qbs-tree-list-container-sub-container.checked,
+.qbs-tree-list-container-sub-container-hideicon.checked {
   color: #003c71;
   background-color: rgba(
     141,
@@ -63,6 +66,7 @@
     0.15
   ) !important; /* Corresponds to bg-green-200 in Tailwind */
 }
+
 .marginLeft {
   margin-left: 28px; /* Corresponds to ml-2 in Tailwind */
 }

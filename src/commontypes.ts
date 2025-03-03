@@ -69,6 +69,10 @@ export interface AutoSuggestionInputProps {
   showIcon?: boolean;
   handleShowIcon?: (node: any) => boolean;
   hasDisableSelection?: (node: any) => boolean;
+  onFocusTreeDropdown?: (
+    e: React.FocusEvent<HTMLTextAreaElement, Element>
+  ) => void;
+  inputType?: 'text' | 'textarea';
 }
 export interface IconsProps {
   name: any;
@@ -144,6 +148,7 @@ export interface TextFieldProps {
   onCreatableChange?: (e: string[]) => void;
   infoTitle?: string;
   showInfo?: boolean;
+  inputType?: 'text' | 'textarea';
 }
 
 export interface TextAreaProps {
