@@ -66,6 +66,9 @@ export interface AutoSuggestionInputProps {
   handleUpdateParent?: (val: boolean, level?: string) => void;
   isSeachable?: boolean; // show search input
   customDropOffset?: number; // adjust dropdown postion manually if any overlap issue
+  showIcon?: boolean;
+  handleShowIcon?: (node: any) => boolean;
+  hasDisableSelection?: (node: any) => boolean;
 }
 export interface IconsProps {
   name: any;

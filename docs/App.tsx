@@ -1,6 +1,12 @@
 import React, { useState } from 'react';
 
-import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete } from '../src/index';
+import {
+  AutoComplete,
+  AutoCompleteWithSelectedList,
+  AutoCompleteWithTreeStructure,
+  ExpandableAutoComplete,
+  ModernAutoComplete,
+} from '../src/index';
 import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
 import { treeDropData } from './store';
@@ -140,21 +146,21 @@ export default function App() {
               type="custom_select"
               // async
               desc="name"
-              isMultiple={true}
+              isMultiple={false}
               flatArray={true}
-              singleSelect={false}
+              singleSelect={true}
               expandable={true}
               isTreeDropdown={true}
               descId="id"
               data={treeDropData}
               paginationEnabled={false}
+              showIcon={true}
               initialLoad={false}
               itemCount={5}
               // nextBlock={nexBlock}
               placeholder="Auto Suggestion"
-              selectedItems={[{ name: 'test', id: '1' }]}
               // getData={getData}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => {}}
             />
           </div>
 
@@ -427,7 +433,7 @@ export default function App() {
               name="sample"
               label="TextField"
               id="id"
-              type="text"
+              type="number"
               adorementPosition="start"
               placeholder="TextField"
               required

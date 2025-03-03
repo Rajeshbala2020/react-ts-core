@@ -229,8 +229,6 @@ body * {
   margin-left: 10px;
 }
 
-
-
 .qbs-textfield-default.expandable {
   height: auto;
   border: none;
@@ -499,7 +497,7 @@ span.dropdown-search-icon {
   border: 1px solid #999696;
   width: 16px;
   height: 16px;
-  top: 3px;
+  top: 1px;
   transition: all 0.2s ease;
   cursor: pointer;
 }
@@ -630,3 +628,4 @@ span.dropdown-search-icon {
   margin-left: -5px;
   border-color: transparent transparent #000 transparent;
 }
+

@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps, TabPops, ValueProps } from './commontypes';
@@ -109,7 +116,6 @@ const AutoCompleteWithSelectedList = forwardRef<
           if (dropdownSelectedRef?.current)
             dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
         }
-
         if (tab.length > 0) {
           if (tabRef?.current) dropdownHeight += tabRef?.current?.clientHeight;
         }
@@ -117,10 +123,14 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropLevelRef.current = 'bottom';
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
-        } else {
+        } else if (spaceAbove >= dropdownHeight) {
           dropLevelRef.current = 'top';
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
+        } else {
+          dropLevelRef.current = 'bottom';
+          dropdownPosition.top =
+            inputRect.top + window.scrollY + inputRect.height;
         }
         // setDropdownStyle({
         //   ...dropdownPosition,
@@ -283,7 +293,6 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     useEffect(() => {
       const handleClickOutside = (event: any) => {
-      
         if (
           dropRef.current &&
           event.target instanceof Node &&
@@ -727,7 +736,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                             className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${
                               viewMode ? 'hidden' : ''
                             }`}
-                            onClick={()=>{setDropOpen(false)}}
+                            onClick={() => {
+                              setDropOpen(false);
+                            }}
                           >
                             Done
                           </div>

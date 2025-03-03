@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -58,8 +65,11 @@ const AutoCompleteWithTreeStructure = forwardRef<
       parentField = 'parentId',
       errorFlag,
       handleUpdateParent,
-      isSeachable = false,
+      isSeachable = true,
       customDropOffset = 300,
+      showIcon,
+      handleShowIcon,
+      hasDisableSelection,
     },
     ref
   ) => {
@@ -300,6 +310,33 @@ const AutoCompleteWithTreeStructure = forwardRef<
       setDropDownData(newTreeData);
     };
 
+    const handleNodeExpandCheck = (node: any): boolean => {
+      const handleCheck = (node: any): boolean => {
+        if (node.children && node.children.length > 0) {
+          return node.children.some(
+            (child: any) =>
+              isSelected(child, isMultiple ? selectedItems : inputValue) ||
+              handleCheck(child)
+          );
+        }
+        return false;
+      };
+      return handleCheck(node);
+    };
+
+    const treeData = () => {
+      const processNode = (node: any) => ({
+        ...node,
+        expanded: handleNodeExpandCheck(node),
+        children: node.children ? node.children.map(processNode) : [],
+      });
+
+      return dropDownData.map(processNode);
+    };
+    useEffect(() => {
+      setDropDownData(treeData());
+    }, [dropOpen]);
+
     const clearAllNodes = (nodes: any[]): any[] => {
       return nodes.map((node) => ({
         ...node,
@@ -311,7 +348,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
     const updateNode = (id: string, checked: boolean, dataItem: any) => {
       let newTreeData;
       let checkedNodes: any[] = []; // Array to store the entire checked node objects
-
       if (isMultiple) {
         let selectedData = [...selectedItems];
         if (checked) {
@@ -334,6 +370,19 @@ const AutoCompleteWithTreeStructure = forwardRef<
         );
       }
     };
+    const handleSelect = (selctedNode: any) => {
+      let TreeData = [];
+      const checked = !selctedNode?.checked;
+      if (!checked) {
+        setInputValue('');
+        onChange({ id: '', name: '' });
+      }
+      TreeData = dropDownData.map((node) =>
+        updateAllNodes(node, selctedNode[descId], checked)
+      );
+      setDropDownData(TreeData);
+    };
+
     const getCheckedNodes = (node: any, checkedNodes: any[]) => {
       if (node.checked) {
         checkedNodes.push(node); // Push the entire node object
@@ -381,6 +430,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
       return node;
     };
+
     const renderTree = (node: any, index: number) => {
       return (
         <div className="qbs-tree-list-container-child">
@@ -392,6 +442,9 @@ const AutoCompleteWithTreeStructure = forwardRef<
             isSelected={isSelected}
             isMultiple={isMultiple}
             singleSelect={singleSelect}
+            handleSelect={handleSelect}
+            showIcon={handleShowIcon?.(node) ?? showIcon}
+            hasDisableSelection={hasDisableSelection?.(node)}
             idx={node[descId]}
             updateNode={updateNode}
             desc={desc}
@@ -654,6 +707,9 @@ const AutoCompleteWithTreeStructure = forwardRef<
                         isMultiple={isMultiple}
                         singleSelect={singleSelect}
                         idx={suggestion[descId]}
+                        handleSelect={handleSelect}
+                        showIcon={handleShowIcon?.(suggestion) ?? showIcon}
+                        hasDisableSelection={hasDisableSelection?.(suggestion)}
                         updateNode={updateNode}
                         desc={desc}
                         descId={descId}
