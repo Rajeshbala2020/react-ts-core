@@ -461,7 +461,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   //   return 'bottom'
   // }
   const filteredData =
-    inputValue !== '*' && type !== 'custom_select' && !noLocalFilter
+    inputValue !== '*' && inputValue !== '' && type !== 'custom_select' && !noLocalFilter
       ? suggestions?.filter((item: valueProps) =>
           checkIncludes(
             item.name,
