@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -249,7 +242,7 @@ const ExpandableAutoComplete = forwardRef<
           dropRef.current &&
           event.target instanceof Node &&
           !dropRef.current.contains(event.target) &&
-          event.target?.id !== 'drop-arrow-icon'
+          event.target?.id !== 'drop-arrow-expanded-list-icon'
         ) {
           setTimeout(() => {
             setDropOpen(false);
@@ -472,6 +465,7 @@ const ExpandableAutoComplete = forwardRef<
             readOnly={readOnly}
             expandable={expandable}
             handleClear={handleClear}
+            uniqueDropArrowId='drop-arrow-expanded-list-icon'
           />
           {/* Displaying Loading Spinner */}
 

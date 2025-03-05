@@ -243,7 +243,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
           dropRef.current &&
           event.target instanceof Node &&
           !dropRef.current.contains(event.target) &&
-          event.target?.id !== 'drop-arrow-icon'
+          event.target?.id !== 'drop-arrow-tree-list-icon'
         ) {
           setTimeout(() => {
             setDropOpen(false);
@@ -373,16 +373,18 @@ const AutoCompleteWithTreeStructure = forwardRef<
       }
     };
     const handleSelect = (selctedNode: any) => {
-      let TreeData = [];
-      const checked = !selctedNode?.checked;
-      if (!checked) {
-        setInputValue('');
-        onChange({ id: '', name: '' });
-      }
-      TreeData = dropDownData.map((node) =>
-        updateAllNodes(node, selctedNode[descId], checked)
-      );
-      setDropDownData(TreeData);
+      setInputValue(selctedNode[desc]);
+      onChange(selctedNode);
+      setDropOpen(false);
+
+      // if (!checked) {
+      //   setInputValue('');
+      //   onChange({ id: '', name: '' });
+      // }
+      // TreeData = dropDownData.map((node) =>
+      //   updateAllNodes(node, selctedNode[descId], checked)
+      // );
+      // setDropDownData(TreeData);
     };
 
     const getCheckedNodes = (node: any, checkedNodes: any[]) => {
@@ -659,7 +661,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                   overflowY: 'auto', // Add scrollbar when exceeding 4 lines
                   wordWrap: 'break-word', // Ensure long words wrap correctly
                   whiteSpace: 'pre-wrap', // Preserve line breaks & spacing
-                  paddingRight:'43px !important'
+                  paddingRight: '43px !important',
                 }}
               />
             )}
@@ -678,6 +680,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
             error={errorFlag}
             expandable={expandable}
             handleClear={handleClear}
+            uniqueDropArrowId="drop-arrow-tree-list-icon"
           />
           {/* Displaying Loading Spinner */}
 
@@ -726,6 +729,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                         isMultiple={isMultiple}
                         singleSelect={singleSelect}
                         desc={desc}
+                        hideCheckbox={singleSelect}
                         key={suggestion[descId]}
                       />
                     ))

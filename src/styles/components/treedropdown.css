@@ -40,7 +40,10 @@
   width: 100%; /* Corresponds to w-full in Tailwind */
   color: #3d414a;
 }
-
+.qbs-tree-list-container-sub-container-hideicon:hover {
+  color: #003c71;
+  background-color: rgba(141, 194, 240, 0.15) !important;
+}
 .qbs-tree-list-container-sub-container:hover {
   color: #003c71;
   background-color: rgba(141, 194, 240, 0.15) !important;

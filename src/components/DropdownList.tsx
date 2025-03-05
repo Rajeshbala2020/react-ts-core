@@ -10,6 +10,7 @@ type ValueProps = {
   isMultiple?: boolean;
   singleSelect?: boolean;
   desc: string;
+  hideCheckbox?: boolean;
 };
 const DropdownList: React.FC<ValueProps> = ({
   idx,
@@ -21,6 +22,7 @@ const DropdownList: React.FC<ValueProps> = ({
   isMultiple,
   singleSelect,
   desc,
+  hideCheckbox = false,
 }) => {
   return (
     <div
@@ -29,7 +31,7 @@ const DropdownList: React.FC<ValueProps> = ({
         (isMultiple || singleSelect) && 'qbs-autocomplete-checkbox-container'
       } ${isSelected(suggestion, selected) ? 'is-selected' : ''}`}
     >
-      {(isMultiple || singleSelect) && (
+      {(isMultiple || singleSelect) && !hideCheckbox && (
         <div className="qbs-autocomplete-checkbox">
           <input
             onChange={(e) => handleMultiSelect(e, suggestion)}

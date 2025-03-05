@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps, TabPops, ValueProps } from './commontypes';
@@ -297,7 +290,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropRef.current &&
           event.target instanceof Node &&
           !dropRef.current.contains(event.target) &&
-          event.target?.id !== 'drop-arrow-icon'
+          event.target?.id !== 'drop-arrow-selected-list-icon'
         ) {
           setTimeout(() => {
             setDropOpen(false);
@@ -619,6 +612,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             expandable={expandable}
             handleClear={handleClear}
             countOnly={countOnly}
+            uniqueDropArrowId='drop-arrow-selected-list-icon'
             viewMode={viewMode}
           />
           {/* Displaying Loading Spinner */}
@@ -756,7 +750,10 @@ const AutoCompleteWithSelectedList = forwardRef<
                                     handleCollapseArrowClick();
                                   }}
                                 >
-                                  <DropArrow className={`icon-button-rotate`} />
+                                  <DropArrow
+                                    className={`icon-button-rotate`}
+                                    uniqueDropArrowId="drop-arrow-selected-list-icon"
+                                  />
                                 </div>
                               </div>
                             )}

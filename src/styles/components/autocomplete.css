@@ -325,8 +325,8 @@ body * {
   padding: 12px !important;
 }
 .qbs-autocomplete-listitem-container {
-  display: flex;
-  align-items: center;
+  display: flex !important;
+  align-items: center !important;
   gap: 0px;
 }
 ul {
@@ -628,4 +628,3 @@ span.dropdown-search-icon {
   margin-left: -5px;
   border-color: transparent transparent #000 transparent;
 }
-

@@ -748,9 +748,9 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   ref={dropBtnRef}
                 >
                   {!dropOpen ? (
-                    <DropArrow />
+                    <DropArrow uniqueDropArrowId="drop-arrow-icon" />
                   ) : (
-                    <DropArrow className="rotate-180" />
+                    <DropArrow className="rotate-180" uniqueDropArrowId="drop-arrow-icon" />
                   )}
                 </button>
               )}

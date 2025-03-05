@@ -15,6 +15,7 @@ type ValueProps = {
   handleClear: () => void;
   error?: boolean;
   viewMode?: boolean;
+  uniqueDropArrowId?: string;
 };
 const InputActions: React.FC<ValueProps> = ({
   inputValue,
@@ -29,13 +30,14 @@ const InputActions: React.FC<ValueProps> = ({
   countOnly,
   error,
   viewMode,
+  uniqueDropArrowId,
 }) => {
   return (
     <div
       className={`${
         error
-          ? "qbs-autocomplete-witherror-close-icon"
-          : "qbs-autocomplete-close-icon"
+          ? 'qbs-autocomplete-witherror-close-icon'
+          : 'qbs-autocomplete-close-icon'
       } `}
     >
       {(inputValue || searchValue) &&
@@ -60,7 +62,10 @@ const InputActions: React.FC<ValueProps> = ({
           aria-label="toggle"
           name="toggle"
         >
-          <DropArrow className={`icon-button-rotate`} />
+          <DropArrow
+            className={`icon-button-rotate`}
+            uniqueId={uniqueDropArrowId}
+          />
         </button>
       ) : (
         <button
@@ -71,7 +76,7 @@ const InputActions: React.FC<ValueProps> = ({
           aria-label="toggle"
           name="toggle"
         >
-          <DropArrow />
+          <DropArrow uniqueId={uniqueDropArrowId} />
         </button>
       )}
     </div>
