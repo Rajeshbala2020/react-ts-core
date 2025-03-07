@@ -72,6 +72,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       hasDisableSelection,
       inputType = 'text',
       onFocusTreeDropdown,
+      filterCondition,
     },
     ref
   ) => {
@@ -470,18 +471,35 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
       const searchRecursive = (port: any) => {
         if (port[desc].toLowerCase().includes(lowerQuery)) {
-          result.push({
-            [descId]: port[descId],
-            [desc]: port[desc],
-            parentId: port.parentId,
-          });
+          if (
+            filterCondition &&
+            filterCondition.filterKey &&
+            filterCondition.filterValue
+          ) {
+            result.push({
+              [descId]: port[descId],
+              [desc]: port[desc],
+              parentId: port.parentId,
+              [filterCondition?.filterKey]: port[filterCondition.filterKey],
+            });
+          } else {
+            result.push({
+              [descId]: port[descId],
+              [desc]: port[desc],
+              parentId: port.parentId,
+            });
+          }
         }
         port.children?.forEach(searchRecursive);
       };
 
-      dropDownData.forEach(searchRecursive);
-      result;
-      setFilteredData(result);
+      // Default behavior (filter entire array)
+      dropDownData?.forEach(searchRecursive);
+
+      const final = result.filter((item) => {
+        return item[filterCondition?.filterKey] === filterCondition.filterValue;
+      });
+      setFilteredData(final);
     };
 
     const handleSuggestionClick = useCallback((suggestion: ValueProps) => {

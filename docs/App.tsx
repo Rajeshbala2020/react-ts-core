@@ -151,6 +151,7 @@ export default function App() {
               singleSelect={true}
               expandable={true}
               isTreeDropdown={true}
+              filterCondition={{ filterKey: 'id', filterValue: 22 }}
               descId="id"
               data={treeDropData}
               paginationEnabled={false}

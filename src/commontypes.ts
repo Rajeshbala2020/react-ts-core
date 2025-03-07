@@ -73,6 +73,10 @@ export interface AutoSuggestionInputProps {
     e: React.FocusEvent<HTMLTextAreaElement, Element>
   ) => void;
   inputType?: 'text' | 'textarea';
+  filterCondition?: {
+    filterKey?: any;
+    filterValue?: any;
+  };
 }
 export interface IconsProps {
   name: any;
