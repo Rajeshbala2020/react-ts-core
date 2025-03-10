@@ -64,6 +64,8 @@ const AutoCompleteWithSelectedList = forwardRef<
     ref
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const selItemRef = useRef<HTMLDivElement>(null);
+    const itemsRef = useRef<HTMLDivElement>(null);
     const dropdownSelectedRef = useRef<HTMLDivElement>(null);
     const tabRef = useRef<HTMLUListElement>(null);
     const dropLevelRef = useRef<string>('bottom');
@@ -76,6 +78,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
     const [showAllSelected, setShowAllSelected] = useState<boolean>(false);
+    const [selHeight, setSelHeight] = useState<number>(184);
     const [expandArrowClick, setExpandArrowClick] = useState<
       number | undefined
     >(1);
@@ -125,6 +128,11 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropLevelRef.current = 'bottom';
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
+
+          if(itemsRef?.current) {
+            const selH =  184 - (dropdownHeight - spaceBelow)
+            setSelHeight(selH < 50 ? 50 : selH )
+          }
         }
         // setDropdownStyle({
         //   ...dropdownPosition,
@@ -427,11 +435,17 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const getSelectedRowLimit = () => {
-      return selectedRowLimit * 33 + 5;
+      let maxHeight = 36
+      if(selItemRef?.current && selItemRef?.current.clientWidth < 300) {
+        maxHeight = 24
+      }
+
+      return selectedRowLimit * maxHeight + 5;
     };
     const getSelectedItems = (dropdown: boolean) => {
       return (
         <div
+          ref={selItemRef}
           className="selected-items-outer-container"
           style={{ maxHeight: `${getSelectedRowLimit()}px` }}
         >
@@ -660,6 +674,8 @@ const AutoCompleteWithSelectedList = forwardRef<
                   className={`qbs-autocomplete-suggestions-sub ${
                     viewMode ? 'hidden' : ''
                   }`}
+                  ref={itemsRef}
+                  style={{ maxHeight: `${selHeight}px`, minHeight: `${selHeight}px` }}
                 >
                   {filteredData?.length > 0 ? (
                     filteredData.map((suggestion: ValueProps, idx: number) => (
