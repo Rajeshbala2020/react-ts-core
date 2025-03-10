@@ -465,41 +465,36 @@ const AutoCompleteWithTreeStructure = forwardRef<
       );
     };
     const [filteredData, setFilteredData] = useState([]);
+
     const searchPortsFlat = (query: string) => {
       const lowerQuery = query.toLowerCase();
       const result: any[] = [];
 
       const searchRecursive = (port: any) => {
-        if (port[desc].toLowerCase().includes(lowerQuery)) {
-          if (
-            filterCondition &&
-            filterCondition.filterKey &&
-            filterCondition.filterValue
-          ) {
-            result.push({
-              [descId]: port[descId],
-              [desc]: port[desc],
-              parentId: port.parentId,
-              [filterCondition?.filterKey]: port[filterCondition.filterKey],
-            });
-          } else {
-            result.push({
-              [descId]: port[descId],
-              [desc]: port[desc],
-              parentId: port.parentId,
-            });
-          }
+        if (port[desc]?.toLowerCase().includes(lowerQuery)) {
+          const filteredItem = {
+            [descId]: port[descId],
+            [desc]: port[desc],
+            parentId: port.parentId,
+            ...(filterCondition?.filterKey && {
+              [filterCondition.filterKey]: port[filterCondition.filterKey],
+            }),
+          };
+          result.push(filteredItem);
         }
         port.children?.forEach(searchRecursive);
       };
 
-      // Default behavior (filter entire array)
       dropDownData?.forEach(searchRecursive);
 
-      const final = result.filter((item) => {
-        return item[filterCondition?.filterKey] === filterCondition.filterValue;
-      });
-      setFilteredData(final);
+      setFilteredData(
+        filterCondition?.filterKey && filterCondition?.filterValue
+          ? result.filter(
+              (item) =>
+                item[filterCondition.filterKey] === filterCondition.filterValue
+            )
+          : result
+      );
     };
 
     const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
@@ -547,7 +542,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
       customDropOffset ?? 200,
       dropOpen
     );
-
     return (
       <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (

@@ -105,6 +105,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         const spaceAbove = inputRect.top + window.scrollY;
 
         let dropdownHeight = viewMode ? 160 : 300; // Assume a fixed height or calculate based on content
+
         if (countOnly) {
           if (dropdownSelectedRef?.current)
             dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
@@ -612,7 +613,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             expandable={expandable}
             handleClear={handleClear}
             countOnly={countOnly}
-            uniqueDropArrowId='drop-arrow-selected-list-icon'
+            uniqueDropArrowId="drop-arrow-selected-list-icon"
             viewMode={viewMode}
           />
           {/* Displaying Loading Spinner */}
