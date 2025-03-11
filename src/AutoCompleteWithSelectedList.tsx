@@ -108,6 +108,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         const spaceAbove = inputRect.top + window.scrollY;
 
         let dropdownHeight = viewMode ? 160 : 300; // Assume a fixed height or calculate based on content
+        const defaultHeight = 184
 
         if (countOnly) {
           if (dropdownSelectedRef?.current)
@@ -120,17 +121,21 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropLevelRef.current = 'bottom';
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
+
+          setSelHeight(defaultHeight)
         } else if (spaceAbove >= dropdownHeight) {
           dropLevelRef.current = 'top';
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
+
+          setSelHeight(defaultHeight)
         } else {
           dropLevelRef.current = 'bottom';
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
 
           if(itemsRef?.current) {
-            const totalH = showAllSelected ? 148 : 184
+            const totalH = showAllSelected ? 148 : defaultHeight
             const selH =  totalH - (dropdownHeight - spaceBelow)
             setSelHeight(selH < 50 ? 50 : selH )
           }
@@ -271,6 +276,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     const handleClearSelected = () => {
       setSelectedItems([]);
+      setShowAllSelected(false);
       if (isMultiple) onChange([]);
       else onChange({ [descId]: '', [desc]: '' });
     };
