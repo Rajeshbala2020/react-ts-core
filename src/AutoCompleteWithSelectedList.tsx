@@ -130,7 +130,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             inputRect.top + window.scrollY + inputRect.height;
 
           if(itemsRef?.current) {
-            const totalH = showAllSelected ? 184 : 224 
+            const totalH = showAllSelected ? 148 : 184
             const selH =  totalH - (dropdownHeight - spaceBelow)
             setSelHeight(selH < 50 ? 50 : selH )
           }
