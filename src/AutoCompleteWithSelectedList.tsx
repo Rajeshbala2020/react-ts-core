@@ -162,7 +162,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       return () => {
         window.removeEventListener('resize', adjustDropdownPosition);
       };
-    }, [dropOpen, selectedItems, expandArrowClick]);
+    }, [dropOpen, expandArrowClick]);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -301,6 +301,12 @@ const AutoCompleteWithSelectedList = forwardRef<
       } else {
         onChange(selectedItems);
       }
+
+      adjustDropdownPosition();
+      setTimeout(() => {
+        adjustDropdownPosition();
+      }, 500);
+
     }, [selectedItems]);
 
     useEffect(() => {
@@ -318,15 +324,15 @@ const AutoCompleteWithSelectedList = forwardRef<
         }
       };
 
-      const observer = new MutationObserver(() => {
-        if(dropOpen) adjustDropdownPosition();
-      });
+      // const observer = new MutationObserver(() => {
+      //   adjustDropdownPosition();
+      // });
   
-      observer.observe(document.body, {
-        childList: true,
-        subtree: true,
-        attributes: true,
-      });
+      // observer.observe(document.body, {
+      //   childList: true,
+      //   subtree: true,
+      //   attributes: true,
+      // });
       
       document.addEventListener('mousedown', handleClickOutside as any);
       window.addEventListener('scroll', handleClickOutside as any);
