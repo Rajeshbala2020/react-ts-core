@@ -305,7 +305,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       adjustDropdownPosition();
       setTimeout(() => {
         adjustDropdownPosition();
-      }, 500);
+      }, 200);
 
     }, [selectedItems]);
 
