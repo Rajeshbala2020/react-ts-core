@@ -319,7 +319,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       };
 
       const observer = new MutationObserver(() => {
-        adjustDropdownPosition();
+        if(dropOpen) adjustDropdownPosition();
       });
   
       observer.observe(document.body, {
