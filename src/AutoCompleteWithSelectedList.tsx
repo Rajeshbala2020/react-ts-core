@@ -95,6 +95,9 @@ const AutoCompleteWithSelectedList = forwardRef<
       width: 200,
     });
 
+    let originalOverflow = '';
+    let hasScrollbar = false;
+    
     const adjustDropdownPosition = () => {
       if (dropdownRef.current) {
         const inputRect = dropdownRef.current.getBoundingClientRect();
@@ -314,6 +317,17 @@ const AutoCompleteWithSelectedList = forwardRef<
           //setSearchValue("");
         }
       };
+
+      const observer = new MutationObserver(() => {
+        adjustDropdownPosition();
+      });
+  
+      observer.observe(document.body, {
+        childList: true,
+        subtree: true,
+        attributes: true,
+      });
+      
       document.addEventListener('mousedown', handleClickOutside as any);
       window.addEventListener('scroll', handleClickOutside as any);
 
@@ -418,10 +432,21 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const setVisibleDrop = () => {
+      hasScrollbar = document.body.scrollHeight > window.innerHeight;
+      if (!originalOverflow && !hasScrollbar) {
+        originalOverflow = document.body.style.overflow;
+        document.body.style.overflow = 'hidden';  
+      }
+
       setVisible(false);
       if (!dropOpen) setDropOpen(true);
       setTimeout(() => {
         setVisible(true);
+
+        if (!hasScrollbar) {
+          document.body.style.overflow = originalOverflow || '';
+        }
+        originalOverflow = ''; 
       }, 200);
     };
 
@@ -649,6 +674,8 @@ const AutoCompleteWithSelectedList = forwardRef<
                   ...dropdownStyle,
                   minHeight: viewMode ? 100 : 192,
                   visibility: visible ? 'visible' : 'hidden',
+                  opacity: visible ? 1 : 0,
+                  transition: "opacity 0.2s ease-in-out" 
                 }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? 'qbs-dropdown-selected-preview' : ''
