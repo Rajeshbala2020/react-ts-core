@@ -590,6 +590,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                           : item?.[desc]}
 
                         <button
+                          type="button"
                           onClick={() => handleRemoveSelectedItem(index)}
                           className="remove-item-btn"
                           aria-label={`Remove ${item?.[desc]}`}
