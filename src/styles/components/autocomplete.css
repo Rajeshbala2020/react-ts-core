@@ -463,6 +463,8 @@ span.dropdown-search-icon {
   padding: 6px 8px;
   display: flex;
   align-items: flex-start;
+  outline: none; 
+  box-shadow: none;
 }
 
 .qbs-autocomplete-checkbox-container .qbs-autocomplete-suggestions-item {
@@ -627,4 +629,27 @@ span.dropdown-search-icon {
   left: 50%;
   margin-left: -5px;
   border-color: transparent transparent #000 transparent;
+}
+
+.autocomplete-suggections .qbs-autocomplete-suggections-items {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+  outline: none; 
+  box-shadow: none;
+}
+
+.qbs-autocomplete-suggections-items.is-selected {
+  background-color: #f1f5f9;
+}
+
+.autocomplete-suggections .qbs-autocomplete-suggections-items .short-code, 
+.qbs-autocomplete-listitem-container .short-code{
+  font-size: 12px;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
 }

@@ -136,7 +136,8 @@ You can pass the following props to the `AutoComplete` component:
 - **async** _(boolean)_: If true, indicates that the `getData` function is asynchronous.
 - **nextBlock** _(function or boolean)_: Function for pagination or boolean to determine if pagination is enabled.
 - **paginationEnabled** _(boolean)_: If true, pagination for suggestions is enabled.
-- **notDataMessage** _(string)_: Custom `"No Results Found` message.
+- **notDataMessage** _(string)_: Custom `No Results Found` message.
+- **shortCode** _(string)_: Custom `Show code` at the right area of the dropdown items.
 
 Additional props for the `ExpandableAutoComplete` component:
 
