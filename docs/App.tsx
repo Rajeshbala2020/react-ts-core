@@ -99,7 +99,7 @@ export default function App() {
               type="auto_complete"
               placeholder="TextField"
               required
-              getData={getData}
+              getData={getDatas}
               onChange={(e) => console.log(e, 'onchange')}
             />
           </div>

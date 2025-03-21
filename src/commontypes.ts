@@ -77,6 +77,7 @@ export interface AutoSuggestionInputProps {
     filterKey?: any;
     filterValue?: any;
   };
+  shortCode?: string
 }
 export interface IconsProps {
   name: any;
