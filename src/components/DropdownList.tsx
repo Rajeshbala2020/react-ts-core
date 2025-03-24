@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 type ValueProps = {
   idx: number;
@@ -11,6 +11,9 @@ type ValueProps = {
   singleSelect?: boolean;
   desc: string;
   hideCheckbox?: boolean;
+  shortCode?: string
+  focusedIndex?: number
+  setItemRef?: (index: number, ref: HTMLDivElement | null) => void
 };
 const DropdownList: React.FC<ValueProps> = ({
   idx,
@@ -23,13 +26,19 @@ const DropdownList: React.FC<ValueProps> = ({
   singleSelect,
   desc,
   hideCheckbox = false,
+  shortCode = '',
+  focusedIndex = 0,
+  setItemRef
 }) => {
+  
   return (
     <div
       key={idx.toString()}
+      ref={(el) => setItemRef?.(idx, el)}  // Properly store each ref
       className={`qbs-autocomplete-listitem-container ${
         (isMultiple || singleSelect) && 'qbs-autocomplete-checkbox-container'
-      } ${isSelected(suggestion, selected) ? 'is-selected' : ''}`}
+      } ${isSelected(suggestion, selected) ? 'is-selected' : ''} ${idx === focusedIndex ? "is-selected" : ""}`}
+      tabIndex={idx}
     >
       {(isMultiple || singleSelect) && !hideCheckbox && (
         <div className="qbs-autocomplete-checkbox">
@@ -65,6 +74,7 @@ const DropdownList: React.FC<ValueProps> = ({
       >
         {suggestion[desc]}
       </div>
+      {shortCode && suggestion?.[shortCode] && <div className='short-code'>{suggestion?.[shortCode]}</div>}
     </div>
   );
 };

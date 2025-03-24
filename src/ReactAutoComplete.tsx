@@ -25,7 +25,7 @@ interface AutoSuggestionInputProps {
   className?: string;
   autoFocus?: boolean;
   required?: boolean;
-
+  shortCode?: string
   hideClear?: boolean;
   value?: valueProps;
   onChange: (value?: valueProps) => void;
@@ -62,6 +62,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   required = false,
   autoFocus,
   name,
+  shortCode = '',
   fullWidth,
   placeholder,
   id,
@@ -98,6 +99,9 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const dropdownref = useRef<HTMLDivElement>(null);
   const dropBtnRef = useRef<HTMLButtonElement>(null);
   const timerRef = useRef<number>(0); // To fix the no results found issue on second type
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
+  const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -306,7 +310,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   useEffect(() => {
     setIsDisabled(disabled);
   }, [disabled]);
-  const handleSuggestionClick = (suggestion: valueProps) => {
+  const handleSuggestionClick = (suggestion: valueProps, index: number) => {
     onChange({
       ...suggestion,
       id: suggestion?.id,
@@ -315,6 +319,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     });
     if (type !== 'custom_select') setInputValue(suggestion.name);
     setDropOpen(false);
+    setSelectedIndex(index);
   };
   const handleOpen = (e: any) => {
     if (!suggestions || suggestions?.length === 0) handleDropData();
@@ -330,6 +335,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
 
   useEffect(() => {
     if (!insideOpen) {
+      setSelectedIndex(0);
       window.addEventListener('scroll', handleScroll);
 
       const mainElement = document.querySelector('main');
@@ -356,6 +362,53 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       };
     }
   }, [dropOpen]);
+
+   // Handle keyboard navigation
+   const handleKeyDown = (e: any) => {
+    if (!dropOpen) return;
+
+    const atBottom = selectedIndex === filteredData.length - 1;
+    const atTop = selectedIndex === 0;
+
+    switch (e.key) {
+      case "ArrowDown":
+        e.preventDefault();
+        if (itemRefs.current && scrollContainerRef.current) {
+          if (!atBottom) {
+            scrollContainerRef.current.scrollTop += itemRefs.current[selectedIndex]?.offsetHeight || 50; 
+          } else {
+            scrollContainerRef.current.scrollTop = 0; 
+          }
+        }
+        setSelectedIndex((prev) => (prev + 1) % filteredData?.length);
+        break;
+
+      case "ArrowUp":
+        e.preventDefault();
+        if (itemRefs.current && scrollContainerRef.current) {
+          if (!atTop) {
+            scrollContainerRef.current.scrollTop -= itemRefs.current[selectedIndex]?.offsetHeight || 50; 
+          } else {
+            scrollContainerRef.current.scrollTop = 0; 
+          }
+        }
+        setSelectedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
+        break;
+
+      case "Enter":
+        e.preventDefault();
+        handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
+        break;
+
+      case "Escape":
+        e.preventDefault();
+        setDropOpen(false);
+        break;
+
+      default:
+        break;
+    }
+  };
 
   const handleClear = () => {
     setDropOpen(false);
@@ -530,6 +583,12 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       return () => clearTimeout(timer);
     } else {
       setShowNoResults(false);
+      if(filteredData?.length > 0 && !isLoading) {
+        window.addEventListener("keydown", handleKeyDown);
+        return(() => {
+          window.removeEventListener("keydown", handleKeyDown);
+        })
+      }
     }
   }, [inputValue, filteredData, isLoading, timerRef.current]);
 
@@ -539,6 +598,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         <ul
           className="autocomplete-suggections absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
           style={dropPosition}
+          ref={scrollContainerRef}
         >
           {filteredData?.length > 0 ? (
             <>
@@ -548,12 +608,18 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                     value?.id === suggestion?.id
                       ? 'bg-blue-navy text-white'
                       : 'hover:bg-table-hover'
-                  } cursor-pointer p-1  text-xxs ps-3.5 pl-[10px]`}
+                  } ${index === selectedIndex ? "is-selected" : ""} cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
                   key={suggestion?.id}
                   data-testid={suggestion.name}
-                  onClick={() => handleSuggestionClick(suggestion)}
+                  onClick={() => handleSuggestionClick(suggestion, index)}
+                  tabIndex={index}
+                  ref={(el) => (itemRefs.current[index] = el)}
                 >
-                  {suggestion?.label ? suggestion?.label : suggestion.name}
+                  <span>
+                    {suggestion?.label ? suggestion?.label : suggestion.name} 
+                  </span>
+
+                  {shortCode && suggestion?.[shortCode] && <span className='short-code'>{suggestion?.[shortCode]}</span>}
                 </li>
               ))}
             </>

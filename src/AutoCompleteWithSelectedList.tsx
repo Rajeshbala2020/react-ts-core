@@ -60,6 +60,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       selectedLabel = '',
       viewMode = false,
       handleUpdateParent,
+      shortCode = ''
     },
     ref
   ) => {
@@ -84,6 +85,8 @@ const AutoCompleteWithSelectedList = forwardRef<
     >(1);
     const [visible, setVisible] = useState<boolean>(false);
     const [activeTab, setActiveTab] = useState<number>(currentTab);
+    const [focusedIndex, setFocusedIndex] = useState(0);
+    const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
     const dropRef = useRef(null);
@@ -180,8 +183,9 @@ const AutoCompleteWithSelectedList = forwardRef<
     );
 
     // Handling the selection of a suggestion
-    const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
+    const handleSuggestionClick = useCallback((suggestion: ValueProps, idx: number) => {
       if (isMultiple) {
+        setFocusedIndex(idx)
         setSelectedItems((prev) => {
           const isAdded =
             prev && prev.length > 0
@@ -194,6 +198,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           }
         });
       } else {
+        setFocusedIndex(idx)
         setInputValue(suggestion[desc]);
         setSearchValue('');
         onChange(suggestion);
@@ -373,6 +378,63 @@ const AutoCompleteWithSelectedList = forwardRef<
       false,
       true
     );
+
+
+    useEffect(() => {
+  
+      // Handle keyboard navigation
+      const handleKeyDown = (e: any) => {
+        if (!dropOpen) return;
+
+        const atBottom = focusedIndex === filteredData.length - 1;
+        const atTop = focusedIndex === 0;
+        switch (e.key) {
+          case "ArrowDown":
+            e.preventDefault();
+            if (itemsRef.current) {
+              if (!atBottom) {
+                  itemsRef.current.scrollTop += itemRefs.current[focusedIndex]?.offsetHeight || 50; 
+              } else {
+                  itemsRef.current.scrollTop = 0; 
+              }
+            }
+            setFocusedIndex((prev) => (prev + 1) % filteredData?.length);
+            break;
+    
+          case "ArrowUp":
+            e.preventDefault();
+            if (itemsRef.current) {
+              if (!atTop) {
+                  itemsRef.current.scrollTop -= itemRefs.current[focusedIndex]?.offsetHeight || 50; 
+              } else {
+                  itemsRef.current.scrollTop = 0; 
+              }
+            }
+            setFocusedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
+            break;
+    
+          case "Enter":
+            e.preventDefault();
+            handleSuggestionClick(filteredData[focusedIndex], focusedIndex)
+            break;
+    
+          case "Escape":
+            e.preventDefault();
+            setDropOpen(false);
+            break;
+    
+          default:
+            break;
+        }
+      };
+    
+      window.addEventListener("keydown", handleKeyDown);
+    
+      return () => {
+        window.removeEventListener("keydown", handleKeyDown);
+      };
+    }, [filteredData, dropOpen, isLoading, focusedIndex]);
+    
     const isSelected = (
       item: ValueProps,
       selectedItems: ValueProps[] | string
@@ -446,6 +508,8 @@ const AutoCompleteWithSelectedList = forwardRef<
 
       setVisible(false);
       if (!dropOpen) setDropOpen(true);
+      setFocusedIndex(0);
+
       setTimeout(() => {
         setVisible(true);
 
@@ -723,13 +787,18 @@ const AutoCompleteWithSelectedList = forwardRef<
                         idx={idx}
                         suggestion={suggestion}
                         isSelected={isSelected}
-                        handleSuggestionClick={handleSuggestionClick}
+                        handleSuggestionClick={() => handleSuggestionClick(suggestion, idx)}
                         handleMultiSelect={handleMultiSelect}
                         selected={selected}
                         isMultiple={isMultiple}
                         singleSelect={singleSelect}
                         desc={desc}
                         key={suggestion[descId]}
+                        shortCode={shortCode}
+                        focusedIndex={focusedIndex}
+                        setItemRef={(index, ref) => {
+                          itemRefs.current[index] = ref;  // Store each ref properly
+                        }}
                       />
                     ))
                   ) : (
