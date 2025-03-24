@@ -339,7 +339,11 @@ const ExpandableAutoComplete = forwardRef<
     };
 
     return (
-      <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+      <div
+        id={id ? `expandable-container-${id}` : `expandable-container-${name}`}
+        className={fullWidth ? 'fullWidth' : 'autoWidth'}
+        ref={dropdownRef}
+      >
         {label && (
           <div
             style={{
@@ -420,7 +424,7 @@ const ExpandableAutoComplete = forwardRef<
             onClick={() => onInputFocus()}
           >
             <input
-              id={id}
+              id={id ? `input-expandable-${id}` : `input-expandable-${name}`}
               ref={inputRef}
               type="text"
               value={
@@ -446,6 +450,7 @@ const ExpandableAutoComplete = forwardRef<
 
           {selectedItems?.length > 1 && (
             <div
+              id="expandable-clear-all"
               className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 bottom-1`}
               onClick={handleClearSelected}
             >
@@ -465,7 +470,7 @@ const ExpandableAutoComplete = forwardRef<
             readOnly={readOnly}
             expandable={expandable}
             handleClear={handleClear}
-            uniqueDropArrowId='drop-arrow-expanded-list-icon'
+            uniqueDropArrowId="drop-arrow-expanded-list-icon"
           />
           {/* Displaying Loading Spinner */}
 
@@ -477,6 +482,11 @@ const ExpandableAutoComplete = forwardRef<
                 ref={dropRef}
                 style={{ ...dropdownStyle, minHeight: 192 }}
                 className={`qbs-autocomplete-suggestions`}
+                id={
+                  id
+                    ? `autocomplete-dropdown-${id}`
+                    : `autocomplete-dropdown-${name}`
+                }
               >
                 {type == 'auto_suggestion' && !expandable && (
                   <div
@@ -490,7 +500,7 @@ const ExpandableAutoComplete = forwardRef<
                       className="dropdown-search-input"
                       onChange={handleSuggestionChange}
                       value={searchValue}
-                      placeholder="Search"
+                      placeholder="Type to search"
                     />
                   </div>
                 )}

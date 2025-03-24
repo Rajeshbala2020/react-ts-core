@@ -187,7 +187,7 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
         <div className={`flex relative ${fullwidth ? 'w-full' : 'w-auto'}`}>
           <div className="relative w-full">
             <textarea
-              id={id}
+              id={id ? `input-textarea-${id}` : `input-textarea-${name}`}
               ref={inputRef}
               disabled={isDisabled}
               data-testid="textarea"

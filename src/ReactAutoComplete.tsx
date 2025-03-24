@@ -461,7 +461,10 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   //   return 'bottom'
   // }
   const filteredData =
-    inputValue !== '*' && inputValue !== '' && type !== 'custom_select' && !noLocalFilter
+    inputValue !== '*' &&
+    inputValue !== '' &&
+    type !== 'custom_select' &&
+    !noLocalFilter
       ? suggestions?.filter((item: valueProps) =>
           checkIncludes(
             item.name,
@@ -636,6 +639,9 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
 
   return (
     <div
+      id={
+        id ? `autocomplete-container-${id}` : `autocomplete-container-${name}`
+      }
       className={` flex-grow  ${fullWidth ? 'w-full' : 'w-auto'}`}
       ref={dropdownref}
     >
@@ -665,13 +671,15 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
             onMouseLeave={() => handleMouseLeave()}
           >
             <input
-              id={id}
               type="text"
               readOnly={readOnly ?? type === 'custom_select'}
               value={inputValue ? inputValue : ''}
               onBlur={handleClearInputValue}
               disabled={disabled}
               ref={inputRef}
+              id={
+                id ? `custom-autocomplete-${id}` : `custom-autocomplete-${name}`
+              }
               data-testid="custom-autocomplete"
               // onBlur={() => {
               // setInputValue("")
@@ -732,6 +740,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   className=" text-table-bodyColor text-[#667085]"
                   aria-label="close"
                   type="button"
+                  id="autocomplete-close-icon"
                 >
                   <CustomIcons name="close" type="large-m" />
                 </button>
@@ -745,12 +754,16 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   className=" text-[#667085] focus-visible:outline-slate-100"
                   data-testid="drop-arrow"
                   type="button"
+                  id="autocomplete-drop-icon"
                   ref={dropBtnRef}
                 >
                   {!dropOpen ? (
                     <DropArrow uniqueDropArrowId="drop-arrow-icon" />
                   ) : (
-                    <DropArrow className="rotate-180" uniqueDropArrowId="drop-arrow-icon" />
+                    <DropArrow
+                      className="rotate-180"
+                      uniqueDropArrowId="drop-arrow-icon"
+                    />
                   )}
                 </button>
               )}

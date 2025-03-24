@@ -1,6 +1,6 @@
-import { CheckboxProps } from './commontypes'
 import React from 'react'
 
+import { CheckboxProps } from './commontypes'
 import CustomIcons from './components/customIcons'
 
 const Checkbox: React.FC<CheckboxProps> = ({
@@ -32,7 +32,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
   return (
     <div
       className={`text-common font-normal text-grey-secondary flex items-center justify-start gap-2.5 ${
-        disabled ? " opacity-70" : ""
+        disabled ? ' opacity-70' : ''
       } `}
     >
       <div>
@@ -43,7 +43,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
             name={name}
             className="border-none outline-none invisible "
             data-testid="app-common-checkbox"
-            id={id}
+            id={id ? `input-check-${id}` : `input-check-${name}`}
             value={value}
             checked={checked}
             onChange={handleChange}
@@ -51,7 +51,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
           <div
             className={`absolute top-[2px] left-0 text-text-primary ${propsClassName}  ${
-              disabled ? "cursor-not-allowed" : "cursor-pointer"
+              disabled ? 'cursor-not-allowed' : 'cursor-pointer'
             }`}
           >
             {checked ? (

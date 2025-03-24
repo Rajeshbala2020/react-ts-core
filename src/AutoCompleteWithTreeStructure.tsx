@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -543,7 +536,11 @@ const AutoCompleteWithTreeStructure = forwardRef<
       dropOpen
     );
     return (
-      <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+      <div
+        id={id ? `tree-container-${id}` : `tree-container-${name}`}
+        className={fullWidth ? 'fullWidth' : 'autoWidth'}
+        ref={dropdownRef}
+      >
         {label && (
           <div
             style={{
@@ -627,7 +624,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
           >
             {inputType === 'text' ? (
               <input
-                id={id}
                 ref={inputRef}
                 type="text"
                 value={
@@ -635,6 +631,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                     ? inputValue
                     : inputValue
                 }
+                id={id ? `input-tree-${id}` : `input-tree-${name}`}
                 onChange={handleChange}
                 // onBlur={handleBlur}
                 onFocus={onFocus}
@@ -718,7 +715,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                       className="dropdown-search-input"
                       onChange={handleSuggestionChange}
                       value={searchValue}
-                      placeholder="Search"
+                      placeholder="Type to search"
                     />
                   </div>
                 )}

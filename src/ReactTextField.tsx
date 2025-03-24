@@ -294,6 +294,7 @@ const TextField: React.FC<TextFieldProps> = ({
                 type={type}
                 // id={frmid+id}
                 ref={inputRef}
+                id={id ? `input-${id}` : `input-${name}`}
                 disabled={isDisabled}
                 // step={step}
                 min={min}

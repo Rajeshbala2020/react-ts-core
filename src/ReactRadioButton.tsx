@@ -38,11 +38,11 @@ const Radio: React.FC<RadioProps> = ({
             type="radio"
             checked={checked}
             disabled={disabled}
+            id={id ? `input-button-${id}` : `input-button-${name}`}
             ref={radioRef}
             name={name}
             data-testid="app-common-radio"
             value={value}
-            id={id}
             onChange={onChange}
           />
           <span className="radio"></span>

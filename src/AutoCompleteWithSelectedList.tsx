@@ -567,7 +567,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       handleUpdateParent?.(dropOpen, dropLevelRef.current);
     }, [dropOpen, dropLevelRef.current]);
     return (
-      <div className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+      <div id={id ? `selected-list-${id}` : `selected-list-${name}`} className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
         {label && (
           <div
             style={{
@@ -702,7 +702,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                           className="dropdown-search-input"
                           onChange={handleSuggestionChange}
                           value={searchValue}
-                          placeholder="Search"
+                          placeholder="Type to search"
                           ref={inputSearchRef}
                         />
                       </div>

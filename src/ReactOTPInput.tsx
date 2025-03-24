@@ -146,9 +146,12 @@ const OTPInput: React.FC<OTPInputProps> = ({
         </div>
       )}
       <div className="flex flex-col w-fit">
-        <div className="flex gap-x-5 ">
+        <div
+          className="flex gap-x-5 "
+          id={id ? `input-otp-${id}` : `input-otp-${name}`}
+        >
           {Array(BoxLength)
-            .fill("")
+            .fill('')
             .map((_, index) => (
               <input
                 key={index}
@@ -161,8 +164,8 @@ const OTPInput: React.FC<OTPInputProps> = ({
                 onPaste={handlePaste}
                 ref={(el) => (inputRefs.current[index] = el)}
                 maxLength={1}
-                onFocus={(e) => (e.target.style.borderColor = "#667085")}
-                onBlur={(e) => (e.target.style.borderColor = "#D0D5DD")}
+                onFocus={(e) => (e.target.style.borderColor = '#667085')}
+                onBlur={(e) => (e.target.style.borderColor = '#D0D5DD')}
                 className="w-[54px] h-10 text-center text-lg  border border-[#D0D5DD] focus:border-[#667085] transition-colors duration-200 outline-none rounded-sm"
               />
             ))}
@@ -171,7 +174,7 @@ const OTPInput: React.FC<OTPInputProps> = ({
           <p className="text-common text-[#475467]">Didn't receive a code? </p>
           <span
             className={`text-common text-[#003C71] ml-2  ${
-              !isTimerCompleted ? "cursor-not-allowed" : "cursor-pointer"
+              !isTimerCompleted ? 'cursor-not-allowed' : 'cursor-pointer'
             }`}
             onClick={handleResend}
           >
