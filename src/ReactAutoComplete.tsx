@@ -591,7 +591,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         window.removeEventListener("keydown", handleKeyDown);
       })
     }
-  }, [inputValue, filteredData, isLoading, timerRef.current, selectedIndex]);
+  }, [inputValue, filteredData, isLoading, timerRef.current, selectedIndex, dropOpen]);
 
   const setDropDown = () => {
     return (
