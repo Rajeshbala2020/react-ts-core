@@ -274,7 +274,7 @@ const TextField: React.FC<TextFieldProps> = ({
     applyPositionClass(textFieldRef, isHovered);
   }, [isHovered]);
   return (
-    <div ref={textFieldRef} className={` ${fullwidth ? 'w-full' : 'w-auto'}`}>
+    <div ref={textFieldRef} className={`qbs-textfield ${fullwidth ? 'w-full' : 'w-auto'}`}>
       <div className="tooltip-container ">
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
