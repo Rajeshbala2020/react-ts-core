@@ -36,6 +36,7 @@ const Radio: React.FC<RadioProps> = ({
         >
           <input
             type="radio"
+            autoComplete="off"
             checked={checked}
             disabled={disabled}
             id={id ? `input-button-${id}` : `input-button-${name}`}

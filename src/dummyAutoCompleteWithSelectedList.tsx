@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps, TabPops, ValueProps } from './commontypes';
@@ -568,6 +561,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           >
             <input
               id={id}
+              autoComplete="off"
               ref={inputRef}
               type="text"
               value={
@@ -642,6 +636,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                           onChange={handleSuggestionChange}
                           value={searchValue}
                           placeholder="Search"
+                          autoComplete="off"
                           ref={inputSearchRef}
                         />
                       </div>

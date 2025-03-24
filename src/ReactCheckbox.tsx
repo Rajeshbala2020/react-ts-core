@@ -41,6 +41,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
             type="checkbox"
             disabled={disabled}
             name={name}
+            autoComplete="off"
             className="border-none outline-none invisible "
             data-testid="app-common-checkbox"
             id={id ? `input-check-${id}` : `input-check-${name}`}

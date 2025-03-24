@@ -319,6 +319,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
           <input
             id={id}
             ref={inputRef}
+            autoComplete="off"
             type="text"
             value={
               type === 'auto_suggestion'
@@ -381,6 +382,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                     className="dropdown-search-input"
                     onChange={handleSuggestionChange}
                     value={searchValue}
+                    autoComplete="off"
                     placeholder="Search"
                   />
                 </div>
@@ -413,6 +415,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                           <input
                             onChange={(e) => handleMultiSelect(e, suggestion)}
                             type="checkbox"
+                            autoComplete="off"
                             checked={isSelected(suggestion, selected)}
                             id={`qbs-checkbox-${idx.toString()}`}
                           />

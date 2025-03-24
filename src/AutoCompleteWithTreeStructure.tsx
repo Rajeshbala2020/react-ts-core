@@ -626,6 +626,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
               <input
                 ref={inputRef}
                 type="text"
+                autoComplete="off"
                 value={
                   type === 'auto_suggestion' && !expandable
                     ? inputValue
@@ -714,6 +715,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                     <input
                       className="dropdown-search-input"
                       onChange={handleSuggestionChange}
+                      autoComplete="off"
                       value={searchValue}
                       placeholder="Type to search"
                     />

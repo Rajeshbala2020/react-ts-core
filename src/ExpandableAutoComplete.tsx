@@ -427,6 +427,7 @@ const ExpandableAutoComplete = forwardRef<
               id={id ? `input-expandable-${id}` : `input-expandable-${name}`}
               ref={inputRef}
               type="text"
+              autoComplete="off"
               value={
                 type === 'auto_suggestion' && !expandable
                   ? inputValue
@@ -501,6 +502,7 @@ const ExpandableAutoComplete = forwardRef<
                       onChange={handleSuggestionChange}
                       value={searchValue}
                       placeholder="Type to search"
+                      autoComplete="off"
                     />
                   </div>
                 )}

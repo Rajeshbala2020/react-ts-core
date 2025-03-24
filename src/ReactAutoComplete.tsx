@@ -741,6 +741,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               readOnly={readOnly ?? type === 'custom_select'}
               value={inputValue ? inputValue : ''}
               onBlur={handleClearInputValue}
+              autoComplete="off"
               disabled={disabled}
               ref={inputRef}
               id={

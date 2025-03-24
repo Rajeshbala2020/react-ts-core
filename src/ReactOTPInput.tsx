@@ -158,6 +158,7 @@ const OTPInput: React.FC<OTPInputProps> = ({
                 name={name}
                 id={id}
                 type="text"
+                autoComplete="off"
                 value={otp[index]}
                 onChange={(e) => handleChange(e, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}

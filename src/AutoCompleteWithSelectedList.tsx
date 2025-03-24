@@ -631,7 +631,11 @@ const AutoCompleteWithSelectedList = forwardRef<
       handleUpdateParent?.(dropOpen, dropLevelRef.current);
     }, [dropOpen, dropLevelRef.current]);
     return (
-      <div id={id ? `selected-list-${id}` : `selected-list-${name}`} className={fullWidth ? 'fullWidth' : 'autoWidth'} ref={dropdownRef}>
+      <div
+        id={id ? `selected-list-${id}` : `selected-list-${name}`}
+        className={fullWidth ? 'fullWidth' : 'autoWidth'}
+        ref={dropdownRef}
+      >
         {label && (
           <div
             style={{
@@ -694,6 +698,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             <input
               id={id}
               ref={inputRef}
+              autoComplete="off"
               type="text"
               value={
                 type === 'auto_suggestion' && !expandable
@@ -745,7 +750,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                   minHeight: viewMode ? 100 : 192,
                   visibility: visible ? 'visible' : 'hidden',
                   opacity: visible ? 1 : 0,
-                  transition: "opacity 0.2s ease-in-out" 
+                  transition: 'opacity 0.2s ease-in-out',
                 }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? 'qbs-dropdown-selected-preview' : ''
@@ -767,6 +772,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                           onChange={handleSuggestionChange}
                           value={searchValue}
                           placeholder="Type to search"
+                          autoComplete="off"
                           ref={inputSearchRef}
                         />
                       </div>
@@ -779,7 +785,10 @@ const AutoCompleteWithSelectedList = forwardRef<
                     viewMode ? 'hidden' : ''
                   }`}
                   ref={itemsRef}
-                  style={{ maxHeight: `${selHeight}px`, minHeight: `${selHeight}px` }}
+                  style={{
+                    maxHeight: `${selHeight}px`,
+                    minHeight: `${selHeight}px`,
+                  }}
                 >
                   {filteredData?.length > 0 ? (
                     filteredData.map((suggestion: ValueProps, idx: number) => (
@@ -787,7 +796,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                         idx={idx}
                         suggestion={suggestion}
                         isSelected={isSelected}
-                        handleSuggestionClick={() => handleSuggestionClick(suggestion, idx)}
+                        handleSuggestionClick={() =>
+                          handleSuggestionClick(suggestion, idx)
+                        }
                         handleMultiSelect={handleMultiSelect}
                         selected={selected}
                         isMultiple={isMultiple}
@@ -797,7 +808,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                         shortCode={shortCode}
                         focusedIndex={focusedIndex}
                         setItemRef={(index, ref) => {
-                          itemRefs.current[index] = ref;  // Store each ref properly
+                          itemRefs.current[index] = ref; // Store each ref properly
                         }}
                       />
                     ))
