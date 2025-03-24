@@ -363,53 +363,6 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     }
   }, [dropOpen]);
 
-   // Handle keyboard navigation
-   const handleKeyDown = (e: any) => {
-    if (!dropOpen) return;
-
-    const atBottom = selectedIndex === filteredData.length - 1;
-    const atTop = selectedIndex === 0;
-
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        if (itemRefs.current && scrollContainerRef.current) {
-          if (!atBottom) {
-            scrollContainerRef.current.scrollTop += itemRefs.current[selectedIndex]?.offsetHeight || 50; 
-          } else {
-            scrollContainerRef.current.scrollTop = 0; 
-          }
-        }
-        setSelectedIndex((prev) => (prev + 1) % filteredData?.length);
-        break;
-
-      case "ArrowUp":
-        e.preventDefault();
-        if (itemRefs.current && scrollContainerRef.current) {
-          if (!atTop) {
-            scrollContainerRef.current.scrollTop -= itemRefs.current[selectedIndex]?.offsetHeight || 50; 
-          } else {
-            scrollContainerRef.current.scrollTop = 0; 
-          }
-        }
-        setSelectedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
-        break;
-
-      case "Enter":
-        e.preventDefault();
-        handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
-        break;
-
-      case "Escape":
-        e.preventDefault();
-        setDropOpen(false);
-        break;
-
-      default:
-        break;
-    }
-  };
-
   const handleClear = () => {
     setDropOpen(false);
     setInputValue('');
@@ -583,14 +536,62 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       return () => clearTimeout(timer);
     } else {
       setShowNoResults(false);
-      if(filteredData?.length > 0 && !isLoading) {
-        window.addEventListener("keydown", handleKeyDown);
-        return(() => {
-          window.removeEventListener("keydown", handleKeyDown);
-        })
-      }
     }
-  }, [inputValue, filteredData, isLoading, timerRef.current]);
+
+    // Handle keyboard navigation
+    const handleKeyDown = (e: any) => {
+      if (!dropOpen) return;
+
+      const atBottom = selectedIndex === filteredData.length - 1;
+      const atTop = selectedIndex === 0;
+
+      switch (e.key) {
+        case "ArrowDown":
+          e.preventDefault();
+          if (itemRefs.current && scrollContainerRef.current) {
+            if (!atBottom) {
+              scrollContainerRef.current.scrollTop += itemRefs.current[selectedIndex]?.offsetHeight || 50; 
+            } else {
+              scrollContainerRef.current.scrollTop = 0; 
+            }
+          }
+          setSelectedIndex((prev) => (prev + 1) % filteredData?.length);
+          break;
+
+        case "ArrowUp":
+          e.preventDefault();
+          if (itemRefs.current && scrollContainerRef.current) {
+            if (!atTop) {
+              scrollContainerRef.current.scrollTop -= itemRefs.current[selectedIndex]?.offsetHeight || 50; 
+            } else {
+              scrollContainerRef.current.scrollTop = 0; 
+            }
+          }
+          setSelectedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
+          break;
+
+        case "Enter":
+          e.preventDefault();
+          handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
+          break;
+
+        case "Escape":
+          e.preventDefault();
+          setDropOpen(false);
+          break;
+
+        default:
+          break;
+      }
+    };
+
+    if(filteredData?.length > 0 && !isLoading) {
+      window.addEventListener("keydown", handleKeyDown);
+      return(() => {
+        window.removeEventListener("keydown", handleKeyDown);
+      })
+    }
+  }, [inputValue, filteredData, isLoading, timerRef.current, selectedIndex]);
 
   const setDropDown = () => {
     return (
