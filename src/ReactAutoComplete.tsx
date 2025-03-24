@@ -607,8 +607,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   className={`${
                     value?.id === suggestion?.id
                       ? 'bg-blue-navy text-white'
-                      : 'hover:bg-table-hover'
-                  } ${index === selectedIndex ? "is-selected" : ""} cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
+                      : `${index === selectedIndex ? "is-selected" : ""} hover:bg-table-hover`
+                  }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
                   key={suggestion?.id}
                   data-testid={suggestion.name}
                   onClick={() => handleSuggestionClick(suggestion, index)}
