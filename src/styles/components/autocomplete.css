@@ -311,6 +311,7 @@ body * {
   font-weight: 500;
   line-height: 20px;
   padding-left: 32px;
+  width: 100%;
 }
 .qbs-autocomplete-suggestions-sub {
   position: relative;
