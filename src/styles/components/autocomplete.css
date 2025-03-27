@@ -325,6 +325,10 @@ body * {
 .padding-class {
   padding: 12px !important;
 }
+.qbs-autocomplete-listitem-container:hover {
+  color: #003c71;
+  background-color: rgba(141, 194, 240, 0.15) !important;
+}
 .qbs-autocomplete-listitem-container {
   display: flex !important;
   align-items: center !important;
@@ -464,7 +468,7 @@ span.dropdown-search-icon {
   padding: 6px 8px;
   display: flex;
   align-items: flex-start;
-  outline: none; 
+  outline: none;
   box-shadow: none;
 }
 
@@ -637,7 +641,7 @@ span.dropdown-search-icon {
   justify-content: space-between;
   align-items: center;
   cursor: pointer;
-  outline: none; 
+  outline: none;
   box-shadow: none;
 }
 
@@ -645,8 +649,8 @@ span.dropdown-search-icon {
   background-color: #f1f5f9;
 }
 
-.autocomplete-suggections .qbs-autocomplete-suggections-items .short-code, 
-.qbs-autocomplete-listitem-container .short-code{
+.autocomplete-suggections .qbs-autocomplete-suggections-items .short-code,
+.qbs-autocomplete-listitem-container .short-code {
   font-size: 12px;
   background: #f0f0f0;
   padding: 4px 8px;
