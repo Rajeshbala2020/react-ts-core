@@ -31,11 +31,11 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <div
-      className={`text-common font-normal text-grey-secondary flex items-center justify-start gap-2.5 ${
+      className={`text-common font-normal text-grey-secondary flex items-center justify-start gap-2 ${
         disabled ? ' opacity-70' : ''
       } `}
     >
-      <div>
+      <div className="w-4 h-4">
         <label className="relative">
           <input
             type="checkbox"
@@ -51,7 +51,7 @@ const Checkbox: React.FC<CheckboxProps> = ({
           />
 
           <div
-            className={`absolute top-[2px] left-0 text-text-primary ${propsClassName}  ${
+            className={`absolute top-0 left-0 text-text-primary ${propsClassName}  ${
               disabled ? 'cursor-not-allowed' : 'cursor-pointer'
             }`}
           >
