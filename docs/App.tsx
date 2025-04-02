@@ -93,7 +93,7 @@ export default function App() {
           <div style={{ width: 300 }}>
             <ModernAutoComplete
               name="sample"
-              label="TextField"
+              label="TextField sjdfjiosjfois fspofpospof spofpsoifp ospofispodfiposidf spodfisf"
               id="id"
               isStaticList={false}
               type="auto_complete"
@@ -432,7 +432,7 @@ export default function App() {
           <div style={{ width: 300 }}>
             <TextField
               name="sample"
-              label="TextField"
+              label="React TextField ."
               id="id"
               type="number"
               adorementPosition="start"

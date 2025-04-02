@@ -25,7 +25,7 @@ interface AutoSuggestionInputProps {
   className?: string;
   autoFocus?: boolean;
   required?: boolean;
-  shortCode?: string
+  shortCode?: string;
   hideClear?: boolean;
   value?: valueProps;
   onChange: (value?: valueProps) => void;
@@ -411,7 +411,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
 
         break;
       case 'label':
-        className += ` modern-input-label  peer-focus:modern-input-peer-focus-label-size 
+        className += ` modern-input-label-truncate  peer-focus:modern-input-peer-focus-label-size 
           ${
             isDisabled
               ? 'cursor-pointer'
@@ -546,36 +546,40 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       const atTop = selectedIndex === 0;
 
       switch (e.key) {
-        case "ArrowDown":
+        case 'ArrowDown':
           e.preventDefault();
           if (itemRefs.current && scrollContainerRef.current) {
             if (!atBottom) {
-              scrollContainerRef.current.scrollTop += itemRefs.current[selectedIndex]?.offsetHeight || 50; 
+              scrollContainerRef.current.scrollTop +=
+                itemRefs.current[selectedIndex]?.offsetHeight || 50;
             } else {
-              scrollContainerRef.current.scrollTop = 0; 
+              scrollContainerRef.current.scrollTop = 0;
             }
           }
           setSelectedIndex((prev) => (prev + 1) % filteredData?.length);
           break;
 
-        case "ArrowUp":
+        case 'ArrowUp':
           e.preventDefault();
           if (itemRefs.current && scrollContainerRef.current) {
             if (!atTop) {
-              scrollContainerRef.current.scrollTop -= itemRefs.current[selectedIndex]?.offsetHeight || 50; 
+              scrollContainerRef.current.scrollTop -=
+                itemRefs.current[selectedIndex]?.offsetHeight || 50;
             } else {
-              scrollContainerRef.current.scrollTop = 0; 
+              scrollContainerRef.current.scrollTop = 0;
             }
           }
-          setSelectedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
+          setSelectedIndex(
+            (prev) => (prev - 1 + filteredData?.length) % filteredData?.length
+          );
           break;
 
-        case "Enter":
+        case 'Enter':
           e.preventDefault();
           handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
           break;
 
-        case "Escape":
+        case 'Escape':
           e.preventDefault();
           setDropOpen(false);
           break;
@@ -585,13 +589,20 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       }
     };
 
-    if(filteredData?.length > 0 && !isLoading) {
-      window.addEventListener("keydown", handleKeyDown);
-      return(() => {
-        window.removeEventListener("keydown", handleKeyDown);
-      })
+    if (filteredData?.length > 0 && !isLoading) {
+      window.addEventListener('keydown', handleKeyDown);
+      return () => {
+        window.removeEventListener('keydown', handleKeyDown);
+      };
     }
-  }, [inputValue, filteredData, isLoading, timerRef.current, selectedIndex, dropOpen]);
+  }, [
+    inputValue,
+    filteredData,
+    isLoading,
+    timerRef.current,
+    selectedIndex,
+    dropOpen,
+  ]);
 
   const setDropDown = () => {
     return (
@@ -608,7 +619,9 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   className={`${
                     value?.id === suggestion?.id
                       ? 'bg-blue-navy text-white'
-                      : `${index === selectedIndex ? "is-selected" : ""} hover:bg-table-hover`
+                      : `${
+                          index === selectedIndex ? 'is-selected' : ''
+                        } hover:bg-table-hover`
                   }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
                   key={suggestion?.id}
                   data-testid={suggestion.name}
@@ -617,10 +630,14 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   ref={(el) => (itemRefs.current[index] = el)}
                 >
                   <span>
-                    {suggestion?.label ? suggestion?.label : suggestion.name} 
+                    {suggestion?.label ? suggestion?.label : suggestion.name}
                   </span>
 
-                  {shortCode && suggestion?.[shortCode] && <span className='short-code'>{suggestion?.[shortCode]}</span>}
+                  {shortCode && suggestion?.[shortCode] && (
+                    <span className="short-code">
+                      {suggestion?.[shortCode]}
+                    </span>
+                  )}
                 </li>
               ))}
             </>
@@ -788,7 +805,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                 onClick={() => onLabelClick()}
                 className={generateClassName('label')}
               >
-                {label ? label : ''}
+                {label ? <span className="truncate">{label}</span> : ''}
                 {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}

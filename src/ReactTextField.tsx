@@ -135,7 +135,7 @@ const TextField: React.FC<TextFieldProps> = ({
 
         break;
       case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
-        className += ` modern-input-label peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-2 z-1 origin-[0] px-0 
+        className += `flex modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-2 z-1 origin-[0] px-0 
     peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
     peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto  ${
       isDisabled ? 'cursor-pointer' : 'cursor-text peer-focus:cursor-pointer'
@@ -274,7 +274,10 @@ const TextField: React.FC<TextFieldProps> = ({
     applyPositionClass(textFieldRef, isHovered);
   }, [isHovered]);
   return (
-    <div ref={textFieldRef} className={`qbs-textfield ${fullwidth ? 'w-full' : 'w-auto'}`}>
+    <div
+      ref={textFieldRef}
+      className={`qbs-textfield ${fullwidth ? 'w-full' : 'w-auto'}`}
+    >
       <div className="tooltip-container ">
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
@@ -332,7 +335,7 @@ const TextField: React.FC<TextFieldProps> = ({
                   onClick={() => onLabelClick()}
                   className={generateClassName('label')}
                 >
-                  {label}
+                  {label ? <span className="truncate">{label}</span> : ''}
                   {required ? <span className="text-error"> *</span> : <></>}
                 </label>
               )}
