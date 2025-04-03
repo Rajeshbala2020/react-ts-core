@@ -7,7 +7,14 @@ const CheckBoxInterMediateDisabled = () => {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
     >
-      <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" fill="#F9FAFB" />
+      <rect
+        x="0.5"
+        y="0.5"
+        width="15"
+        height="15"
+        rx="1.5"
+        fill="currentColor"
+      />
       <rect x="0.5" y="0.5" width="15" height="15" rx="1.5" stroke="#D2D2D2" />
       <path
         d="M4.5 8H11.5"
@@ -17,6 +24,6 @@ const CheckBoxInterMediateDisabled = () => {
         strokeLinejoin="round"
       />
     </svg>
-  )
+  );
 }
 export default CheckBoxInterMediateDisabled
