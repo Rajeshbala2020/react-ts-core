@@ -117,7 +117,7 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
       //     }
       //     break;
       case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
-        className += ` modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-1.5 z-1 origin-[0] px-0 
+        className += ` flex modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-1.5 z-1 origin-[0] px-0 
          peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/6 rtl:peer-focus:left-auto 
          peer-placeholder-shown:translate-y-2 peer-placeholder-shown:top-[2px] peer-focus:top-1.5 peer-focus:-translate-y-4" ${
            isDisabled

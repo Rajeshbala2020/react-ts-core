@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { FieldErrors } from "react-hook-form";
+import React, { useEffect, useRef, useState } from 'react';
+import { FieldErrors } from 'react-hook-form';
 
 type OTPInputProps = {
   BoxLength?: number;
@@ -17,7 +17,7 @@ type OTPInputProps = {
 const OTPInput: React.FC<OTPInputProps> = ({
   BoxLength = 6,
   onChangeOTP,
-  value = "",
+  value = '',
   label,
   errors,
   name,
@@ -28,7 +28,7 @@ const OTPInput: React.FC<OTPInputProps> = ({
 }) => {
   // Initialize OTP state from value prop
   const [otp, setOtp] = useState<string[]>(
-    value.split("").concat(Array(BoxLength - value.length).fill(""))
+    value.split('').concat(Array(BoxLength - value.length).fill(''))
   );
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
   const [remainingTime, setRemainingTime] = useState<number>(initialTime);
@@ -36,11 +36,11 @@ const OTPInput: React.FC<OTPInputProps> = ({
 
   useEffect(() => {
     // Synchronize local otp state with value prop changes
-    setOtp(value.split("").concat(Array(BoxLength - value.length).fill("")));
+    setOtp(value.split('').concat(Array(BoxLength - value.length).fill('')));
   }, [value, BoxLength]);
 
   useEffect(() => {
-    if (otp) onChangeOTP(otp.join(""));
+    if (otp) onChangeOTP(otp.join(''));
   }, [otp]);
 
   useEffect(() => {
@@ -72,7 +72,7 @@ const OTPInput: React.FC<OTPInputProps> = ({
     newOtp[index] = value;
     setOtp(newOtp);
 
-    if (value !== "" && index < BoxLength - 1) {
+    if (value !== '' && index < BoxLength - 1) {
       inputRefs.current[index + 1]?.focus(); // Move focus to next input
     }
   };
@@ -81,22 +81,22 @@ const OTPInput: React.FC<OTPInputProps> = ({
     e: React.KeyboardEvent<HTMLInputElement>,
     index: number
   ) => {
-    if (e.key === "Backspace" && otp[index] === "" && index > 0) {
+    if (e.key === 'Backspace' && otp[index] === '' && index > 0) {
       inputRefs.current[index - 1]?.focus(); // Move focus to previous input
     }
   };
 
   const handlePaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
-    const pastedData = e.clipboardData.getData("Text").slice(0, BoxLength);
+    const pastedData = e.clipboardData.getData('Text').slice(0, BoxLength);
     if (/[^0-9]/.test(pastedData)) return;
 
     const newOtp = pastedData
-      .split("")
-      .concat(Array(BoxLength - pastedData.length).fill(""));
+      .split('')
+      .concat(Array(BoxLength - pastedData.length).fill(''));
     setOtp(newOtp);
 
     // Move focus to the last filled input field
-    const lastIndex = newOtp.findIndex((val) => val === "");
+    const lastIndex = newOtp.findIndex((val) => val === '');
     if (lastIndex !== -1) {
       inputRefs.current[lastIndex]?.focus();
     } else {
@@ -105,7 +105,7 @@ const OTPInput: React.FC<OTPInputProps> = ({
   };
 
   const getErrors = (err: any) => {
-    let errMsg = "";
+    let errMsg = '';
     if (err.message) {
       errMsg = err?.message;
     }
@@ -114,12 +114,12 @@ const OTPInput: React.FC<OTPInputProps> = ({
 
   const handleError = (data: any) => {
     if (
-      getErrors(data[name]) === "required" ||
-      getErrors(data[name]) === "Required"
+      getErrors(data[name]) === 'required' ||
+      getErrors(data[name]) === 'Required'
     ) {
       return `${label ?? labelTitle} is ${getErrors(data[name])}`;
     } else {
-      return getErrors(data[name]) ?? "";
+      return getErrors(data[name]) ?? '';
     }
   };
 
@@ -167,7 +167,7 @@ const OTPInput: React.FC<OTPInputProps> = ({
                 maxLength={1}
                 onFocus={(e) => (e.target.style.borderColor = '#667085')}
                 onBlur={(e) => (e.target.style.borderColor = '#D0D5DD')}
-                className="w-[54px] h-10 text-center text-lg  border border-[#D0D5DD] focus:border-[#667085] transition-colors duration-200 outline-none rounded-sm"
+                className={`otp-input-customstyle w-[54px] h-10 text-center text-lg  border border-[#D0D5DD] focus:border-[#667085] transition-colors duration-200 outline-none rounded-sm`}
               />
             ))}
         </div>

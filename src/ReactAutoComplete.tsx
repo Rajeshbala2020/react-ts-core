@@ -411,7 +411,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
 
         break;
       case 'label':
-        className += ` modern-input-label-truncate  peer-focus:modern-input-peer-focus-label-size 
+        className += ` flex modern-input-label-truncate  peer-focus:modern-input-peer-focus-label-size 
           ${
             isDisabled
               ? 'cursor-pointer'
