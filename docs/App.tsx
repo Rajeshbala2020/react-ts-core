@@ -6,6 +6,7 @@ import {
   AutoCompleteWithTreeStructure,
   ExpandableAutoComplete,
   ModernAutoComplete,
+  ModernAutoCompleteDropdown,
 } from '../src/index';
 import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
@@ -36,7 +37,7 @@ export default function App() {
   const getDatas = (keyName?: string) => {
     return fetch(
       keyName
-        ? `https://jsonplaceholder.typicode.com/posts?title_like=${keyName}`
+        ? `https://jsonplaceholder.typicode.com/posts?title_like=${keyName === '*' ? '' : keyName}`
         : `https://jsonplaceholder.typicode.com/posts`
     )
       .then((res) => res.json())
@@ -103,6 +104,21 @@ export default function App() {
               onChange={(e) => console.log(e, 'onchange')}
             />
           </div>
+
+          <div style={{ width: 300 }}>
+            <ModernAutoCompleteDropdown
+              name="sample"
+              label="TextField"
+              id="id"
+              type="auto_complete"
+              placeholder="TextField"
+              required
+              getData={getDatas}
+              onChange={(e) => console.log(e, 'onchange')}
+            />
+          </div>
+
+          
           <div className="autocomplete-section">
             <h2>Expandable Auto Suggestion</h2>
             <p>
