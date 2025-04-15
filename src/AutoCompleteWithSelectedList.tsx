@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps, TabPops, ValueProps } from './commontypes';
@@ -60,7 +67,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       selectedLabel = '',
       viewMode = false,
       handleUpdateParent,
-      shortCode = ''
+      shortCode = '',
     },
     ref
   ) => {
@@ -100,7 +107,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     let originalOverflow = '';
     let hasScrollbar = false;
-    
+
     const adjustDropdownPosition = () => {
       if (dropdownRef.current) {
         const inputRect = dropdownRef.current.getBoundingClientRect();
@@ -114,7 +121,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         const spaceAbove = inputRect.top + window.scrollY;
 
         let dropdownHeight = viewMode ? 160 : 300; // Assume a fixed height or calculate based on content
-        const defaultHeight = 184
+        const defaultHeight = 184;
 
         if (countOnly) {
           if (dropdownSelectedRef?.current)
@@ -128,22 +135,22 @@ const AutoCompleteWithSelectedList = forwardRef<
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
 
-          setSelHeight(defaultHeight)
+          setSelHeight(defaultHeight);
         } else if (spaceAbove >= dropdownHeight) {
           dropLevelRef.current = 'top';
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
 
-          setSelHeight(defaultHeight)
+          setSelHeight(defaultHeight);
         } else {
           dropLevelRef.current = 'bottom';
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
 
-          if(itemsRef?.current) {
-            const totalH = showAllSelected ? 148 : defaultHeight
-            const selH =  totalH - (dropdownHeight - spaceBelow)
-            setSelHeight(selH < 50 ? 50 : selH )
+          if (itemsRef?.current) {
+            const totalH = showAllSelected ? 148 : defaultHeight;
+            const selH = totalH - (dropdownHeight - spaceBelow);
+            setSelHeight(selH < 50 ? 50 : selH);
           }
         }
         // setDropdownStyle({
@@ -183,28 +190,31 @@ const AutoCompleteWithSelectedList = forwardRef<
     );
 
     // Handling the selection of a suggestion
-    const handleSuggestionClick = useCallback((suggestion: ValueProps, idx: number) => {
-      if (isMultiple) {
-        setFocusedIndex(idx)
-        setSelectedItems((prev) => {
-          const isAdded =
-            prev && prev.length > 0
-              ? prev.some((item) => item[descId] === suggestion[descId])
-              : false;
-          if (isAdded) {
-            return prev.filter((item) => item[descId] !== suggestion[descId]);
-          } else {
-            return [...prev, suggestion];
-          }
-        });
-      } else {
-        setFocusedIndex(idx)
-        setInputValue(suggestion[desc]);
-        setSearchValue('');
-        onChange(suggestion);
-        setDropOpen(false);
-      }
-    }, []);
+    const handleSuggestionClick = useCallback(
+      (suggestion: ValueProps, idx: number) => {
+        if (isMultiple) {
+          setFocusedIndex(idx);
+          setSelectedItems((prev) => {
+            const isAdded =
+              prev && prev.length > 0
+                ? prev.some((item) => item[descId] === suggestion[descId])
+                : false;
+            if (isAdded) {
+              return prev.filter((item) => item[descId] !== suggestion[descId]);
+            } else {
+              return [...prev, suggestion];
+            }
+          });
+        } else {
+          setFocusedIndex(idx);
+          setInputValue(suggestion[desc]);
+          setSearchValue('');
+          onChange(suggestion);
+          setDropOpen(false);
+        }
+      },
+      []
+    );
 
     // Adding debounce to avoid making API calls on every keystroke
     const debouncedUpdate = useCallback(
@@ -311,7 +321,6 @@ const AutoCompleteWithSelectedList = forwardRef<
       setTimeout(() => {
         adjustDropdownPosition();
       }, 200);
-
     }, [selectedItems]);
 
     useEffect(() => {
@@ -332,13 +341,13 @@ const AutoCompleteWithSelectedList = forwardRef<
       // const observer = new MutationObserver(() => {
       //   adjustDropdownPosition();
       // });
-  
+
       // observer.observe(document.body, {
       //   childList: true,
       //   subtree: true,
       //   attributes: true,
       // });
-      
+
       document.addEventListener('mousedown', handleClickOutside as any);
       window.addEventListener('scroll', handleClickOutside as any);
 
@@ -379,9 +388,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       true
     );
 
-
     useEffect(() => {
-  
       // Handle keyboard navigation
       const handleKeyDown = (e: any) => {
         if (!dropOpen) return;
@@ -389,52 +396,57 @@ const AutoCompleteWithSelectedList = forwardRef<
         const atBottom = focusedIndex === filteredData.length - 1;
         const atTop = focusedIndex === 0;
         switch (e.key) {
-          case "ArrowDown":
+          case 'ArrowDown':
             e.preventDefault();
             if (itemsRef.current) {
               if (!atBottom) {
-                  itemsRef.current.scrollTop += itemRefs.current[focusedIndex]?.offsetHeight || 50; 
+                itemsRef.current.scrollTop +=
+                  itemRefs.current[focusedIndex]?.offsetHeight || 50;
               } else {
-                  itemsRef.current.scrollTop = 0; 
+                itemsRef.current.scrollTop = 0;
               }
             }
             setFocusedIndex((prev) => (prev + 1) % filteredData?.length);
             break;
-    
-          case "ArrowUp":
+
+          case 'ArrowUp':
             e.preventDefault();
             if (itemsRef.current) {
               if (!atTop) {
-                  itemsRef.current.scrollTop -= itemRefs.current[focusedIndex]?.offsetHeight || 50; 
+                itemsRef.current.scrollTop -=
+                  itemRefs.current[focusedIndex]?.offsetHeight || 50;
               } else {
-                  itemsRef.current.scrollTop = 0; 
+                itemsRef.current.scrollTop = 0;
               }
             }
-            setFocusedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
+            setFocusedIndex(
+              (prev) => (prev - 1 + filteredData?.length) % filteredData?.length
+            );
             break;
-    
-          case "Enter":
+
+          case 'Enter':
             e.preventDefault();
-            handleSuggestionClick(filteredData[focusedIndex], focusedIndex)
+            if (filteredData && filteredData.length > 0)
+              handleSuggestionClick(filteredData[focusedIndex], focusedIndex);
             break;
-    
-          case "Escape":
+
+          case 'Escape':
             e.preventDefault();
             setDropOpen(false);
             break;
-    
+
           default:
             break;
         }
       };
-    
-      window.addEventListener("keydown", handleKeyDown);
-    
+
+      window.addEventListener('keydown', handleKeyDown);
+
       return () => {
-        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }, [filteredData, dropOpen, isLoading, focusedIndex]);
-    
+
     const isSelected = (
       item: ValueProps,
       selectedItems: ValueProps[] | string
@@ -503,7 +515,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       hasScrollbar = document.body.scrollHeight > window.innerHeight;
       if (!originalOverflow && !hasScrollbar) {
         originalOverflow = document.body.style.overflow;
-        document.body.style.overflow = 'hidden';  
+        document.body.style.overflow = 'hidden';
       }
 
       setVisible(false);
@@ -516,7 +528,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         if (!hasScrollbar) {
           document.body.style.overflow = originalOverflow || '';
         }
-        originalOverflow = ''; 
+        originalOverflow = '';
       }, 200);
     };
 
@@ -537,9 +549,9 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const getSelectedRowLimit = () => {
-      let maxHeight = 36
-      if(selItemRef?.current && selItemRef?.current.clientWidth < 300) {
-        maxHeight = 24
+      let maxHeight = 36;
+      if (selItemRef?.current && selItemRef?.current.clientWidth < 300) {
+        maxHeight = 24;
       }
 
       return selectedRowLimit * maxHeight + 5;
