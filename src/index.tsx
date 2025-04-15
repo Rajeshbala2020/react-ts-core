@@ -17,3 +17,4 @@ export { default as ModernTextField } from './ReactTextField';
 export { deepEqual } from './utilities/deepEqual';
 export { default as ExpandableToolTip } from './utilities/expandableTootltip';
 export { default as ToolTip } from './utilities/tooltip';
+export { default as ModernAutoCompleteDropdown } from './ReactAutoCompleteDropdown';
