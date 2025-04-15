@@ -1,12 +1,12 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { FieldErrors } from 'react-hook-form';
+import React, { useCallback, useEffect, useRef, useState } from "react";
+import { FieldErrors } from "react-hook-form";
 
-import CustomIcons from './components/customIcons';
-import Spinner from './components/loader/Spinner';
-import Portal from './components/portal';
-import { debounce } from './utilities/debounce';
-import { applyPositionClass } from './utilities/getPosition';
-import { DropArrow } from './utilities/icons';
+import CustomIcons from "./components/customIcons";
+import Spinner from "./components/loader/Spinner";
+import Portal from "./components/portal";
+import { debounce } from "./utilities/debounce";
+import { applyPositionClass } from "./utilities/getPosition";
+import { DropArrow } from "./utilities/icons";
 
 type valueProps = {
   id?: string | number;
@@ -30,7 +30,7 @@ interface AutoSuggestionInputProps {
   value?: valueProps;
   onChange: (value?: valueProps) => void;
   data?: any[];
-  type?: 'custom_select' | 'auto_complete' | 'custom_search_select';
+  type?: "custom_select" | "auto_complete" | "custom_search_select";
   placeholder?: string;
   getData?: ((key?: string) => Promise<any>) | ((key?: string) => any);
   errors?: FieldErrors;
@@ -63,12 +63,12 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   required = false,
   autoFocus,
   name,
-  shortCode = '',
+  shortCode = "",
   fullWidth,
   placeholder,
   id,
   className: propsClassName,
-  type = 'custom_select',
+  type = "custom_select",
   readOnly,
   disabled = false,
   value,
@@ -86,7 +86,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   labelTitle,
   isModern = true,
 }) => {
-  const [inputValue, setInputValue] = useState<any>(value?.name ?? '');
+  const [inputValue, setInputValue] = useState<any>(value?.name ?? "");
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [dropOpen, setDropOpen] = useState<boolean>(false);
@@ -124,8 +124,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     ) => {
       return substring &&
         mainString &&
-        typeof mainString === 'string' &&
-        typeof subString === 'string'
+        typeof mainString === "string" &&
+        typeof subString === "string"
         ? mainString
             .toString()
             .toLowerCase()
@@ -140,13 +140,13 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     return (
       checkIncludesIfExists(mainString, subString) ||
       (!!checkParams &&
-        ((checkArrayContains(checkParams, 'param1') &&
+        ((checkArrayContains(checkParams, "param1") &&
           checkIncludesIfExists(param1, subString)) ||
-          (checkArrayContains(checkParams, 'param2') &&
+          (checkArrayContains(checkParams, "param2") &&
             checkIncludesIfExists(param2, subString)) ||
-          (checkArrayContains(checkParams, 'param3') &&
+          (checkArrayContains(checkParams, "param3") &&
             checkIncludesIfExists(param3, subString)) ||
-          (checkArrayContains(checkParams, 'param4') &&
+          (checkArrayContains(checkParams, "param4") &&
             checkIncludesIfExists(param4, subString))))
     );
   };
@@ -158,8 +158,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     setInputValue(value);
     handleValChange(value);
     if (!value) {
-      setInputValue('');
-      onChange({ id: undefined, name: '', from: 2 });
+      setInputValue("");
+      onChange({ id: undefined, name: "", from: 2 });
     }
   };
 
@@ -167,11 +167,11 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     debounce(
       (value: string) => {
         setDropOpen(true);
-        onChange({ id: undefined, name: '', from: 1 });
-        if (value.trim() === '' && type === 'auto_complete') {
+        onChange({ id: undefined, name: "", from: 1 });
+        if (value.trim() === "" && type === "auto_complete") {
           setSuggestions([]);
           if (autoFilter) {
-            handleDropData('*');
+            handleDropData("*");
           } else {
             setDropOpen(false);
           }
@@ -187,11 +187,11 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     []
   );
   const handleDropData = (value?: string) => {
-    if (type === 'auto_complete') {
+    if (type === "auto_complete") {
       if (isStaticList) {
         loadStaticData();
         const filteredData =
-          value && value !== '*'
+          value && value !== "*"
             ? data?.filter((item) =>
                 checkIncludes(
                   item.name,
@@ -204,16 +204,16 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             : data;
         setSuggestions(filteredData);
       } else {
-          handlePickSuggestions(value);
+        handlePickSuggestions(value);
       }
     } else if (
-      (type === 'custom_select' || type === 'custom_search_select') &&
+      (type === "custom_select" || type === "custom_search_select") &&
       (!data || data?.length === 0)
     ) {
       handlePickSuggestions();
-    } else if (type === 'custom_search_select' && data && data?.length > 0) {
+    } else if (type === "custom_search_select" && data && data?.length > 0) {
       const filteredData =
-        value && value !== '*'
+        value && value !== "*"
           ? data.filter((item) =>
               checkIncludes(
                 item.name,
@@ -243,10 +243,10 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   const onLabelClick = () => {
     if (!isDisabled) {
       inputRef?.current?.focus();
-      if (autoFilter && inputValue === '') {
-        handleValChange('*');
+      if (autoFilter && inputValue === "") {
+        handleValChange("*");
       } else if (
-        (type === 'custom_select' || type === 'custom_search_select') &&
+        (type === "custom_select" || type === "custom_search_select") &&
         data &&
         data?.length > 0
       ) {
@@ -274,7 +274,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
         try {
           setIsLoading(true);
           //handlePickSuggestions('*');
-          const fetchedSuggestions = await getData?.('*');
+          const fetchedSuggestions = await getData?.("*");
           setSuggestions(fetchedSuggestions);
           setIsLoading(false);
         } catch (error) {
@@ -284,9 +284,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     }
   };
   useEffect(() => {
-    document.addEventListener('click', handleClickOutside);
+    document.addEventListener("click", handleClickOutside);
     return () => {
-      document.removeEventListener('click', handleClickOutside);
+      document.removeEventListener("click", handleClickOutside);
     };
   }, []);
 
@@ -297,10 +297,10 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   }, [autoFocus]);
   const onInputFocus = () => {
     if (!isDisabled) {
-      if (autoFilter && inputValue === '') {
-        handleValChange('*');
+      if (autoFilter && inputValue === "") {
+        handleValChange("*");
       } else if (
-        (type === 'custom_select' || type === 'custom_search_select') &&
+        (type === "custom_select" || type === "custom_search_select") &&
         data &&
         data?.length > 0
       ) {
@@ -319,7 +319,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       name: suggestion.name,
       ...(suggestion?.label ? { label: suggestion?.label } : {}),
     });
-    if (type !== 'custom_select') setInputValue(suggestion.name);
+    if (type !== "custom_select") setInputValue(suggestion.name);
     setDropOpen(false);
     setSelectedIndex(index);
   };
@@ -327,18 +327,18 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     if (!suggestions || suggestions?.length === 0) handleDropData();
     if (!isLoading) {
       setDropOpen(!dropOpen);
-      if (type !== 'custom_select') setInputValue('');
+      if (type !== "custom_select") setInputValue("");
     }
   };
 
   const handleOpenDropdown = (e: any) => {
     if (!suggestions || suggestions?.length === 0) {
-      if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
+      if (autoDropdown && (inputValue === "" || inputValue.trim() === "")) {
         loadStaticData();
       } else {
-        handleDropData()
+        handleDropData();
       }
-    };
+    }
     if (!isLoading) {
       setDropOpen(!dropOpen);
     }
@@ -351,28 +351,28 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   useEffect(() => {
     if (!insideOpen) {
       setSelectedIndex(0);
-      window.addEventListener('scroll', handleScroll);
+      window.addEventListener("scroll", handleScroll);
 
-      const mainElement = document.querySelector('main');
-      mainElement?.addEventListener('scroll', handleScroll);
+      const mainElement = document.querySelector("main");
+      mainElement?.addEventListener("scroll", handleScroll);
 
       const gridElements = document.querySelectorAll(
-        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        ".k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto"
       );
       gridElements.forEach((gridElement: any) => {
-        gridElement.addEventListener('scroll', handleScroll);
+        gridElement.addEventListener("scroll", handleScroll);
       });
 
-      window.addEventListener('resize', getDropPosition);
+      window.addEventListener("resize", getDropPosition);
       getDropPosition();
       return () => {
-        window.removeEventListener('scroll', handleScroll);
-        const mainElement = document.querySelector('main');
-        mainElement?.removeEventListener('scroll', handleScroll);
-        window.addEventListener('resize', getDropPosition);
-        const gridElements = document.querySelectorAll('.k-grid-content');
+        window.removeEventListener("scroll", handleScroll);
+        const mainElement = document.querySelector("main");
+        mainElement?.removeEventListener("scroll", handleScroll);
+        window.addEventListener("resize", getDropPosition);
+        const gridElements = document.querySelectorAll(".k-grid-content");
         gridElements.forEach((gridElement: any) => {
-          gridElement.removeEventListener('scroll', handleScroll);
+          gridElement.removeEventListener("scroll", handleScroll);
         });
       };
     }
@@ -380,13 +380,13 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
 
   const handleClear = () => {
     setDropOpen(false);
-    setInputValue('');
-    onChange({ id: undefined, name: '', from: 3 });
+    setInputValue("");
+    onChange({ id: undefined, name: "", from: 3 });
     onLabelClick();
   };
 
   useEffect(() => {
-    setInputValue(value?.name ?? '');
+    setInputValue(value?.name ?? "");
   }, [value?.name]);
 
   useEffect(() => {
@@ -394,7 +394,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   }, [data]);
 
   const getErrors = (err: any) => {
-    let errMsg = '';
+    let errMsg = "";
     if (err.message) {
       errMsg = err?.message;
     } else if (err?.id?.message) {
@@ -405,59 +405,59 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     return errMsg;
   };
   const generateClassName = (
-    type: 'input' | 'label' | 'message' | 'adorement'
+    type: "input" | "label" | "message" | "adorement"
   ): string => {
     let className = propsClassName;
     switch (type) {
-      case 'input':
+      case "input":
         className += `block text-common text-input-text font-normal px-3.5 w-full text-sm text-gray-900 bg-transparent  border  appearance-none    peer h-10 rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
           label && isModern
-            ? 'placeholder-transparent'
-            : 'focus:placeholder-grey-secondary placeholder-input-label'
+            ? "placeholder-transparent"
+            : "focus:placeholder-grey-secondary placeholder-input-label"
         } focus:placeholder-grey-secondary`;
 
         if (errors && errors[name]) {
           className +=
-            ' border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline';
+            " border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline";
         } else {
           className +=
-            ' text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0';
+            " text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0";
         }
 
         break;
-      case 'label':
+      case "label":
         className += ` flex modern-input-label-truncate  peer-focus:modern-input-peer-focus-label-size 
           ${
             isDisabled
-              ? 'cursor-pointer'
-              : 'cursor-text peer-focus:cursor-pointer'
+              ? "cursor-pointer"
+              : "cursor-text peer-focus:cursor-pointer"
           } ${
           isDisabled && !checkIsEmptyField()
-            ? 'disabled-input-label-bg'
+            ? "disabled-input-label-bg"
             : !isDisabled || !checkIsEmptyField()
-            ? 'active-input-label-bg'
-            : ''
+            ? "active-input-label-bg"
+            : ""
         } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
           isDisabled
-            ? 'cursor-pointer'
-            : 'cursor-text peer-focus:cursor-pointer'
+            ? "cursor-pointer"
+            : "cursor-text peer-focus:cursor-pointer"
         }
            ${
              checkIsEmptyField()
-               ? 'modern-input-label-size'
-               : 'modern-input-peer-focus-label-size'
+               ? "modern-input-label-size"
+               : "modern-input-peer-focus-label-size"
            }`;
         if (errors && errors[name]) {
-          className += ' text-error-light ';
+          className += " text-error-light ";
         } else {
-          className += ' text-grey-dark peer-focus:text-blue-navy';
+          className += " text-grey-dark peer-focus:text-blue-navy";
         }
         break;
-      case 'message':
-        className = ' text-error-icon ';
+      case "message":
+        className = " text-error-icon ";
         break;
-      case 'adorement':
-        className += '  absolute right-0 adorement gap-1 flex items-center ';
+      case "adorement":
+        className += "  absolute right-0 adorement gap-1 flex items-center ";
         break;
       default:
         break;
@@ -482,30 +482,30 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   //   return 'bottom'
   // }
   const filteredData =
-    inputValue !== '*' &&
-    inputValue !== '' &&
-    type !== 'custom_select' &&
+    inputValue !== "*" &&
+    inputValue !== "" &&
+    type !== "custom_select" &&
     !noLocalFilter
       ? suggestions?.filter((item: valueProps) =>
           checkIncludes(
             item.name,
             inputValue,
-            item.param1 ?? '',
-            item.param2 ?? '',
-            item.param3 ?? '',
-            item.param4 ?? ''
+            item.param1 ?? "",
+            item.param2 ?? "",
+            item.param3 ?? "",
+            item.param4 ?? ""
           )
         )
       : suggestions;
 
   const handleError = (data: any) => {
     if (
-      getErrors(data[name]) === 'required' ||
-      getErrors(data[name]) === 'Required'
+      getErrors(data[name]) === "required" ||
+      getErrors(data[name]) === "Required"
     ) {
       return `${label ?? labelTitle} is ${getErrors(data[name])}`;
     } else {
-      return getErrors(data[name]) ?? '';
+      return getErrors(data[name]) ?? "";
     }
   };
 
@@ -561,7 +561,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       const atTop = selectedIndex === 0;
 
       switch (e.key) {
-        case 'ArrowDown':
+        case "ArrowDown":
           e.preventDefault();
           if (itemRefs.current && scrollContainerRef.current) {
             if (!atBottom) {
@@ -574,7 +574,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           setSelectedIndex((prev) => (prev + 1) % filteredData?.length);
           break;
 
-        case 'ArrowUp':
+        case "ArrowUp":
           e.preventDefault();
           if (itemRefs.current && scrollContainerRef.current) {
             if (!atTop) {
@@ -589,12 +589,12 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           );
           break;
 
-        case 'Enter':
+        case "Enter":
           e.preventDefault();
           handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
           break;
 
-        case 'Escape':
+        case "Escape":
           e.preventDefault();
           setDropOpen(false);
           break;
@@ -605,9 +605,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     };
 
     if (filteredData?.length > 0 && !isLoading) {
-      window.addEventListener('keydown', handleKeyDown);
+      window.addEventListener("keydown", handleKeyDown);
       return () => {
-        window.removeEventListener('keydown', handleKeyDown);
+        window.removeEventListener("keydown", handleKeyDown);
       };
     }
   }, [
@@ -633,9 +633,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                 <li
                   className={`${
                     value?.id === suggestion?.id
-                      ? 'bg-blue-navy text-white'
+                      ? "bg-blue-navy text-white"
                       : `${
-                          index === selectedIndex ? 'is-selected' : ''
+                          index === selectedIndex ? "is-selected" : ""
                         } hover:bg-table-hover`
                   }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
                   key={suggestion?.id}
@@ -694,7 +694,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   useEffect(() => {
     const shouldShowClose =
       value?.name &&
-      (value?.id || String(value?.id) === '0') &&
+      (value?.id || String(value?.id) === "0") &&
       !disabled &&
       !readOnly &&
       isClose;
@@ -708,7 +708,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       if (inputRef.current) {
         const { scrollWidth, clientWidth, value } = inputRef.current;
         // Check for overflow only when there's content
-        if (value.trim() !== '') {
+        if (value.trim() !== "") {
           setShowTooltip(scrollWidth > clientWidth + 2);
         } else {
           setShowTooltip(false); // No tooltip for empty input
@@ -717,13 +717,13 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     };
 
     if (inputRef.current) {
-      inputRef.current.addEventListener('input', checkOverflow);
+      inputRef.current.addEventListener("input", checkOverflow);
       checkOverflow(); // Initial check
     }
 
     return () => {
       if (inputRef.current) {
-        inputRef.current.removeEventListener('input', checkOverflow);
+        inputRef.current.removeEventListener("input", checkOverflow);
       }
     };
   }, [inputValue]);
@@ -741,7 +741,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       id={
         id ? `autocomplete-container-${id}` : `autocomplete-container-${name}`
       }
-      className={` flex-grow  ${fullWidth ? 'w-full' : 'w-auto'}`}
+      className={` flex-grow  ${fullWidth ? "w-full" : "w-auto"}`}
       ref={dropdownref}
     >
       {label && !isModern && (
@@ -761,7 +761,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
         )}
 
         <div
-          className={`flex relative ${fullWidth ? 'w-full' : 'w-auto'}`}
+          className={`flex relative ${fullWidth ? "w-full" : "w-auto"}`}
           style={{ width: width }}
         >
           <div
@@ -771,8 +771,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           >
             <input
               type="text"
-              readOnly={readOnly ?? type === 'custom_select'}
-              value={inputValue ? inputValue : ''}
+              readOnly={readOnly ?? type === "custom_select"}
+              value={inputValue ? inputValue : ""}
               onBlur={handleClearInputValue}
               autoComplete="off"
               disabled={disabled}
@@ -795,22 +795,23 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                     }
                   : {}),
               }}
-              className={` ${generateClassName('input')}`}
+              className={` ${generateClassName("input")}`}
               onChange={handleChange}
               placeholder={
-                type === 'auto_complete'
+                type === "auto_complete"
                   ? placeholder && isCustomPlaceholder
                     ? placeholder
-                    : 'Type to search'
-                  : placeholder ?? '--Select--'
+                    : "Type to search"
+                  : placeholder ?? "--Select--"
               }
               onFocus={onInputFocus}
               onClick={(e) => {
-                if (type === 'custom_select') {
+                if (type === "custom_select") {
                   setDropOpen(!dropOpen);
                   handleOpen(e);
                 } else {
-                  setDropOpen(!dropOpen);
+                  if (dropOpen || filteredData.length > 0)
+                    setDropOpen(!dropOpen);
                 }
               }}
             />
@@ -818,9 +819,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
               <label
                 htmlFor={id}
                 onClick={() => onLabelClick()}
-                className={generateClassName('label')}
+                className={generateClassName("label")}
               >
-                {label ? <span className="truncate">{label}</span> : ''}
+                {label ? <span className="truncate">{label}</span> : ""}
                 {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}
@@ -829,9 +830,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             <div
               ref={adorementRef}
               className={`${generateClassName(
-                'adorement'
+                "adorement"
               )} qbs-autocomplete-adorement mr-[1px] ${
-                isLoading ? 'bg-white' : ''
+                isLoading ? "bg-white" : ""
               }`}
             >
               {showClose && (
@@ -846,31 +847,33 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                 </button>
               )}
               {isLoading && <Spinner />}
-              {(type !== 'auto_complete' || autoDropdown) && !disabled && !readOnly && (
-                <button
-                  disabled={disabled ?? readOnly}
-                  onClick={(e) => handleOpenDropdown(e)}
-                  onBlur={handleClose}
-                  className=" text-[#667085] focus-visible:outline-slate-100"
-                  data-testid="drop-arrow"
-                  type="button"
-                  id="autocomplete-drop-icon"
-                  ref={dropBtnRef}
-                >
-                  {!dropOpen ? (
-                    <DropArrow uniqueDropArrowId="drop-arrow-icon" />
-                  ) : (
-                    <DropArrow
-                      className="rotate-180"
-                      uniqueDropArrowId="drop-arrow-icon"
-                    />
-                  )}
-                </button>
-              )}
+              {(type !== "auto_complete" || autoDropdown) &&
+                !disabled &&
+                !readOnly && (
+                  <button
+                    disabled={disabled ?? readOnly}
+                    onClick={(e) => handleOpenDropdown(e)}
+                    onBlur={handleClose}
+                    className=" text-[#667085] focus-visible:outline-slate-100"
+                    data-testid="drop-arrow"
+                    type="button"
+                    id="autocomplete-drop-icon"
+                    ref={dropBtnRef}
+                  >
+                    {!dropOpen ? (
+                      <DropArrow uniqueDropArrowId="drop-arrow-icon" />
+                    ) : (
+                      <DropArrow
+                        className="rotate-180"
+                        uniqueDropArrowId="drop-arrow-icon"
+                      />
+                    )}
+                  </button>
+                )}
               {errors && errors[name] && (
                 <div
                   className={` text-error-label relative cursor-pointer ${generateClassName(
-                    'message'
+                    "message"
                   )}`}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}
