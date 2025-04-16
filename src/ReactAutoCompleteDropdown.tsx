@@ -275,6 +275,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           setIsLoading(true);
           //handlePickSuggestions('*');
           const fetchedSuggestions = await getData?.("*");
+          fetchedSuggestions?.forEach((element: any) => {
+            data?.push(element);
+          });
           setSuggestions(fetchedSuggestions);
           setIsLoading(false);
         } catch (error) {
