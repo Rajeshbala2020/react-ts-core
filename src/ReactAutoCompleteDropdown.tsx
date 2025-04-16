@@ -810,7 +810,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                   setDropOpen(!dropOpen);
                   handleOpen(e);
                 } else {
-                  if (dropOpen || filteredData.length > 0)
+                  if (dropOpen || filteredData?.length > 0)
                     setDropOpen(!dropOpen);
                 }
               }}
