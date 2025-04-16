@@ -104,6 +104,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   const [selectedIndex, setSelectedIndex] = useState(0);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLUListElement | null>(null);
+  const [refetchData, setRefetchData] = useState(false);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -234,6 +235,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
         const fetchedSuggestions = await getData?.(value);
         setSuggestions(fetchedSuggestions);
         setIsLoading(false);
+        if (autoDropdown) {
+          setRefetchData(true);
+        }
       } catch (error) {
         setIsLoading(false);
       }
@@ -268,7 +272,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     else return (inputValue?.toString().length ?? 0) <= 0 ? true : false;
   };
   const loadStaticData = async () => {
-    if (!data) {
+    if (!data || (refetchData && autoDropdown && !isStaticList)) {
       data = [];
       if (getData) {
         try {
@@ -280,6 +284,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           });
           setSuggestions(fetchedSuggestions);
           setIsLoading(false);
+          if (autoDropdown) {
+            setRefetchData(false);
+          }
         } catch (error) {
           setIsLoading(false);
         }
@@ -335,7 +342,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   };
 
   const handleOpenDropdown = (e: any) => {
-    if (!suggestions || suggestions?.length === 0) {
+    if (!suggestions || suggestions?.length === 0 || refetchData) {
       if (autoDropdown && (inputValue === "" || inputValue.trim() === "")) {
         loadStaticData();
       } else {
@@ -386,6 +393,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     setInputValue("");
     onChange({ id: undefined, name: "", from: 3 });
     onLabelClick();
+    if(autoDropdown) {
+      setRefetchData(true);
+    }
   };
 
   useEffect(() => {
