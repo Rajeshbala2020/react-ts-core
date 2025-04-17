@@ -345,7 +345,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     if (!suggestions || suggestions?.length === 0 || refetchData) {
       if (autoDropdown && (inputValue === "" || inputValue.trim() === "")) {
         loadStaticData();
-      } else {
+      } else if(!refetchData) {
         handleDropData();
       }
     }
