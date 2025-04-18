@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -466,6 +473,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       const searchRecursive = (port: any) => {
         if (port[desc]?.toLowerCase().includes(lowerQuery)) {
           const filteredItem = {
+            ...port,
             [descId]: port[descId],
             [desc]: port[desc],
             parentId: port.parentId,
