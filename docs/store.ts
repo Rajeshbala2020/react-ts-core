@@ -10,7 +10,7 @@ export const treeDropData = [
     parentId: null,
   },
   {
-    name: 'Port G - A small port used for local shipments and fishing operations',
+    name: 'Port G - A small',
     id: 2,
     parentId: null,
   },

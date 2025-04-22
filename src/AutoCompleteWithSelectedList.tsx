@@ -14,9 +14,9 @@ import InputActions from './components/InputActions';
 import { useSuggestions } from './utilities/autosuggestions';
 import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
-import { default as Tooltip } from './utilities/expandableTootltip';
 import { filterSuggestions } from './utilities/filterSuggestions';
 import { DropArrow, Search, Spinner } from './utilities/icons';
+import { default as Tooltip } from './utilities/NewTooltip';
 
 const AutoCompleteWithSelectedList = forwardRef<
   HTMLInputElement,
