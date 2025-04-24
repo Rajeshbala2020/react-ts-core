@@ -6,7 +6,7 @@ import Spinner from "./components/loader/Spinner";
 import Portal from "./components/portal";
 import { debounce } from "./utilities/debounce";
 import { applyPositionClass } from "./utilities/getPosition";
-import { AllDropArrow } from "./utilities/icons";
+import { AllDropArrow, DropArrow } from "./utilities/icons";
 
 type valueProps = {
   id?: string | number;
@@ -875,16 +875,25 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                     ref={dropBtnRef}
                   >
                     {!dropOpen ? (
-                      <AllDropArrow
-                        type="down"
-                        uniqueId="all-dropdow-arrow-icon"
-                        className='all-dropdow-arrow-icon'
-                      />
-                    ) : (
+                      autoDropdown ? (
+                        <AllDropArrow
+                          type="down"
+                          uniqueId="all-dropdow-arrow-icon"
+                          className="all-dropdow-arrow-icon"
+                        />
+                      ) : (
+                        <DropArrow uniqueDropArrowId="drop-arrow-icon" />
+                      )
+                    ) : autoDropdown ? (
                       <AllDropArrow
                         type="up"
                         uniqueId="all-dropdow-arrow-icon"
-                        className='all-dropdow-arrow-icon'
+                        className="all-dropdow-arrow-icon"
+                      />
+                    ) : (
+                      <DropArrow
+                        className="rotate-180"
+                        uniqueDropArrowId="drop-arrow-icon"
                       />
                     )}
                   </button>
