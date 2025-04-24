@@ -1,6 +1,10 @@
-import React from 'react';
+import React from "react";
 
-export const DropArrow: React.FC<any> = ({ className = '', stroke = 1.5 ,uniqueId = 'drop-arrow-icon' }) => {
+export const DropArrow: React.FC<any> = ({
+  className = "",
+  stroke = 1.5,
+  uniqueId = "drop-arrow-icon",
+}) => {
   return (
     <svg
       id={uniqueId}
@@ -22,7 +26,7 @@ export const DropArrow: React.FC<any> = ({ className = '', stroke = 1.5 ,uniqueI
   );
 };
 
-export const Close: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
+export const Close: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -41,7 +45,7 @@ export const Close: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   );
 };
 
-export const Spinner: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
+export const Spinner: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
@@ -64,7 +68,7 @@ export const Spinner: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
   );
 };
 
-export const Search: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
+export const Search: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
@@ -83,5 +87,93 @@ export const Search: React.FC<any> = ({ className = '', stroke = 1.5 }) => {
         />
       </svg>
     </div>
+  );
+};
+
+export const AllDropArrow: React.FC<any> = ({
+  className = "",
+  uniqueId = "all-drop-up-arrow-icon",
+  type = "up",
+}) => {
+  return (
+    <svg
+      id={uniqueId}
+      width="20"
+      height="20"
+      viewBox="0 0 20 20"
+      className={className}
+      fill="none"
+      xmlns="http://www.w3.org/2000/svg"
+    >
+      {type === "up" ? (
+        <>
+          <path
+            d="M17.5 15L14.5833 11.6667L11.6666 15"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M2.5 4.16669H17.5"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+          <path
+            d="M2.5 7.91669H17.5"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+          <path
+            d="M2.5 11.6667H9.16667"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+          <path
+            d="M2.5 15.4167H9.16667"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+        </>
+      ) : (
+        <>
+          <path
+            d="M11.6667 11.6667L14.5833 15L17.5 11.6667"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+          />
+          <path
+            d="M2.5 4.16669H17.5"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+          <path
+            d="M2.5 7.91669H17.5"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+          <path
+            d="M2.5 11.6667H9.16667"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+          <path
+            d="M2.5 15.4167H9.16667"
+            stroke="currentColor"
+            strokeWidth="1.66667"
+            strokeLinecap="round"
+          />
+        </>
+      )}
+    </svg>
   );
 };

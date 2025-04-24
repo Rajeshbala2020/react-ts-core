@@ -6,7 +6,7 @@ import Spinner from "./components/loader/Spinner";
 import Portal from "./components/portal";
 import { debounce } from "./utilities/debounce";
 import { applyPositionClass } from "./utilities/getPosition";
-import { DropArrow } from "./utilities/icons";
+import { AllDropArrow } from "./utilities/icons";
 
 type valueProps = {
   id?: string | number;
@@ -346,7 +346,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       if (autoDropdown && (inputValue === "" || inputValue.trim() === "")) {
         setSuggestions([]);
         loadStaticData();
-      } else if(!refetchData) {
+      } else if (!refetchData) {
         handleDropData();
       }
     }
@@ -394,7 +394,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     setInputValue("");
     onChange({ id: undefined, name: "", from: 3 });
     onLabelClick();
-    if(autoDropdown) {
+    if (autoDropdown) {
       setRefetchData(true);
     }
   };
@@ -875,11 +875,16 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                     ref={dropBtnRef}
                   >
                     {!dropOpen ? (
-                      <DropArrow uniqueDropArrowId="drop-arrow-icon" />
+                      <AllDropArrow
+                        type="down"
+                        uniqueId="all-dropdow-arrow-icon"
+                        className='all-dropdow-arrow-icon'
+                      />
                     ) : (
-                      <DropArrow
-                        className="rotate-180"
-                        uniqueDropArrowId="drop-arrow-icon"
+                      <AllDropArrow
+                        type="up"
+                        uniqueId="all-dropdow-arrow-icon"
+                        className='all-dropdow-arrow-icon'
                       />
                     )}
                   </button>
