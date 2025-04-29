@@ -30,6 +30,7 @@ type UseSuggestionsType = (
     append?: boolean,
     tabValue?: string | number
   ) => Promise<void>;
+  resetSuggections?: () => void
 };
 
 export const useSuggestions: UseSuggestionsType = (
@@ -47,6 +48,10 @@ export const useSuggestions: UseSuggestionsType = (
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+
+  const resetSuggections = () => {
+    setSuggestions([]);
+  }
 
   const handlePickSuggestions = async (
     value?: string,
@@ -90,5 +95,5 @@ export const useSuggestions: UseSuggestionsType = (
     }
   }, [dropOpen]);
 
-  return { suggestions, isLoading, handlePickSuggestions };
+  return { suggestions, isLoading, handlePickSuggestions, resetSuggections};
 };
