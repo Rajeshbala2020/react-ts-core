@@ -387,13 +387,25 @@ ul {
   flex-wrap: wrap;
 }
 
+.selected-items-counter-container {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: absolute;
+  right: 8px;
+  z-index: 99;
+  top: 6.5px;
+  flex-wrap: wrap;
+}
+
 .qbs-expandable-container .selected-items-container {
   position: relative;
   top: 0;
   left: 0;
 }
 
-.selected-items-container .badge {
+.selected-items-container .badge, 
+.selected-items-counter-container .badge {
   background-color: #c63a3a;
   color: #fff;
 }

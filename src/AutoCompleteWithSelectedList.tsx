@@ -68,6 +68,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       viewMode = false,
       handleUpdateParent,
       shortCode = '',
+      tabInlineSearch = true,
     },
     ref
   ) => {
@@ -137,9 +138,14 @@ const AutoCompleteWithSelectedList = forwardRef<
 
           setSelHeight(defaultHeight);
         } else if (spaceAbove >= dropdownHeight) {
+          const sHeight = tabInlineSearch ? 73 : 113;
           dropLevelRef.current = 'top';
           dropdownPosition.top =
-            inputRect.top + window.scrollY - dropdownHeight + 73 + topMargin;
+            inputRect.top +
+            window.scrollY -
+            dropdownHeight +
+            sHeight +
+            topMargin;
 
           setSelHeight(defaultHeight);
         } else {
@@ -174,20 +180,21 @@ const AutoCompleteWithSelectedList = forwardRef<
       };
     }, [dropOpen, expandArrowClick]);
 
-    const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
-      getData,
-      data,
-      dropOpen,
-      async,
-      paginationEnabled,
-      initialLoad,
-      inputValue,
-      isMultiple,
-      setNextPage,
-      selectedItems,
-      typeOnlyFetch
-      // nextBlock
-    );
+    const { suggestions, isLoading, handlePickSuggestions, resetSuggections } =
+      useSuggestions(
+        getData,
+        data,
+        dropOpen,
+        async,
+        paginationEnabled,
+        initialLoad,
+        inputValue,
+        isMultiple,
+        setNextPage,
+        selectedItems,
+        typeOnlyFetch
+        // nextBlock
+      );
 
     // Handling the selection of a suggestion
     const handleSuggestionClick = useCallback(
@@ -270,6 +277,10 @@ const AutoCompleteWithSelectedList = forwardRef<
       if (!value) {
         setInputValue('');
         // onChange({ [descId]: '', [desc]: '' });
+      }
+
+      if (!tabInlineSearch) {
+        setDropOpen(true);
       }
     };
     const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -540,9 +551,20 @@ const AutoCompleteWithSelectedList = forwardRef<
       if (activeTab !== index) {
         if (clearTabSwitch) {
           handleClearSelected();
-          setSearchValue('');
-          setInputValue('');
-          handlePickSuggestions('', 1);
+          if (tabInlineSearch) {
+            setSearchValue('');
+            setInputValue('');
+            handlePickSuggestions('', 1);
+          } else {
+            resetSuggections?.();
+            const activeTabVal =
+              tab.length > 0 ? tab?.[activeTab].id : undefined;
+            handlePickSuggestions(searchValue, 1, false, activeTabVal);
+          }
+        } else if (!tabInlineSearch) {
+          resetSuggections?.();
+          const activeTabVal = tab.length > 0 ? tab?.[activeTab].id : undefined;
+          handlePickSuggestions(searchValue, 1, false, activeTabVal);
         }
         setActiveTab(index);
       }
@@ -672,10 +694,16 @@ const AutoCompleteWithSelectedList = forwardRef<
             expandable ? 'qbs-expandable-container' : 'qbs-container'
           }`}
         >
-          {selectedItems?.length > 0 && (
+          {(selectedItems?.length > 0 || !tabInlineSearch) && (
             <>
               {!countOnly ? (
                 getSelectedItems(false)
+              ) : !tabInlineSearch ? (
+                <div className="selected-items-counter-container qbs-text-sm qbs-gap-1">
+                  <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
+                    {selectedItems?.length}
+                  </span>
+                </div>
               ) : (
                 <div
                   className="selected-items-container qbs-text-sm qbs-gap-1"
@@ -713,7 +741,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               autoComplete="off"
               type="text"
               value={
-                type === 'auto_suggestion' && !expandable
+                type === 'auto_suggestion' && !expandable && tabInlineSearch
                   ? inputValue
                   : searchValue || inputValue
               }
@@ -726,7 +754,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               readOnly={
                 readOnly ||
                 type === 'custom_select' ||
-                (type == 'auto_suggestion' && !expandable)
+                (type == 'auto_suggestion' && !expandable && tabInlineSearch)
               }
               disabled={disabled}
               data-testid="custom-autocomplete"
@@ -771,24 +799,26 @@ const AutoCompleteWithSelectedList = forwardRef<
                 {!viewMode && (
                   <>
                     <>{tab.length > 0 && getTabItems()}</>
-                    {type == 'auto_suggestion' && !expandable && (
-                      <div
-                        style={{ position: 'relative' }}
-                        className="react-core-ts-search-container"
-                      >
-                        <span className="dropdown-search-icon">
-                          <Search />
-                        </span>
-                        <input
-                          className="dropdown-search-input"
-                          onChange={handleSuggestionChange}
-                          value={searchValue}
-                          placeholder="Type to search"
-                          autoComplete="off"
-                          ref={inputSearchRef}
-                        />
-                      </div>
-                    )}
+                    {type == 'auto_suggestion' &&
+                      !expandable &&
+                      tabInlineSearch && (
+                        <div
+                          style={{ position: 'relative' }}
+                          className="react-core-ts-search-container"
+                        >
+                          <span className="dropdown-search-icon">
+                            <Search />
+                          </span>
+                          <input
+                            className="dropdown-search-input"
+                            onChange={handleSuggestionChange}
+                            value={searchValue}
+                            placeholder="Type to search"
+                            autoComplete="off"
+                            ref={inputSearchRef}
+                          />
+                        </div>
+                      )}
                   </>
                 )}
 
