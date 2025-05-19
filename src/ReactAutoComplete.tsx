@@ -815,7 +815,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               ref={adorementRef}
               className={`${generateClassName(
                 'adorement'
-              )} qbs-autocomplete-adorement mr-[1px] ${
+              )} qbs-autocomplete-adorement custom-dorpdown-adorement  mr-[1px] ${
                 isLoading ? 'bg-white' : ''
               }`}
             >

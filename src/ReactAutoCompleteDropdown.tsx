@@ -845,7 +845,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
               ref={adorementRef}
               className={`${generateClassName(
                 'adorement'
-              )} qbs-autocomplete-adorement mr-[1px] ${
+              )} qbs-autocomplete-adorement auto-dorpdown-adorement mr-[1px] ${
                 isLoading ? 'bg-white' : ''
               }`}
             >
@@ -900,7 +900,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                 )}
               {errors && errors[name] && (
                 <div
-                  className={` text-error-label relative cursor-pointer ${generateClassName(
+                  className={` text-error-label  relative cursor-pointer ${generateClassName(
                     'message'
                   )}`}
                   onMouseEnter={() => setIsHovered(true)}
