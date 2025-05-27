@@ -730,7 +730,9 @@ const AutoCompleteWithSelectedList = forwardRef<
             }`}
             data-value={
               selectedItems?.length > 0 || searchValue
-                ? searchValue
+                ? !tabInlineSearch && searchValue
+                  ? searchValue
+                  : placeholder ?? ''
                 : placeholder ?? ''
             }
             onClick={() => onInputFocus()}
@@ -750,7 +752,13 @@ const AutoCompleteWithSelectedList = forwardRef<
               onFocus={onFocus}
               onClick={() => handleOnClick()}
               className={generateClassName()}
-              placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+              placeholder={
+                selectedItems?.length > 0 || searchValue
+                  ? !tabInlineSearch && searchValue
+                    ? searchValue
+                    : placeholder ?? ''
+                  : placeholder ?? ''
+              }
               readOnly={
                 readOnly ||
                 type === 'custom_select' ||
