@@ -286,6 +286,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           setIsLoading(false);
           if (autoDropdown) {
             setRefetchData(false);
+            timerRef.current = 1;
           }
         } catch (error) {
           setIsLoading(false);
@@ -554,7 +555,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
 
   useEffect(() => {
     if (
-      inputValue &&
+      (inputValue || autoDropdown) &&
       filteredData?.length === 0 &&
       !isLoading &&
       timerRef.current === 1
