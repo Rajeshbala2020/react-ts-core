@@ -94,7 +94,7 @@ export default function App() {
           <div style={{ width: 300 }}>
             <ModernAutoComplete
               name="sample"
-              label="TextField sjdfjiosjfois fspofpospof spofpsoifp ospofispodfiposidf spodfisf"
+              label="TextField"
               id="id"
               isStaticList={false}
               type="auto_complete"
@@ -102,6 +102,8 @@ export default function App() {
               required
               getData={getDatas}
               onChange={(e) => console.log(e, 'onchange')}
+              shortCode='id'
+              labelCode='userId'
             />
           </div>
 
@@ -206,7 +208,7 @@ export default function App() {
               placeholder="Auto Suggestion"
               selectedItems={[]}
               onChange={(e) => console.log(e, 'onchange')}
-              countOnly={true}
+              countOnly={true}  
             />
           </div>
           <div style={{ width: 300 }}>
@@ -249,6 +251,7 @@ export default function App() {
                 { id: 2, label: 'Tab 2' },
               ]}
               clearTabSwitch={true}
+              tabInlineSearch={false}
             />
           </div>
           <div className="autocomplete-section">

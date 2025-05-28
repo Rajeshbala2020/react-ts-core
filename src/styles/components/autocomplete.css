@@ -128,7 +128,7 @@ body * {
   font-size: 14px;
   font-weight: 500;
   line-height: 20px; /* 142.857% */
-  width: 100%;
+  /* width: 100%; */
   display: flex;
   align-items: flex-start;
   gap: 8px;
@@ -650,7 +650,7 @@ span.dropdown-search-icon {
 
 .autocomplete-suggections .qbs-autocomplete-suggections-items {
   display: flex;
-  justify-content: space-between;
+  /* justify-content: space-between; */
   align-items: center;
   cursor: pointer;
   outline: none;
@@ -669,4 +669,16 @@ span.dropdown-search-icon {
   border: 1px solid #ccc;
   border-radius: 4px;
   white-space: nowrap;
+  margin-left: auto;
+}
+
+.autocomplete-suggections .qbs-autocomplete-suggections-items .label-code,
+.qbs-autocomplete-listitem-container .label-code {
+  font-size: 12px;
+  background: #f0f0f0;
+  padding: 4px 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  white-space: nowrap;
+  margin: 0px 5px;
 }
