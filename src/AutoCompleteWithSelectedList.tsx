@@ -68,6 +68,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       viewMode = false,
       handleUpdateParent,
       shortCode = '',
+      labelCode = '',
       tabInlineSearch = true,
     },
     ref
@@ -856,6 +857,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                         desc={desc}
                         key={suggestion[descId]}
                         shortCode={shortCode}
+                        labelCode={labelCode}
                         focusedIndex={focusedIndex}
                         setItemRef={(index, ref) => {
                           itemRefs.current[index] = ref; // Store each ref properly

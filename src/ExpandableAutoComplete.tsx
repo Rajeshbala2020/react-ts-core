@@ -53,7 +53,8 @@ const ExpandableAutoComplete = forwardRef<
       itemCount = 1,
       scrollRef,
       isTreeDropdown = false,
-      shortCode = ''
+      shortCode = '',
+      labelCode = ''
     },
     ref
   ) => {
@@ -586,6 +587,7 @@ const ExpandableAutoComplete = forwardRef<
                         singleSelect={singleSelect}
                         desc={desc}
                         shortCode={shortCode}
+                        labelCode={labelCode}
                         focusedIndex={focusedIndex}
                         setItemRef={(index, ref) => {
                           itemRefs.current[index] = ref; // Store each ref properly

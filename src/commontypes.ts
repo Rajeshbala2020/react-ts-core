@@ -78,6 +78,7 @@ export interface AutoSuggestionInputProps {
     filterValue?: any;
   };
   shortCode?: string
+  labelCode?: string,
   tabInlineSearch?: boolean // tab dropdown search
 }
 export interface IconsProps {

@@ -138,6 +138,7 @@ You can pass the following props to the `AutoComplete` component:
 - **paginationEnabled** _(boolean)_: If true, pagination for suggestions is enabled.
 - **notDataMessage** _(string)_: Custom `No Results Found` message.
 - **shortCode** _(string)_: Custom `Show code` at the right area of the dropdown items.
+- **labelCode** _(string)_: Custom `Lable code` near to the items.
 
 Additional props for the `ExpandableAutoComplete` component:
 
