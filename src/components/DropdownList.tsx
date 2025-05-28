@@ -12,6 +12,7 @@ type ValueProps = {
   desc: string;
   hideCheckbox?: boolean;
   shortCode?: string
+  labelCode?: string
   focusedIndex?: number
   setItemRef?: (index: number, ref: HTMLDivElement | null) => void
 };
@@ -27,6 +28,7 @@ const DropdownList: React.FC<ValueProps> = ({
   desc,
   hideCheckbox = false,
   shortCode = '',
+  labelCode = '',
   focusedIndex = 0,
   setItemRef
 }) => {
@@ -74,6 +76,7 @@ const DropdownList: React.FC<ValueProps> = ({
       >
         {suggestion[desc]}
       </div>
+      {labelCode && suggestion?.[labelCode] && <div className='label-code'>{suggestion?.[labelCode]}</div>}
       {shortCode && suggestion?.[shortCode] && <div className='short-code'>{suggestion?.[shortCode]}</div>}
     </div>
   );

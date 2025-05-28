@@ -26,6 +26,7 @@ interface AutoSuggestionInputProps {
   autoFocus?: boolean;
   required?: boolean;
   shortCode?: string;
+  labelCode?: string;
   hideClear?: boolean;
   value?: valueProps;
   onChange: (value?: valueProps) => void;
@@ -64,6 +65,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   autoFocus,
   name,
   shortCode = '',
+  labelCode = '',
   fullWidth,
   placeholder,
   id,
@@ -286,6 +288,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           setIsLoading(false);
           if (autoDropdown) {
             setRefetchData(false);
+            timerRef.current = 1;
           }
         } catch (error) {
           setIsLoading(false);
@@ -554,7 +557,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
 
   useEffect(() => {
     if (
-      inputValue &&
+      (inputValue || autoDropdown) &&
       filteredData?.length === 0 &&
       !isLoading &&
       timerRef.current === 1
@@ -661,6 +664,12 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                   <span>
                     {suggestion?.label ? suggestion?.label : suggestion.name}
                   </span>
+
+                  {labelCode && suggestion?.[labelCode] && (
+                    <span className="label-code">
+                      {suggestion?.[labelCode]}
+                    </span>
+                  )}
 
                   {shortCode && suggestion?.[shortCode] && (
                     <span className="short-code">

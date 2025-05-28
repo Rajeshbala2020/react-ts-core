@@ -68,6 +68,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       viewMode = false,
       handleUpdateParent,
       shortCode = '',
+      labelCode = '',
       tabInlineSearch = true,
     },
     ref
@@ -730,7 +731,9 @@ const AutoCompleteWithSelectedList = forwardRef<
             }`}
             data-value={
               selectedItems?.length > 0 || searchValue
-                ? searchValue
+                ? !tabInlineSearch && searchValue
+                  ? searchValue
+                  : placeholder ?? ''
                 : placeholder ?? ''
             }
             onClick={() => onInputFocus()}
@@ -750,7 +753,13 @@ const AutoCompleteWithSelectedList = forwardRef<
               onFocus={onFocus}
               onClick={() => handleOnClick()}
               className={generateClassName()}
-              placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+              placeholder={
+                selectedItems?.length > 0 || searchValue
+                  ? !tabInlineSearch && searchValue
+                    ? searchValue
+                    : placeholder ?? ''
+                  : placeholder ?? ''
+              }
               readOnly={
                 readOnly ||
                 type === 'custom_select' ||
@@ -848,6 +857,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                         desc={desc}
                         key={suggestion[descId]}
                         shortCode={shortCode}
+                        labelCode={labelCode}
                         focusedIndex={focusedIndex}
                         setItemRef={(index, ref) => {
                           itemRefs.current[index] = ref; // Store each ref properly
