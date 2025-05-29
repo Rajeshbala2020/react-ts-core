@@ -757,7 +757,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                 selectedItems?.length > 0 || searchValue
                   ? !tabInlineSearch && searchValue
                     ? searchValue
-                    : placeholder ?? ''
+                    : !tabInlineSearch ? placeholder ?? '' : ''
                   : placeholder ?? ''
               }
               readOnly={
