@@ -307,6 +307,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleClearSelected = () => {
       setSelectedItems([]);
       setShowAllSelected(false);
+      setSearchValue('');
       if (isMultiple) onChange([]);
       else onChange({ [descId]: '', [desc]: '' });
     };

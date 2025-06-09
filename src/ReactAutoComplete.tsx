@@ -26,7 +26,7 @@ interface AutoSuggestionInputProps {
   autoFocus?: boolean;
   required?: boolean;
   shortCode?: string;
-  labelCode?:string;
+  labelCode?: string;
   hideClear?: boolean;
   value?: valueProps;
   onChange: (value?: valueProps) => void;
@@ -103,7 +103,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const timerRef = useRef<number>(0); // To fix the no results found issue on second type
   const [selectedIndex, setSelectedIndex] = useState(0);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const scrollContainerRef = useRef<HTMLUListElement | null>(null);
+  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -609,58 +609,60 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const setDropDown = () => {
     return (
       (filteredData?.length > 0 || showNoResults) && (
-        <ul
-          className="autocomplete-suggections absolute h-auto max-h-40 overflow-auto w-full bg-white shadow-gray-300 shadow-md border border-grey-light py-1.5 z-50  mt-9"
+        <div
+          className="autocomplete-suggections absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9"
           style={dropPosition}
           ref={scrollContainerRef}
         >
-          {filteredData?.length > 0 ? (
-            <>
-              {filteredData.map((suggestion: any, index: number) => (
-                <li
-                  className={`${
-                    value?.id === suggestion?.id
-                      ? 'bg-blue-navy text-white'
-                      : `${
-                          index === selectedIndex ? 'is-selected' : ''
-                        } hover:bg-table-hover`
-                  }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
-                  key={suggestion?.id}
-                  data-testid={suggestion.name}
-                  onClick={() => handleSuggestionClick(suggestion, index)}
-                  tabIndex={index}
-                  ref={(el) => (itemRefs.current[index] = el)}
-                >
-                  <span>
-                    {suggestion?.label ? suggestion?.label : suggestion.name}
-                  </span>
-                  {labelCode && suggestion?.[labelCode] && (
-                    <span className="label-code">
-                      {suggestion?.[labelCode]}
+          <ul className="h-auto max-h-40 overflow-auto w-full py-1.5">
+            {filteredData?.length > 0 ? (
+              <>
+                {filteredData.map((suggestion: any, index: number) => (
+                  <li
+                    className={`${
+                      value?.id === suggestion?.id
+                        ? 'bg-blue-navy text-white'
+                        : `${
+                            index === selectedIndex ? 'is-selected' : ''
+                          } hover:bg-table-hover`
+                    }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
+                    key={suggestion?.id}
+                    data-testid={suggestion.name}
+                    onClick={() => handleSuggestionClick(suggestion, index)}
+                    tabIndex={index}
+                    ref={(el) => (itemRefs.current[index] = el)}
+                  >
+                    <span>
+                      {suggestion?.label ? suggestion?.label : suggestion.name}
                     </span>
-                  )}
+                    {labelCode && suggestion?.[labelCode] && (
+                      <span className="label-code">
+                        {suggestion?.[labelCode]}
+                      </span>
+                    )}
 
-                  {shortCode && suggestion?.[shortCode] && (
-                    <span className="short-code">
-                      {suggestion?.[shortCode]}
-                    </span>
-                  )}
+                    {shortCode && suggestion?.[shortCode] && (
+                      <span className="short-code">
+                        {suggestion?.[shortCode]}
+                      </span>
+                    )}
+                  </li>
+                ))}
+              </>
+            ) : (
+              showNoResults &&
+              !isLoading &&
+              timerRef.current === 1 && (
+                <li
+                  className={`$ cursor-pointer p-1 rounded-sm text-xxs`}
+                  onClick={handleClose}
+                >
+                  No Results Found
                 </li>
-              ))}
-            </>
-          ) : (
-            showNoResults &&
-            !isLoading &&
-            timerRef.current === 1 && (
-              <li
-                className={`$ cursor-pointer p-1 rounded-sm text-xxs`}
-                onClick={handleClose}
-              >
-                No Results Found
-              </li>
-            )
-          )}
-        </ul>
+              )
+            )}
+          </ul>
+        </div>
       )
     );
   };
