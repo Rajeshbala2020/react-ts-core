@@ -335,14 +335,14 @@ const AutoCompleteWithSelectedList = forwardRef<
         adjustDropdownPosition();
       }, 200);
     }, [selectedItems]);
-
+    const uniqueDropArrowId = `${name}-drop-arrow-selected-list-icon`;
     useEffect(() => {
       const handleClickOutside = (event: any) => {
         if (
           dropRef.current &&
           event.target instanceof Node &&
           !dropRef.current.contains(event.target) &&
-          event.target?.id !== 'drop-arrow-selected-list-icon'
+          event.target?.id !== uniqueDropArrowId
         ) {
           setTimeout(() => {
             setDropOpen(false);
@@ -758,7 +758,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                 selectedItems?.length > 0 || searchValue
                   ? !tabInlineSearch && searchValue
                     ? searchValue
-                    : !tabInlineSearch ? placeholder ?? '' : ''
+                    : !tabInlineSearch
+                    ? placeholder ?? ''
+                    : ''
                   : placeholder ?? ''
               }
               readOnly={
@@ -784,7 +786,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             expandable={expandable}
             handleClear={handleClear}
             countOnly={countOnly}
-            uniqueDropArrowId="drop-arrow-selected-list-icon"
+            uniqueDropArrowId={uniqueDropArrowId}
             viewMode={viewMode}
           />
           {/* Displaying Loading Spinner */}
@@ -942,7 +944,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                                 >
                                   <DropArrow
                                     className={`icon-button-rotate`}
-                                    uniqueDropArrowId="drop-arrow-selected-list-icon"
+                                    uniqueDropArrowId={uniqueDropArrowId}
                                   />
                                 </div>
                               </div>
