@@ -105,7 +105,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   const timerRef = useRef<number>(0); // To fix the no results found issue on second type
   const [selectedIndex, setSelectedIndex] = useState(0);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
-  const scrollContainerRef = useRef<HTMLDivElement | null>(null);
+  const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const [refetchData, setRefetchData] = useState(false);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
@@ -640,11 +640,13 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <div
-          ref={scrollContainerRef}
           style={dropPosition}
           className="autocomplete-suggections absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9"
         >
-          <ul className="overflow-auto h-auto max-h-40 w-full py-1.5" >
+          <ul
+            className="overflow-auto h-auto max-h-40 w-full py-1.5"
+            ref={scrollContainerRef}
+          >
             {filteredData?.length > 0 ? (
               <>
                 {filteredData.map((suggestion: any, index: number) => (
