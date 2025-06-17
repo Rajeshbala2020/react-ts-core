@@ -52,6 +52,7 @@ interface AutoSuggestionInputProps {
   labelTitle?: string;
   isModern?: boolean;
   autoDropdown?: boolean;
+  size?: 'xs' | 'sm' | 'md' | 'lg' | 'xxs';
 }
 
 const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
@@ -87,6 +88,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   fromPrefix,
   labelTitle,
   isModern = true,
+  size = 'md'
 }) => {
   const [inputValue, setInputValue] = useState<any>(value?.name ?? '');
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -152,6 +154,15 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           (checkArrayContains(checkParams, 'param4') &&
             checkIncludesIfExists(param4, subString))))
     );
+  };
+
+  const getHeight = () => {
+    switch (size) {
+      case 'sm':
+        return ' h-[34px] ';
+      default:
+        return ' ';
+    }
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -427,7 +438,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     let className = propsClassName;
     switch (type) {
       case 'input':
-        className += `block text-common text-input-text font-normal px-3.5 w-full text-sm text-gray-900 bg-transparent  border  appearance-none    peer h-10 rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
+        className += ` block text-common text-input-text font-normal px-3.5 w-full text-sm text-gray-900 bg-transparent  border  appearance-none    peer h-10 rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
           label && isModern
             ? 'placeholder-transparent'
             : 'focus:placeholder-grey-secondary placeholder-input-label'
@@ -440,6 +451,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           className +=
             ' text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0';
         }
+
+        className += getHeight()
 
         break;
       case 'label':
