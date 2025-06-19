@@ -566,7 +566,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
           if (itemRefs.current && scrollContainerRef.current) {
             if (!atBottom) {
               scrollContainerRef.current.scrollTop +=
-                itemRefs.current[selectedIndex]?.offsetHeight || 50;
+                itemRefs.current[selectedIndex]?.offsetHeight-1 || 50;
             } else {
               scrollContainerRef.current.scrollTop = 0;
             }
@@ -579,7 +579,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
           if (itemRefs.current && scrollContainerRef.current) {
             if (!atTop) {
               scrollContainerRef.current.scrollTop -=
-                itemRefs.current[selectedIndex]?.offsetHeight || 50;
+                itemRefs.current[selectedIndex]?.offsetHeight+1 || 50;
             } else {
               scrollContainerRef.current.scrollTop = 0;
             }
