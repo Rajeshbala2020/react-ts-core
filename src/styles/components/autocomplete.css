@@ -659,7 +659,10 @@ span.dropdown-search-icon {
 
 .qbs-autocomplete-suggections-items.is-selected {
   background-color: #f1f5f9;
-  width: max-content;
+  word-break: break-all;
+  word-wrap: break-word;
+  width: auto;
+  /* width: max-content; */
 }
 
 .autocomplete-suggections .qbs-autocomplete-suggections-items .short-code,
