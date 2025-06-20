@@ -655,13 +655,13 @@ span.dropdown-search-icon {
   cursor: pointer;
   outline: none;
   box-shadow: none;
+  word-break: break-all;
+  word-wrap: break-word;
+  width: auto;
 }
 
 .qbs-autocomplete-suggections-items.is-selected {
   background-color: #f1f5f9;
-  word-break: break-all;
-  word-wrap: break-word;
-  width: auto;
   /* width: max-content; */
 }
 
