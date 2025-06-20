@@ -554,51 +554,55 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     }
 
     // Handle keyboard navigation
-    const handleKeyDown = (e: any) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (!dropOpen) return;
-
-      const atBottom = selectedIndex === filteredData.length - 1;
-      const atTop = selectedIndex === 0;
-
+    
+      const nextIndex =
+        e.key === 'ArrowDown'
+          ? (selectedIndex + 1) % filteredData.length
+          : e.key === 'ArrowUp'
+          ? (selectedIndex - 1 + filteredData.length) % filteredData.length
+          : selectedIndex;
+    
       switch (e.key) {
         case 'ArrowDown':
-          e.preventDefault();
-          if (itemRefs.current && scrollContainerRef.current) {
-            if (!atBottom) {
-              scrollContainerRef.current.scrollTop +=
-                itemRefs.current[selectedIndex]?.offsetHeight-1 || 50;
-            } else {
-              scrollContainerRef.current.scrollTop = 0;
-            }
-          }
-          setSelectedIndex((prev) => (prev + 1) % filteredData?.length);
-          break;
-
         case 'ArrowUp':
           e.preventDefault();
-          if (itemRefs.current && scrollContainerRef.current) {
-            if (!atTop) {
-              scrollContainerRef.current.scrollTop -=
-                itemRefs.current[selectedIndex]?.offsetHeight+1 || 50;
-            } else {
-              scrollContainerRef.current.scrollTop = 0;
+    
+          // Update index first
+          setSelectedIndex(nextIndex);
+    
+          // Wait for DOM update before scrolling
+          requestAnimationFrame(() => {
+            const el = itemRefs.current[nextIndex];
+            const container = scrollContainerRef.current;
+    
+            if (el && container) {
+              const elTop = el.offsetTop;
+              const elBottom = elTop + el.offsetHeight;
+    
+              const containerTop = container.scrollTop;
+              const containerBottom = containerTop + container.clientHeight;
+    
+              if (elBottom > containerBottom) {
+                container.scrollTop = elBottom - container.clientHeight;
+              } else if (elTop < containerTop) {
+                container.scrollTop = elTop;
+              }
             }
-          }
-          setSelectedIndex(
-            (prev) => (prev - 1 + filteredData?.length) % filteredData?.length
-          );
+          });
           break;
-
+    
         case 'Enter':
           e.preventDefault();
           handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
           break;
-
+    
         case 'Escape':
           e.preventDefault();
           setDropOpen(false);
           break;
-
+    
         default:
           break;
       }
