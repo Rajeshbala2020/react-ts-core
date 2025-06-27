@@ -1,7 +1,7 @@
-import React from 'react'
+import React from 'react';
 
-import { CheckboxProps } from './commontypes'
-import CustomIcons from './components/customIcons'
+import { CheckboxProps } from './commontypes';
+import CustomIcons from './components/customIcons';
 
 const Checkbox: React.FC<CheckboxProps> = ({
   name,
@@ -13,21 +13,21 @@ const Checkbox: React.FC<CheckboxProps> = ({
   checked,
   className: propsClassName,
   value,
-  labalClass
+  labalClass,
 }) => {
   const getIconName = () => {
     if (checked) {
       if (disabled) {
         return intermediate
           ? 'input_intermediate_check_disabled'
-          : 'input_checked_disabled'
+          : 'input_checked_disabled';
       } else {
-        return intermediate ? 'input_intermediate_check' : 'input_checked'
+        return intermediate ? 'input_intermediate_check' : 'input_checked';
       }
     } else {
-      return disabled ? 'input_unchecked_disabled' : 'input_unchecked'
+      return disabled ? 'input_unchecked_disabled' : 'input_unchecked';
     }
-  }
+  };
 
   return (
     <div
@@ -63,11 +63,9 @@ const Checkbox: React.FC<CheckboxProps> = ({
           </div>
         </label>
       </div>
-      <div className={labalClass} title={label}>
-        {label}
-      </div>
+      <div className={labalClass}>{label}</div>
     </div>
   );
-}
+};
 
-export default Checkbox
+export default Checkbox;
