@@ -70,6 +70,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       shortCode = '',
       labelCode = '',
       tabInlineSearch = true,
+      matchFromStart = false
     },
     ref
   ) => {
@@ -398,7 +399,8 @@ const AutoCompleteWithSelectedList = forwardRef<
       selected,
       async,
       false,
-      true
+      true,
+      matchFromStart
     );
 
     useEffect(() => {

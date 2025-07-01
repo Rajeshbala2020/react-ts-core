@@ -80,6 +80,7 @@ export interface AutoSuggestionInputProps {
   shortCode?: string
   labelCode?: string,
   tabInlineSearch?: boolean // tab dropdown search
+  matchFromStart?: boolean // match data's from the starting position
 }
 export interface IconsProps {
   name: any;
