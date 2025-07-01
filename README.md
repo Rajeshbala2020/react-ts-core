@@ -159,6 +159,7 @@ Additional props for the `AutoCompleteWithSelectedList` component:
 - **currentTab** _(number)_: Current active tab index
 - **seselectedLabel** _(string)_: Able to change the "Item selected" label
 - **viewMode** _(boolean)_: If true, only shows selected items preview.
+- **matchFromStart** _(boolean)_: If true, only match keywords from the start position.
 
 ## Contribution
 

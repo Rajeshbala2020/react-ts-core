@@ -10,18 +10,21 @@ export const filterSuggestions = (
   inputValue?: any[] | string,
   async?: boolean, // API filter
   isTreeDropdown?: boolean, // Tree dropdowns
-  withoutSort?: boolean // Don't show selected items on top of the suggections
+  withoutSort?: boolean, // Don't show selected items on top of the suggections
+  matchFromStart?: boolean
 ): Item[] => {
   if (
-    (type === "custom_search_select" ||
-      type === "auto_complete" ||
-      type === "auto_suggestion") &&
+    (type === 'custom_search_select' ||
+      type === 'auto_complete' ||
+      type === 'auto_suggestion') &&
     !async &&
     query &&
     !isTreeDropdown
   ) {
     return data?.filter((item) =>
-      item[desc].toLowerCase().includes(query.toLowerCase())
+      matchFromStart
+        ? item[desc].toLowerCase().startsWith(query.toLowerCase())
+        : item[desc].toLowerCase().includes(query.toLowerCase())
     );
   }
   return isTreeDropdown || withoutSort
