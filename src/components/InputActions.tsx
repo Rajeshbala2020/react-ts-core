@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { Close, DropArrow } from "../utilities/icons";
+import { Close, DropArrow } from '../utilities/icons';
 
 type ValueProps = {
   inputValue: string;
@@ -16,6 +16,7 @@ type ValueProps = {
   error?: boolean;
   viewMode?: boolean;
   uniqueDropArrowId?: string;
+  autoDropdown?: boolean;
 };
 const InputActions: React.FC<ValueProps> = ({
   inputValue,
@@ -31,6 +32,7 @@ const InputActions: React.FC<ValueProps> = ({
   error,
   viewMode,
   uniqueDropArrowId,
+  autoDropdown = false,
 }) => {
   return (
     <div
@@ -54,31 +56,32 @@ const InputActions: React.FC<ValueProps> = ({
             <Close />
           </button>
         )}
-      {dropOpen ? (
-        <button
-          type="button"
-          onClick={(e) => handleDropClose(e)}
-          className="icon-button text-[#667085] "
-          aria-label="toggle"
-          name="toggle"
-        >
-          <DropArrow
-            className={`icon-button-rotate`}
-            uniqueId={uniqueDropArrowId}
-          />
-        </button>
-      ) : (
-        <button
-          disabled={(disabled || readOnly) && !viewMode}
-          type="button"
-          className="icon-button text-[#667085] "
-          onClick={(e) => handleDropOpen(e)}
-          aria-label="toggle"
-          name="toggle"
-        >
-          <DropArrow uniqueId={uniqueDropArrowId} />
-        </button>
-      )}
+      {!autoDropdown &&
+        (dropOpen ? (
+          <button
+            type="button"
+            onClick={(e) => handleDropClose(e)}
+            className="icon-button text-[#667085] "
+            aria-label="toggle"
+            name="toggle"
+          >
+            <DropArrow
+              className={`icon-button-rotate`}
+              uniqueId={uniqueDropArrowId}
+            />
+          </button>
+        ) : (
+          <button
+            disabled={(disabled || readOnly) && !viewMode}
+            type="button"
+            className="icon-button text-[#667085] "
+            onClick={(e) => handleDropOpen(e)}
+            aria-label="toggle"
+            name="toggle"
+          >
+            <DropArrow uniqueId={uniqueDropArrowId} />
+          </button>
+        ))}
     </div>
   );
 };

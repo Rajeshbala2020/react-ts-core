@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -9,7 +16,7 @@ import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
 import { default as Tooltip } from './utilities/expandableTootltip';
 import { filterSuggestions } from './utilities/filterSuggestions';
-import { Search, Spinner } from './utilities/icons';
+import { AllDropArrow, Search, Spinner } from './utilities/icons';
 
 type ValueProps = {
   [key: string]: string;
@@ -54,7 +61,9 @@ const ExpandableAutoComplete = forwardRef<
       scrollRef,
       isTreeDropdown = false,
       shortCode = '',
-      labelCode = ''
+      labelCode = '',
+      typeOnlyFetch = false,
+      autoDropdown = false,
     },
     ref
   ) => {
@@ -70,9 +79,13 @@ const ExpandableAutoComplete = forwardRef<
     const [focusedIndex, setFocusedIndex] = useState(0);
     const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
     const itemsRef = useRef<HTMLDivElement>(null);
+    const dropBtnRef = useRef<HTMLButtonElement>(null);
+    const [refetchData, setRefetchData] = useState(false);
+
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
     const dropRef = useRef(null);
+    const typeRef = useRef(0);
     useImperativeHandle(ref, () => inputRef.current);
     const [dropdownStyle, setDropdownStyle] = useState({
       top: 0,
@@ -126,39 +139,51 @@ const ExpandableAutoComplete = forwardRef<
       inputValue,
       isMultiple,
       setNextPage,
-      selectedItems
+      selectedItems,
+      typeOnlyFetch
       // nextBlock
     );
 
     // Handling the selection of a suggestion
-    const handleSuggestionClick = useCallback((suggestion: ValueProps, idx: number) => {
-      if (isMultiple) {
-        setFocusedIndex(idx)
-        setSelectedItems((prev) => {
-          const isAdded = prev.some(
-            (item) => item[descId] === suggestion[descId]
-          );
-          if (isAdded) {
-            return prev.filter((item) => item[descId] !== suggestion[descId]);
-          } else {
-            return [...prev, suggestion];
-          }
-        });
-      } else {
-        setFocusedIndex(idx)
-        setInputValue(suggestion[desc]);
-        setSearchValue('');
-        onChange(suggestion);
-        setDropOpen(false);
-      }
-    }, []);
+    const handleSuggestionClick = useCallback(
+      (suggestion: ValueProps, idx: number) => {
+        if (isMultiple) {
+          setFocusedIndex(idx);
+          setSelectedItems((prev) => {
+            const isAdded = prev.some(
+              (item) => item[descId] === suggestion[descId]
+            );
+            if (isAdded) {
+              return prev.filter((item) => item[descId] !== suggestion[descId]);
+            } else {
+              return [...prev, suggestion];
+            }
+          });
+        } else {
+          setFocusedIndex(idx);
+          setInputValue(suggestion[desc]);
+          setSearchValue('');
+          onChange(suggestion);
+          setDropOpen(false);
+        }
+      },
+      []
+    );
 
     // Adding debounce to avoid making API calls on every keystroke
-    const handleChangeWithDebounce = debounce((value) => {
+    const debouncedUpdate = useCallback(
+      debounce((value: string) => {
+        handlePickSuggestions(value, 1, false);
+        typeRef.current = 0;
+      }, 500),
+      []
+    );
+
+    const handleChangeWithDebounce = (value: string) => {
       if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
-        handlePickSuggestions(value, 1);
+        debouncedUpdate(value);
       }
-    }, 1000);
+    };
 
     const handleMultiSelect = (e: any, suggestion: ValueProps) => {
       const { checked } = e.target;
@@ -194,9 +219,10 @@ const ExpandableAutoComplete = forwardRef<
       const { value } = e.target;
       setDropOpen(true);
       setSearchValue(value);
+      typeRef.current = 1;
       handleChangeWithDebounce(value);
       if (!value) {
-        setInputValue('');
+        if (!typeOnlyFetch) setInputValue('');
         // onChange({ [descId]: '', [desc]: '' });
       }
     };
@@ -253,7 +279,7 @@ const ExpandableAutoComplete = forwardRef<
         ) {
           setTimeout(() => {
             setDropOpen(false);
-            setSearchValue('');
+            if (!typeOnlyFetch) setSearchValue('');
           }, 200);
         }
       };
@@ -297,7 +323,6 @@ const ExpandableAutoComplete = forwardRef<
     );
 
     useEffect(() => {
-  
       // Handle keyboard navigation
       const handleKeyDown = (e: any) => {
         if (!dropOpen) return;
@@ -305,49 +330,53 @@ const ExpandableAutoComplete = forwardRef<
         const atBottom = focusedIndex === filteredData.length - 1;
         const atTop = focusedIndex === 0;
         switch (e.key) {
-          case "ArrowDown":
+          case 'ArrowDown':
             e.preventDefault();
             if (itemsRef.current) {
               if (!atBottom) {
-                  itemsRef.current.scrollTop += itemRefs.current[focusedIndex]?.offsetHeight || 50; 
+                itemsRef.current.scrollTop +=
+                  itemRefs.current[focusedIndex]?.offsetHeight || 50;
               } else {
-                  itemsRef.current.scrollTop = 0; 
+                itemsRef.current.scrollTop = 0;
               }
             }
             setFocusedIndex((prev) => (prev + 1) % filteredData?.length);
             break;
-    
-          case "ArrowUp":
+
+          case 'ArrowUp':
             e.preventDefault();
             if (itemsRef.current) {
               if (!atTop) {
-                  itemsRef.current.scrollTop -= itemRefs.current[focusedIndex]?.offsetHeight || 50; 
+                itemsRef.current.scrollTop -=
+                  itemRefs.current[focusedIndex]?.offsetHeight || 50;
               } else {
-                  itemsRef.current.scrollTop = 0; 
+                itemsRef.current.scrollTop = 0;
               }
             }
-            setFocusedIndex((prev) => (prev - 1 + filteredData?.length) % filteredData?.length);
+            setFocusedIndex(
+              (prev) => (prev - 1 + filteredData?.length) % filteredData?.length
+            );
             break;
-    
-          case "Enter":
+
+          case 'Enter':
             e.preventDefault();
-            handleSuggestionClick(filteredData[focusedIndex], focusedIndex)
+            handleSuggestionClick(filteredData[focusedIndex], focusedIndex);
             break;
-    
-          case "Escape":
+
+          case 'Escape':
             e.preventDefault();
             setDropOpen(false);
             break;
-    
+
           default:
             break;
         }
       };
-    
-      window.addEventListener("keydown", handleKeyDown);
-    
+
+      window.addEventListener('keydown', handleKeyDown);
+
       return () => {
-        window.removeEventListener("keydown", handleKeyDown);
+        window.removeEventListener('keydown', handleKeyDown);
       };
     }, [filteredData, dropOpen, isLoading, focusedIndex]);
 
@@ -400,6 +429,38 @@ const ExpandableAutoComplete = forwardRef<
       setSelectedItems([]);
       if (isMultiple) onChange([]);
       else onChange({ [descId]: '', [desc]: '' });
+    };
+
+    const handleSelectAll = () => {
+      if (isMultiple) {
+        filteredData.map((suggestion: ValueProps) =>
+          setSelectedItems((prev) => {
+            const isAdded = prev.some(
+              (item) => item[descId] === suggestion[descId]
+            );
+            if (isAdded) {
+              return prev;
+            } else {
+              return [...prev, suggestion];
+            }
+          })
+        );
+      }
+    };
+
+    const handleOpenDropdown = (e: any) => {
+      if (!suggestions || suggestions?.length === 0 || refetchData) {
+        if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
+          handlePickSuggestions('a', 1);
+          setRefetchData(false);
+        } else if (!refetchData && inputValue !== '') {
+          handlePickSuggestions(inputValue, 1);
+          setRefetchData(true);
+        }
+      }
+      if (!isLoading) {
+        setDropOpen(!dropOpen);
+      }
     };
 
     return (
@@ -513,10 +574,30 @@ const ExpandableAutoComplete = forwardRef<
             />
           </div>
 
+          <>
+            {autoDropdown && !disabled && !readOnly && (
+              <button
+                disabled={disabled ?? readOnly}
+                onClick={(e) => handleOpenDropdown(e)}
+                className=" text-[#667085] focus-visible:outline-slate-100 absolute right-2"
+                data-testid="drop-arrow"
+                type="button"
+                id="autocomplete-drop-icon"
+                ref={dropBtnRef}
+              >
+                <AllDropArrow
+                  type={!dropOpen ? 'down' : 'up'}
+                  uniqueId="all-dropdow-arrow-icon"
+                  className="all-dropdow-arrow-icon"
+                />
+              </button>
+            )}
+          </>
+
           {selectedItems?.length > 1 && (
             <div
               id="expandable-clear-all"
-              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 bottom-1`}
+              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 qbs-bottom-0`}
               onClick={handleClearSelected}
             >
               Clear all
@@ -536,6 +617,7 @@ const ExpandableAutoComplete = forwardRef<
             expandable={expandable}
             handleClear={handleClear}
             uniqueDropArrowId="drop-arrow-expanded-list-icon"
+            autoDropdown={autoDropdown}
           />
           {/* Displaying Loading Spinner */}
 
@@ -571,7 +653,10 @@ const ExpandableAutoComplete = forwardRef<
                   </div>
                 )}
 
-                <div className={`qbs-autocomplete-suggestions-sub `} ref={itemsRef}>
+                <div
+                  className={`qbs-autocomplete-suggestions-sub `}
+                  ref={itemsRef}
+                >
                   {filteredData?.length > 0 ? (
                     filteredData.map((suggestion: ValueProps, idx: number) => (
                       <DropdownList
@@ -610,7 +695,10 @@ const ExpandableAutoComplete = forwardRef<
                           className="qbs-autocomplete-notfound"
                           onClick={handleBlur}
                         >
-                          {notDataMessage ?? 'No Results Found'}
+                          {notDataMessage ??
+                          (searchValue === '' || typeRef.current === 1)
+                            ? 'Start typing to see suggestions'
+                            : 'No Results Found'}
                         </li>
                       )}
                     </>
@@ -627,6 +715,15 @@ const ExpandableAutoComplete = forwardRef<
                       </div>
                     )}
                 </div>
+                {filteredData?.length > 0 && (
+                  <div
+                    id="select-all"
+                    className={`qbs-select-all-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 bottom-1`}
+                    onClick={handleSelectAll}
+                  >
+                    Select all
+                  </div>
+                )}
               </ul>,
               document.body
             )}
