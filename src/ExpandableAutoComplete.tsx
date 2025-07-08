@@ -451,7 +451,7 @@ const ExpandableAutoComplete = forwardRef<
     const handleOpenDropdown = (e: any) => {
       if (!suggestions || suggestions?.length === 0 || refetchData) {
         if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
-          handlePickSuggestions('a', 1);
+          handlePickSuggestions('*', 1);
           setRefetchData(false);
         } else if (!refetchData && inputValue !== '') {
           handlePickSuggestions(inputValue, 1);
@@ -579,7 +579,7 @@ const ExpandableAutoComplete = forwardRef<
               <button
                 disabled={disabled ?? readOnly}
                 onClick={(e) => handleOpenDropdown(e)}
-                className=" text-[#667085] focus-visible:outline-slate-100 absolute right-2"
+                className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
                 data-testid="drop-arrow"
                 type="button"
                 id="autocomplete-drop-icon"
@@ -654,7 +654,7 @@ const ExpandableAutoComplete = forwardRef<
                 )}
 
                 <div
-                  className={`qbs-autocomplete-suggestions-sub `}
+                  className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-suggestions-outer`}
                   ref={itemsRef}
                 >
                   {filteredData?.length > 0 ? (
