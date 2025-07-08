@@ -182,7 +182,7 @@ const ExpandableAutoComplete = forwardRef<
     const handleChangeWithDebounce = (value: string) => {
       if ((type === 'auto_complete' || type === 'auto_suggestion') && async) {
         debouncedUpdate(value);
-      }
+      } else typeRef.current = 0;
     };
 
     const handleMultiSelect = (e: any, suggestion: ValueProps) => {
