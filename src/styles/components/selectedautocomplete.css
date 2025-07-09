@@ -131,3 +131,21 @@
 .qbs-bottom-0{
   bottom: 0;
 }
+.qbs-select-all-link{
+  border-bottom: 1px solid var(--border-card-color-default, #d6d8dc);
+  padding: 0px 8px;
+}
+.qbs-select-all-link .qbs-autocomplete-suggestions-item {
+  margin-top: 5px;
+}
+
+.qbs-select-all-link .qbs-autocomplete-checkbox-container:hover,
+.qbs-select-all-link .qbs-autocomplete-checkbox-container.is-selected,
+.qbs-select-all-link .qbs-autocomplete-suggestions-item:hover
+ {
+  background: #fff;
+  border-radius: 0px;
+}
+.qbs-select-all-link  .qbs-autocomplete-listitem-container:hover {
+  background-color:#fff !important;
+}
