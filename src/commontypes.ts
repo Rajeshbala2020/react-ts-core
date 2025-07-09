@@ -81,7 +81,8 @@ export interface AutoSuggestionInputProps {
   labelCode?: string,
   tabInlineSearch?: boolean // tab dropdown search
   matchFromStart?: boolean // match data's from the starting position
-  autoDropdown?: boolean;
+  autoDropdown?: boolean; // enable all items list items
+  enableSelectAll?: boolean // enable select all option
 }
 export interface IconsProps {
   name: any;

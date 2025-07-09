@@ -111,6 +111,12 @@ body * {
 
   /* Ensure content doesn't overflow during transition */
 }
+.qbs-autocomplete-suggestions-expandable{
+  padding: 8px 0px;
+}
+.qbs-autocomplete-suggestions-expandable .qbs-autocomplete-suggestions-expandable-container {
+  padding: 0px 8px;
+}
 .qbs-autocomplete-suggestions.bottom {
   top: 100%; /* Position below the input */
   /* Other styling */

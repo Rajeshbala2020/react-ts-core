@@ -64,6 +64,7 @@ const ExpandableAutoComplete = forwardRef<
       labelCode = '',
       typeOnlyFetch = false,
       autoDropdown = false,
+      enableSelectAll = false,
     },
     ref
   ) => {
@@ -81,6 +82,7 @@ const ExpandableAutoComplete = forwardRef<
     const itemsRef = useRef<HTMLDivElement>(null);
     const dropBtnRef = useRef<HTMLButtonElement>(null);
     const [refetchData, setRefetchData] = useState(false);
+    const [selectAll, setSelectAll] = useState(false);
 
     // API call for suggestions through a custom hook
     const inputRef = useRef(null);
@@ -433,18 +435,26 @@ const ExpandableAutoComplete = forwardRef<
 
     const handleSelectAll = () => {
       if (isMultiple) {
-        filteredData.map((suggestion: ValueProps) =>
-          setSelectedItems((prev) => {
-            const isAdded = prev.some(
-              (item) => item[descId] === suggestion[descId]
-            );
-            if (isAdded) {
-              return prev;
-            } else {
-              return [...prev, suggestion];
-            }
-          })
-        );
+        if (selectAll) {
+          setSelectedItems((prev) =>
+            prev.filter(
+              (item) => !filteredData.some((f) => f[descId] === item[descId])
+            )
+          );
+        } else {
+          filteredData.map((suggestion: ValueProps) =>
+            setSelectedItems((prev) => {
+              const isAdded = prev.some(
+                (item) => item[descId] === suggestion[descId]
+              );
+              if (isAdded) {
+                return prev;
+              } else {
+                return [...prev, suggestion];
+              }
+            })
+          );
+        }
       }
     };
 
@@ -462,6 +472,16 @@ const ExpandableAutoComplete = forwardRef<
         setDropOpen(!dropOpen);
       }
     };
+
+    useEffect(() => {
+      const allSelected =
+        filteredData.length > 0 &&
+        filteredData.every((item) =>
+          selectedItems.some((s) => s[descId] === item[descId])
+        );
+
+      setSelectAll(allSelected);
+    }, [filteredData, selectedItems, descId]);
 
     return (
       <div
@@ -628,7 +648,7 @@ const ExpandableAutoComplete = forwardRef<
               <ul
                 ref={dropRef}
                 style={{ ...dropdownStyle, minHeight: 192 }}
-                className={`qbs-autocomplete-suggestions`}
+                className={`qbs-autocomplete-suggestions qbs-autocomplete-suggestions-expandable`}
                 id={
                   id
                     ? `autocomplete-dropdown-${id}`
@@ -653,77 +673,112 @@ const ExpandableAutoComplete = forwardRef<
                   </div>
                 )}
 
-                <div
-                  className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-suggestions-outer`}
-                  ref={itemsRef}
-                >
-                  {filteredData?.length > 0 ? (
-                    filteredData.map((suggestion: ValueProps, idx: number) => (
-                      <DropdownList
-                        idx={idx}
-                        suggestion={suggestion}
-                        isSelected={isSelected}
-                        handleSuggestionClick={() =>
-                          handleSuggestionClick(suggestion, idx)
-                        }
-                        handleMultiSelect={handleMultiSelect}
-                        selected={selected}
-                        isMultiple={isMultiple}
-                        singleSelect={singleSelect}
-                        desc={desc}
-                        shortCode={shortCode}
-                        labelCode={labelCode}
-                        focusedIndex={focusedIndex}
-                        setItemRef={(index, ref) => {
-                          itemRefs.current[index] = ref; // Store each ref properly
-                        }}
-                      />
-                    ))
-                  ) : (
-                    <>
-                      {isLoading ? (
-                        <div
-                          style={{ display: 'flex', justifyContent: 'center' }}
-                          className="qbs-autocomplete-loader"
-                        >
-                          <span>
-                            <Spinner />
-                          </span>
-                        </div>
-                      ) : (
-                        <li
-                          className="qbs-autocomplete-notfound"
-                          onClick={handleBlur}
-                        >
-                          {notDataMessage ??
-                          (searchValue === '' || typeRef.current === 1)
-                            ? 'Start typing to see suggestions'
-                            : 'No Results Found'}
-                        </li>
-                      )}
-                    </>
-                  )}
-                  {paginationEnabled &&
-                    nextBlock !== 0 &&
-                    nextBlock !== undefined &&
-                    filteredData?.length > 0 && (
-                      <div
-                        className="loadMoreSection"
-                        onClick={() => handleLoadMore()}
-                      >
-                        <p style={{ margin: 2 }}>Load More</p>
-                      </div>
-                    )}
-                </div>
-                {filteredData?.length > 0 && (
+                {filteredData?.length > 0 && enableSelectAll && isMultiple && (
                   <div
                     id="select-all"
-                    className={`qbs-select-all-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 bottom-1`}
+                    className={`qbs-select-all-link qbs-cursor-pointer qbs-text-xs`}
                     onClick={handleSelectAll}
                   >
-                    Select all
+                    <div
+                      className={`qbs-autocomplete-listitem-container qbs-autocomplete-checkbox-container`}
+                    >
+                      <div className="qbs-autocomplete-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectAll}
+                          id={`qbs-checkbox-all`}
+                        />
+                        <label htmlFor={`qbs-checkbox-all`}>
+                          <svg
+                            width="8"
+                            height="6"
+                            viewBox="0 0 8 6"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </label>
+                      </div>
+                      <div className={`qbs-autocomplete-suggestions-item`}>
+                        Select All
+                      </div>
+                    </div>
                   </div>
                 )}
+
+                <div className="qbs-autocomplete-suggestions-expandable-container">
+                  <div
+                    className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-suggestions-outer`}
+                    ref={itemsRef}
+                  >
+                    {filteredData?.length > 0 ? (
+                      filteredData.map(
+                        (suggestion: ValueProps, idx: number) => (
+                          <DropdownList
+                            idx={idx}
+                            suggestion={suggestion}
+                            isSelected={isSelected}
+                            handleSuggestionClick={() =>
+                              handleSuggestionClick(suggestion, idx)
+                            }
+                            handleMultiSelect={handleMultiSelect}
+                            selected={selected}
+                            isMultiple={isMultiple}
+                            singleSelect={singleSelect}
+                            desc={desc}
+                            shortCode={shortCode}
+                            labelCode={labelCode}
+                            focusedIndex={focusedIndex}
+                            setItemRef={(index, ref) => {
+                              itemRefs.current[index] = ref; // Store each ref properly
+                            }}
+                          />
+                        )
+                      )
+                    ) : (
+                      <>
+                        {isLoading ? (
+                          <div
+                            style={{
+                              display: 'flex',
+                              justifyContent: 'center',
+                            }}
+                            className="qbs-autocomplete-loader"
+                          >
+                            <span>
+                              <Spinner />
+                            </span>
+                          </div>
+                        ) : (
+                          <li
+                            className="qbs-autocomplete-notfound"
+                            onClick={handleBlur}
+                          >
+                            {notDataMessage ??
+                            (searchValue === '' || typeRef.current === 1)
+                              ? 'Start typing to see suggestions'
+                              : 'No Results Found'}
+                          </li>
+                        )}
+                      </>
+                    )}
+                    {paginationEnabled &&
+                      nextBlock !== 0 &&
+                      nextBlock !== undefined &&
+                      filteredData?.length > 0 && (
+                        <div
+                          className="loadMoreSection"
+                          onClick={() => handleLoadMore()}
+                        >
+                          <p style={{ margin: 2 }}>Load More</p>
+                        </div>
+                      )}
+                  </div>
+                </div>
               </ul>,
               document.body
             )}
