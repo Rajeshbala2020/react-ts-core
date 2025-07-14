@@ -114,7 +114,6 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
       onMouseLeave={handleMouseLeave}
       ref={menuButtonRef}
       style={{ display: 'flex' }}
-      
     >
       {children}
 
@@ -137,7 +136,7 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
               visibility: 'visible',
             }}
           >
-            {title}
+            <span className="tooltip-text-container">{title}</span>
           </span>,
           document.body
         )}

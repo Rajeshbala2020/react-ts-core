@@ -613,6 +613,11 @@ span.dropdown-search-icon {
   line-height: 16px;
   max-width: 300px;
 }
+.tooltip-text-container {
+  display: block;
+  max-height: 200px;
+  overflow: auto;
+}
 
 .qbs-table-tooltip.up .tooltiptext {
   bottom: 125%;
