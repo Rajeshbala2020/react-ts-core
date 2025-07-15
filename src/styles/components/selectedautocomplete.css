@@ -117,8 +117,25 @@
 .qbs-hidden {
   display: none;
 }
+.qbs-autocomplete-selected-suggestions {
+  padding: 8px 0px;
+}
 .qbs-autocomplete-selected-suggestions .qbs-autocomplete-suggestions-sub {
   min-height: 184px;
+}
+.qbs-autocomplete-selected-suggestions .qbs-autocomplete-selected-suggestions-outer {
+  padding: 0px 8px;
+}
+.qbs-autocomplete-selected-suggestions .qbs-autocomplete-listitem-container{
+  padding-top: 0px;
+  padding-left: 4px;
+  padding-right: 4px;
+}
+.qbs-autocomplete-selected-suggestions .qbs-autocomplete-selected-suggestions-outer span.dropdown-search-icon {
+  left: 16px;
+}
+.qbs-autocomplete-selected-suggestions .qbs-autocomplete-selected-suggestions-outer .qbs-all-dropdown-btn {
+  right: 16px;
 }
 .selected-items-outer-container {
   display: flex;
