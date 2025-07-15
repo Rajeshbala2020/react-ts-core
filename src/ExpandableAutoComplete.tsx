@@ -65,6 +65,7 @@ const ExpandableAutoComplete = forwardRef<
       typeOnlyFetch = false,
       autoDropdown = false,
       enableSelectAll = false,
+      matchFromStart = false,
     },
     ref
   ) => {
@@ -321,7 +322,9 @@ const ExpandableAutoComplete = forwardRef<
       desc,
       selected,
       async,
-      isTreeDropdown
+      isTreeDropdown,
+      true,
+      matchFromStart
     );
 
     useEffect(() => {
@@ -388,10 +391,10 @@ const ExpandableAutoComplete = forwardRef<
     ): boolean => {
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc]
+          (selectedItem) => selectedItem[desc] === item[desc] || selectedItem[descId] === item[descId]
         );
       } else {
-        return item[desc] === selectedItems;
+        return item[desc] === selectedItems || item[descId] === selectedItems;
       }
     };
 

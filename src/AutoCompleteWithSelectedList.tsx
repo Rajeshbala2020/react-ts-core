@@ -15,7 +15,7 @@ import { useSuggestions } from './utilities/autosuggestions';
 import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
 import { filterSuggestions } from './utilities/filterSuggestions';
-import { DropArrow, Search, Spinner } from './utilities/icons';
+import { AllDropArrow, DropArrow, Search, Spinner } from './utilities/icons';
 import { default as Tooltip } from './utilities/NewTooltip';
 
 const AutoCompleteWithSelectedList = forwardRef<
@@ -70,7 +70,9 @@ const AutoCompleteWithSelectedList = forwardRef<
       shortCode = '',
       labelCode = '',
       tabInlineSearch = true,
-      matchFromStart = false
+      matchFromStart = false,
+      autoDropdown = false,
+      enableSelectAll = false,
     },
     ref
   ) => {
@@ -101,12 +103,18 @@ const AutoCompleteWithSelectedList = forwardRef<
     const inputRef = useRef(null);
     const dropRef = useRef(null);
     const inputSearchRef = useRef(null);
+    const dropBtnRef = useRef<HTMLButtonElement>(null);
     useImperativeHandle(ref, () => inputRef.current);
     const [dropdownStyle, setDropdownStyle] = useState({
       top: 0,
       left: 0,
       width: 200,
     });
+
+    const [selectAll, setSelectAll] = useState(false);
+    const [refetchData, setRefetchData] = useState(false);
+    const [allDataLoaded, setAllDataLoaded] = useState(false);
+
 
     let originalOverflow = '';
     let hasScrollbar = false;
@@ -291,6 +299,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       const trimStart = value.trimStart();
       setSearchValue(trimStart);
       handleChangeWithDebounce(trimStart);
+      setAllDataLoaded(false)
     };
 
     const handleClear = () => {
@@ -468,10 +477,10 @@ const AutoCompleteWithSelectedList = forwardRef<
     ): boolean => {
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc]
+          (selectedItem) => selectedItem[desc] === item[desc] || selectedItem[descId] === item[descId]
         );
       } else {
-        return item[desc] === selectedItems;
+        return item[desc] === selectedItems || item[descId] === selectedItems;
       }
     };
 
@@ -665,6 +674,56 @@ const AutoCompleteWithSelectedList = forwardRef<
         </ul>
       );
     };
+
+    const handleSelectAll = () => {
+      if (isMultiple) {
+        if (selectAll) {
+          setSelectedItems((prev) =>
+            prev.filter(
+              (item) => !filteredData.some((f) => f[descId] === item[descId])
+            )
+          );
+        } else {
+          filteredData.map((suggestion: ValueProps) =>
+            setSelectedItems((prev) => {
+              const isAdded = prev.some(
+                (item) => item[descId] === suggestion[descId]
+              );
+              if (isAdded) {
+                return prev;
+              } else {
+                return [...prev, suggestion];
+              }
+            })
+          );
+        }
+      }
+    };
+
+    const handleOpenDropdown = (e: any) => {
+      if (!suggestions || suggestions?.length === 0 || refetchData) {
+        if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
+          handlePickSuggestions('*', 1);
+          setRefetchData(false);
+          setAllDataLoaded(true)
+        } else if (!refetchData && inputValue !== '') {
+          handlePickSuggestions(inputValue, 1);
+          setRefetchData(true);
+          setAllDataLoaded(false)
+        }
+      }
+    };
+
+    useEffect(() => {
+      const allSelected =
+        filteredData.length > 0 &&
+        filteredData.every((item) =>
+          selectedItems.some((s) => s[descId] === item[descId])
+        );
+
+      setSelectAll(allSelected);
+    }, [filteredData, selectedItems, descId]);
+
     useEffect(() => {
       handleUpdateParent?.(dropOpen, dropLevelRef.current);
     }, [dropOpen, dropLevelRef.current]);
@@ -818,7 +877,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                       tabInlineSearch && (
                         <div
                           style={{ position: 'relative' }}
-                          className="react-core-ts-search-container"
+                          className="react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer"
                         >
                           <span className="dropdown-search-icon">
                             <Search />
@@ -831,13 +890,70 @@ const AutoCompleteWithSelectedList = forwardRef<
                             autoComplete="off"
                             ref={inputSearchRef}
                           />
+
+                          <>
+                            {autoDropdown && !disabled && !readOnly && (
+                              <button
+                                disabled={disabled ?? readOnly}
+                                onClick={(e) => handleOpenDropdown(e)}
+                                className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                                data-testid="drop-arrow"
+                                type="button"
+                                id="autocomplete-drop-icon"
+                                ref={dropBtnRef}
+                              >
+                                <AllDropArrow
+                                  type={!allDataLoaded ? 'down' : 'up'}
+                                  uniqueId="all-dropdow-arrow-icon"
+                                  className="all-dropdow-arrow-icon"
+                                />
+                              </button>
+                            )}
+                          </>
                         </div>
                       )}
                   </>
                 )}
 
+                {filteredData?.length > 0 && enableSelectAll && isMultiple && (
+                  <div
+                    id="select-all"
+                    className={`qbs-select-all-link qbs-cursor-pointer qbs-text-xs`}
+                    onClick={handleSelectAll}
+                  >
+                    <div
+                      className={`qbs-autocomplete-listitem-container qbs-autocomplete-checkbox-container`}
+                    >
+                      <div className="qbs-autocomplete-checkbox">
+                        <input
+                          type="checkbox"
+                          checked={selectAll}
+                          id={`qbs-checkbox-all`}
+                        />
+                        <label htmlFor={`qbs-checkbox-all`}>
+                          <svg
+                            width="8"
+                            height="6"
+                            viewBox="0 0 8 6"
+                            fill="none"
+                            xmlns="http://www.w3.org/2000/svg"
+                          >
+                            <path
+                              d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
+                              fill="white"
+                            />
+                          </svg>
+                        </label>
+                      </div>
+                      <div className={`qbs-autocomplete-suggestions-item`}>
+                        Select All
+                      </div>
+                    </div>
+                  </div>
+                )}
+
                 <div
-                  className={`qbs-autocomplete-suggestions-sub ${
+                  className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${
                     viewMode ? 'hidden' : ''
                   }`}
                   ref={itemsRef}
