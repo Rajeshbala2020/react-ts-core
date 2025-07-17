@@ -14,7 +14,7 @@ import InputActions from './components/InputActions';
 import { useSuggestions } from './utilities/autosuggestions';
 import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
-import { default as Tooltip } from './utilities/expandableTootltip';
+import { default as Tooltip } from './utilities/NewTooltip';
 import { filterSuggestions } from './utilities/filterSuggestions';
 import { AllDropArrow, Search, Spinner } from './utilities/icons';
 
@@ -108,11 +108,16 @@ const ExpandableAutoComplete = forwardRef<
         const spaceBelow = window.innerHeight - inputRect.bottom;
         const spaceAbove = inputRect.top + window.scrollY;
 
-        const dropdownHeight = 275; // Assume a fixed height or calculate based on content
+        let dropdownHeight = 275; // Assume a fixed height or calculate based on content
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
         } else {
+          dropdownHeight =
+            dropdownHeight +
+            (filteredData?.length > 0 && enableSelectAll && isMultiple
+              ? 32
+              : 0);
           dropdownPosition.top =
             inputRect.top + window.scrollY - dropdownHeight + 73;
         }
@@ -122,15 +127,6 @@ const ExpandableAutoComplete = forwardRef<
         });
       }
     };
-
-    useEffect(() => {
-      window.addEventListener('resize', adjustDropdownPosition);
-      adjustDropdownPosition();
-
-      return () => {
-        window.removeEventListener('resize', adjustDropdownPosition);
-      };
-    }, [dropOpen, selectedItems]);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -328,6 +324,15 @@ const ExpandableAutoComplete = forwardRef<
     );
 
     useEffect(() => {
+      window.addEventListener('resize', adjustDropdownPosition);
+      adjustDropdownPosition();
+
+      return () => {
+        window.removeEventListener('resize', adjustDropdownPosition);
+      };
+    }, [dropOpen, selectedItems, filteredData]);
+
+    useEffect(() => {
       // Handle keyboard navigation
       const handleKeyDown = (e: any) => {
         if (!dropOpen) return;
@@ -391,7 +396,9 @@ const ExpandableAutoComplete = forwardRef<
     ): boolean => {
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc] || selectedItem[descId] === item[descId]
+          (selectedItem) =>
+            selectedItem[desc] === item[desc] ||
+            selectedItem[descId] === item[descId]
         );
       } else {
         return item[desc] === selectedItems || item[descId] === selectedItems;
