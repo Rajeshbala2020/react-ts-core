@@ -115,7 +115,6 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [refetchData, setRefetchData] = useState(false);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
 
-
     let originalOverflow = '';
     let hasScrollbar = false;
 
@@ -148,7 +147,12 @@ const AutoCompleteWithSelectedList = forwardRef<
 
           setSelHeight(defaultHeight);
         } else if (spaceAbove >= dropdownHeight) {
-          const sHeight = tabInlineSearch ? 73 : 113;
+          let sHeight = tabInlineSearch ? 73 : 113;
+          sHeight =
+            sHeight -
+            (filteredData?.length > 0 && enableSelectAll && isMultiple
+              ? 32
+              : 0);
           dropLevelRef.current = 'top';
           dropdownPosition.top =
             inputRect.top +
@@ -299,7 +303,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       const trimStart = value.trimStart();
       setSearchValue(trimStart);
       handleChangeWithDebounce(trimStart);
-      setAllDataLoaded(false)
+      setAllDataLoaded(false);
     };
 
     const handleClear = () => {
@@ -319,6 +323,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       setShowAllSelected(false);
       setSearchValue('');
       if (isMultiple) onChange([]);
+      if (async) resetSuggections?.();
       else onChange({ [descId]: '', [desc]: '' });
     };
 
@@ -333,18 +338,6 @@ const AutoCompleteWithSelectedList = forwardRef<
       });
     };
 
-    useEffect(() => {
-      if (isInitialRender) {
-        setIsInitialRender(false);
-      } else {
-        onChange(selectedItems);
-      }
-
-      adjustDropdownPosition();
-      setTimeout(() => {
-        adjustDropdownPosition();
-      }, 200);
-    }, [selectedItems]);
     const uniqueDropArrowId = `${name}-drop-arrow-selected-list-icon`;
     useEffect(() => {
       const handleClickOutside = (event: any) => {
@@ -413,6 +406,19 @@ const AutoCompleteWithSelectedList = forwardRef<
     );
 
     useEffect(() => {
+      if (isInitialRender) {
+        setIsInitialRender(false);
+      } else {
+        onChange(selectedItems);
+      }
+
+      adjustDropdownPosition();
+      setTimeout(() => {
+        adjustDropdownPosition();
+      }, 200);
+    }, [selectedItems, filteredData]);
+
+    useEffect(() => {
       // Handle keyboard navigation
       const handleKeyDown = (e: any) => {
         if (!dropOpen) return;
@@ -477,7 +483,9 @@ const AutoCompleteWithSelectedList = forwardRef<
     ): boolean => {
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc] || selectedItem[descId] === item[descId]
+          (selectedItem) =>
+            selectedItem[desc] === item[desc] ||
+            selectedItem[descId] === item[descId]
         );
       } else {
         return item[desc] === selectedItems || item[descId] === selectedItems;
@@ -705,11 +713,11 @@ const AutoCompleteWithSelectedList = forwardRef<
         if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
           handlePickSuggestions('*', 1);
           setRefetchData(false);
-          setAllDataLoaded(true)
+          setAllDataLoaded(true);
         } else if (!refetchData && inputValue !== '') {
           handlePickSuggestions(inputValue, 1);
           setRefetchData(true);
-          setAllDataLoaded(false)
+          setAllDataLoaded(false);
         }
       }
     };
