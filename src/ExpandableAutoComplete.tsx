@@ -150,10 +150,16 @@ const ExpandableAutoComplete = forwardRef<
           setFocusedIndex(idx);
           setSelectedItems((prev) => {
             const isAdded = prev.some(
-              (item) => item[descId] === suggestion[descId]
+              (item) =>
+                item[descId]?.toString().toLowerCase() ===
+                suggestion[descId]?.toString().toLowerCase()
             );
             if (isAdded) {
-              return prev.filter((item) => item[descId] !== suggestion[descId]);
+              return prev.filter(
+                (item) =>
+                  item[descId]?.toString().toLowerCase() !==
+                  suggestion[descId]?.toString().toLowerCase()
+              );
             } else {
               return [...prev, suggestion];
             }
@@ -192,7 +198,9 @@ const ExpandableAutoComplete = forwardRef<
         } else {
           setSelectedItems((prev) => {
             return prev.filter(
-              (item, i) => item[descId] !== suggestion[descId]
+              (item, i) =>
+                item[descId]?.toString().toLowerCase() !==
+                suggestion[descId]?.toString().toLowerCase()
             );
           });
         }
@@ -397,11 +405,18 @@ const ExpandableAutoComplete = forwardRef<
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
           (selectedItem) =>
-            selectedItem[desc] === item[desc] ||
-            selectedItem[descId] === item[descId]
+            selectedItem[desc]?.toString().toLowerCase() ===
+              item[desc]?.toString().toLowerCase() ||
+            selectedItem[descId]?.toString().toLowerCase() ===
+              item[descId]?.toString().toLowerCase()
         );
       } else {
-        return item[desc] === selectedItems || item[descId] === selectedItems;
+        return (
+          item[desc]?.toString().toLowerCase() ===
+            selectedItems?.toString().toLowerCase() ||
+          item[descId]?.toString().toLowerCase() ===
+            selectedItems?.toString().toLowerCase()
+        );
       }
     };
 
@@ -448,14 +463,21 @@ const ExpandableAutoComplete = forwardRef<
         if (selectAll) {
           setSelectedItems((prev) =>
             prev.filter(
-              (item) => !filteredData.some((f) => f[descId] === item[descId])
+              (item) =>
+                !filteredData.some(
+                  (f) =>
+                    f[descId]?.toString().toLowerCase() ===
+                    item[descId]?.toString().toLowerCase()
+                )
             )
           );
         } else {
           filteredData.map((suggestion: ValueProps) =>
             setSelectedItems((prev) => {
               const isAdded = prev.some(
-                (item) => item[descId] === suggestion[descId]
+                (item) =>
+                  item[descId]?.toString().toLowerCase() ===
+                  suggestion[descId]?.toString().toLowerCase()
               );
               if (isAdded) {
                 return prev;
@@ -487,7 +509,11 @@ const ExpandableAutoComplete = forwardRef<
       const allSelected =
         filteredData.length > 0 &&
         filteredData.every((item) =>
-          selectedItems.some((s) => s[descId] === item[descId])
+          selectedItems.some(
+            (s) =>
+              s[descId]?.toString().toLowerCase() ===
+              item[descId]?.toString().toLowerCase()
+          )
         );
 
       setSelectAll(allSelected);
