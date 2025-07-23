@@ -17,6 +17,8 @@ import { deepEqual } from './utilities/deepEqual';
 import { default as Tooltip } from './utilities/NewTooltip';
 import { filterSuggestions } from './utilities/filterSuggestions';
 import { AllDropArrow, Search, Spinner } from './utilities/icons';
+import { getKeyValue, safeToLowerString } from './utilities/getKeyValue';
+
 
 type ValueProps = {
   [key: string]: string;
@@ -151,14 +153,14 @@ const ExpandableAutoComplete = forwardRef<
           setSelectedItems((prev) => {
             const isAdded = prev.some(
               (item) =>
-                item[descId]?.toString().toLowerCase() ===
-                suggestion[descId]?.toString().toLowerCase()
+                getKeyValue(item, descId, 'id') ===
+                getKeyValue(suggestion, descId, 'id')
             );
             if (isAdded) {
               return prev.filter(
                 (item) =>
-                  item[descId]?.toString().toLowerCase() !==
-                  suggestion[descId]?.toString().toLowerCase()
+                  getKeyValue(item, descId, 'id') !==
+                  getKeyValue(suggestion, descId, 'id')
               );
             } else {
               return [...prev, suggestion];
@@ -199,8 +201,8 @@ const ExpandableAutoComplete = forwardRef<
           setSelectedItems((prev) => {
             return prev.filter(
               (item, i) =>
-                item[descId]?.toString().toLowerCase() !==
-                suggestion[descId]?.toString().toLowerCase()
+                getKeyValue(item, descId, 'id') !==
+                getKeyValue(suggestion, descId, 'id')
             );
           });
         }
@@ -405,17 +407,13 @@ const ExpandableAutoComplete = forwardRef<
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
           (selectedItem) =>
-            selectedItem[desc]?.toString().toLowerCase() ===
-              item[desc]?.toString().toLowerCase() ||
-            selectedItem[descId]?.toString().toLowerCase() ===
-              item[descId]?.toString().toLowerCase()
+            getKeyValue(selectedItem, desc, 'name') === getKeyValue(item, desc, 'name') ||
+            getKeyValue(selectedItem, descId, 'id') === getKeyValue(item, descId, 'id')
         );
       } else {
         return (
-          item[desc]?.toString().toLowerCase() ===
-            selectedItems?.toString().toLowerCase() ||
-          item[descId]?.toString().toLowerCase() ===
-            selectedItems?.toString().toLowerCase()
+          getKeyValue(item, desc, 'name') === safeToLowerString(selectedItems) ||
+          getKeyValue(item, descId, 'id') === safeToLowerString(selectedItems)
         );
       }
     };
@@ -466,8 +464,7 @@ const ExpandableAutoComplete = forwardRef<
               (item) =>
                 !filteredData.some(
                   (f) =>
-                    f[descId]?.toString().toLowerCase() ===
-                    item[descId]?.toString().toLowerCase()
+                    getKeyValue(f, descId, 'id') === getKeyValue(item, descId, 'id')
                 )
             )
           );
@@ -476,8 +473,8 @@ const ExpandableAutoComplete = forwardRef<
             setSelectedItems((prev) => {
               const isAdded = prev.some(
                 (item) =>
-                  item[descId]?.toString().toLowerCase() ===
-                  suggestion[descId]?.toString().toLowerCase()
+                  getKeyValue(item, descId, 'id') ===
+                  getKeyValue(suggestion, descId, 'id')
               );
               if (isAdded) {
                 return prev;
@@ -511,8 +508,7 @@ const ExpandableAutoComplete = forwardRef<
         filteredData.every((item) =>
           selectedItems.some(
             (s) =>
-              s[descId]?.toString().toLowerCase() ===
-              item[descId]?.toString().toLowerCase()
+              getKeyValue(s, descId, 'id') === getKeyValue(item, descId, 'id')
           )
         );
 
