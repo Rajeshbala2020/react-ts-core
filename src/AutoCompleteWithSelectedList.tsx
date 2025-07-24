@@ -814,8 +814,12 @@ const AutoCompleteWithSelectedList = forwardRef<
                   className="selected-items-container qbs-text-sm qbs-gap-1"
                   onClick={() => onInputFocus()}
                 >
-                  <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
-                    {selectedItems?.length}
+                  <span
+                    className={`badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6 ${
+                      selectedItems?.length > 99 ? 'qbs-text-hundred-plus' : ''
+                    }`}
+                  >
+                    {selectedItems?.length > 99 ? '99+' : selectedItems?.length}
                   </span>
                   <span className="selected-label-text">
                     {selectedLabel && selectedLabel !== '' ? (
