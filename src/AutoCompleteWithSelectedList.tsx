@@ -220,10 +220,10 @@ const AutoCompleteWithSelectedList = forwardRef<
             const isAdded =
               prev && prev.length > 0
                 ? prev.some(
-                  (item) =>
-                    getKeyValue(item, descId, 'id') ===
-                    getKeyValue(suggestion, descId, 'id')
-                )
+                    (item) =>
+                      getKeyValue(item, descId, 'id') ===
+                      getKeyValue(suggestion, descId, 'id')
+                  )
                 : false;
             if (isAdded) {
               return prev.filter(
@@ -344,8 +344,9 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const generateClassName = useCallback(() => {
-      return `qbs-textfield-default ${className} ${errors && errors?.message ? 'textfield-error' : 'textfield'
-        } ${expandable ? 'expandable' : ''}`;
+      return `qbs-textfield-default ${className} ${
+        errors && errors?.message ? 'textfield-error' : 'textfield'
+      } ${expandable ? 'expandable' : ''}`;
     }, [errors, name]);
     const handleRemoveSelectedItem = (index: number) => {
       setSelectedItems((prev) => {
@@ -430,7 +431,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       setTimeout(() => {
         adjustDropdownPosition();
       }, 200);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedItems]);
 
     useEffect(() => {
@@ -438,7 +439,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       setTimeout(() => {
         adjustDropdownPosition();
       }, 200);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filteredData]);
 
     useEffect(() => {
@@ -560,9 +561,9 @@ const AutoCompleteWithSelectedList = forwardRef<
     const tooltipContent =
       selectedItems?.length > itemCount
         ? selectedItems
-          ?.slice(itemCount)
-          .map((item) => item[desc])
-          .join(', ')
+            ?.slice(itemCount)
+            .map((item) => item[desc])
+            .join(', ')
         : '';
 
     const handleDropOpen = (e: any) => {
@@ -668,8 +669,9 @@ const AutoCompleteWithSelectedList = forwardRef<
             <div className="selected-items-container">
               <Tooltip title={tooltipContent} enabled={true}>
                 <div
-                  className={`selected-item-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${dropdown ? 'qbs-cursor-pointer' : ''
-                    }`}
+                  className={`selected-item-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${
+                    dropdown ? 'qbs-cursor-pointer' : ''
+                  }`}
                   onClick={() => {
                     handleShowAllSelected(dropdown);
                   }}
@@ -693,8 +695,9 @@ const AutoCompleteWithSelectedList = forwardRef<
           {tab.map((item: TabPops, idx: number) => (
             <li className="qbs-flex-1 qbs-tab-items" key={`tab-${idx}`}>
               <span
-                className={`qbs-inline-block qbs-tab-item qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${activeTab === idx ? 'qbs-tab-active-item' : ''
-                  }`}
+                className={`qbs-inline-block qbs-tab-item qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${
+                  activeTab === idx ? 'qbs-tab-active-item' : ''
+                }`}
                 onClick={() => {
                   handleTabClick(idx);
                 }}
@@ -794,8 +797,9 @@ const AutoCompleteWithSelectedList = forwardRef<
         {/* Displaying selected items for multi-select */}
 
         <div
-          className={`qbs-relative  qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-container'
-            }`}
+          className={`qbs-relative  qbs-autocomplete-selected-comp ${
+            expandable ? 'qbs-expandable-container' : 'qbs-container'
+          }`}
         >
           {(selectedItems?.length > 0 || !tabInlineSearch) && (
             <>
@@ -813,8 +817,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                   onClick={() => onInputFocus()}
                 >
                   <span
-                    className={`badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6 ${selectedItems?.length > 99 ? 'qbs-text-hundred-plus' : ''
-                      }`}
+                    className={`badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6 ${
+                      selectedItems?.length > 99 ? 'qbs-text-hundred-plus' : ''
+                    }`}
                   >
                     {selectedItems?.length > 99 ? '99+' : selectedItems?.length}
                   </span>
@@ -831,8 +836,9 @@ const AutoCompleteWithSelectedList = forwardRef<
           )}
 
           <div
-            className={`qbs-textfield-expandable ${!expandable ? 'qbs-normal' : ''
-              }`}
+            className={`qbs-textfield-expandable ${
+              !expandable ? 'qbs-normal' : ''
+            }`}
             data-value={
               selectedItems?.length > 0 || searchValue
                 ? !tabInlineSearch && searchValue
@@ -862,8 +868,8 @@ const AutoCompleteWithSelectedList = forwardRef<
                   ? !tabInlineSearch && searchValue
                     ? searchValue
                     : !tabInlineSearch
-                      ? placeholder ?? ''
-                      : ''
+                    ? placeholder ?? ''
+                    : ''
                   : placeholder ?? ''
               }
               readOnly={
@@ -907,8 +913,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                   opacity: visible ? 1 : 0,
                   transition: 'opacity 0.2s ease-in-out',
                 }}
-                className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${viewMode ? 'qbs-dropdown-selected-preview' : ''
-                  } ${viewMode && selectedItems?.length === 0 ? 'hidden' : ''}`}
+                className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
+                  viewMode ? 'qbs-dropdown-selected-preview' : ''
+                } ${viewMode && selectedItems?.length === 0 ? 'hidden' : ''}`}
               >
                 {!viewMode && (
                   <>
@@ -994,8 +1001,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                 )}
 
                 <div
-                  className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'hidden' : ''
-                    }`}
+                  className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${
+                    viewMode ? 'hidden' : ''
+                  }`}
                   ref={itemsRef}
                   style={{
                     maxHeight: `${selHeight}px`,
@@ -1028,9 +1036,9 @@ const AutoCompleteWithSelectedList = forwardRef<
                   ) : (
                     <>
                       {isLoading ||
-                        (searchValue !== searchOldValue &&
-                          searchValue !== '' &&
-                          async) ? (
+                      (searchValue !== searchOldValue &&
+                        searchValue !== '' &&
+                        async) ? (
                         <div className="qbs-flex qbs-align-middle qbs-justify-center qbs-min-emp-h">
                           <div className="qbs-pt-16 qbs-autocomplete-loader">
                             <Spinner />
@@ -1069,15 +1077,17 @@ const AutoCompleteWithSelectedList = forwardRef<
                             Selected Items
                           </div>
                           <div
-                            className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
-                              }`}
+                            className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${
+                              viewMode ? 'hidden' : ''
+                            }`}
                             onClick={handleClearSelected}
                           >
                             Clear all
                           </div>
                           <div
-                            className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
-                              }`}
+                            className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${
+                              viewMode ? 'hidden' : ''
+                            }`}
                             onClick={() => {
                               setDropOpen(false);
                             }}
