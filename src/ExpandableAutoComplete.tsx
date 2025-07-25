@@ -619,7 +619,7 @@ const ExpandableAutoComplete = forwardRef<
               readOnly={
                 readOnly ||
                 type === 'custom_select' ||
-                (type == 'auto_suggestion' && !expandable)
+                (type === 'auto_suggestion' && !expandable)
               }
               disabled={disabled}
               data-testid="custom-autocomplete"
@@ -687,7 +687,7 @@ const ExpandableAutoComplete = forwardRef<
                     : `autocomplete-dropdown-${name}`
                 }
               >
-                {type == 'auto_suggestion' && !expandable && (
+                {type === 'auto_suggestion' && !expandable && (
                   <div
                     style={{ position: 'relative' }}
                     className="react-core-ts-search-container"

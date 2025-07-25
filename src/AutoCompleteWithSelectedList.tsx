@@ -335,9 +335,11 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleClearSelected = () => {
       setSelectedItems([]);
       setShowAllSelected(false);
-      setSearchValue('');
+      if (searchValue && type === 'auto_suggestion' && tabInlineSearch) {
+        setSearchValue('');
+      }
       if (isMultiple) onChange([]);
-      if (async) resetSuggections?.();
+      if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
       else onChange({ [descId]: '', [desc]: '' });
     };
 
@@ -873,7 +875,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               readOnly={
                 readOnly ||
                 type === 'custom_select' ||
-                (type == 'auto_suggestion' && !expandable && tabInlineSearch)
+                (type === 'auto_suggestion' && !expandable && tabInlineSearch)
               }
               disabled={disabled}
               data-testid="custom-autocomplete"
@@ -918,7 +920,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                 {!viewMode && (
                   <>
                     <>{tab.length > 0 && getTabItems()}</>
-                    {type == 'auto_suggestion' &&
+                    {type === 'auto_suggestion' &&
                       !expandable &&
                       tabInlineSearch && (
                         <div
