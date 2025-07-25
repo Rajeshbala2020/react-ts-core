@@ -504,9 +504,9 @@ const ExpandableAutoComplete = forwardRef<
 
     useEffect(() => {
       const allSelected =
-        filteredData.length > 0 &&
+        filteredData?.length > 0 && selectedItems?.length > 0 &&
         filteredData.every((item) =>
-          selectedItems.some(
+          selectedItems?.some(
             (s) =>
               getKeyValue(s, descId, 'id') === getKeyValue(item, descId, 'id')
           )
