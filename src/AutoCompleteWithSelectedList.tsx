@@ -339,8 +339,8 @@ const AutoCompleteWithSelectedList = forwardRef<
         setSearchValue('');
       }
       if (isMultiple) onChange([]);
-      if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
       else onChange({ [descId]: '', [desc]: '' });
+      if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
     };
 
     const generateClassName = useCallback(() => {
