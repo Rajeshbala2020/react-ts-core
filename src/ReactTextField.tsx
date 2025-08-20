@@ -46,7 +46,7 @@ const TextField: React.FC<TextFieldProps> = ({
   width,
   labelTitle,
   hideLabel = false,
-
+  isModern = true,
   ///
 }) => {
   // const [editState, setEditState] = useState<boolean>(false)
@@ -120,7 +120,7 @@ const TextField: React.FC<TextFieldProps> = ({
         }  text-input-text font-normal ${
           step && adorement ? 'px-2.5' : 'px-3.5'
         } w-full text-sm text-gray-900 ${getBg()} border appearance-none peer rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
-          hideLabel ? '' : 'placeholder-transparent'
+          hideLabel ? '' : label && isModern ? 'placeholder-transparent' : ''
         } focus:placeholder-grey-secondary ${
           adorementPosition === 'start' && ' !pl-[45px] '
         }  ${getHeight()}`;
@@ -278,6 +278,14 @@ const TextField: React.FC<TextFieldProps> = ({
       ref={textFieldRef}
       className={`qbs-textfield ${fullwidth ? 'w-full' : 'w-auto'}`}
     >
+      {label && !isModern && !hideLabel && (
+        <div className="mb-3">
+          <label className={`text-xs font-medium`}>
+            {label}
+            {required ? <span className="text-error"> *</span> : <></>}
+          </label>
+        </div>
+      )}
       <div className="tooltip-container ">
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
@@ -329,7 +337,7 @@ const TextField: React.FC<TextFieldProps> = ({
                 // autoFocus={autoFocus}
                 value={value}
               />
-              {!hideLabel && (
+              {!hideLabel && isModern && (
                 <label
                   htmlFor={id}
                   onClick={() => onLabelClick()}

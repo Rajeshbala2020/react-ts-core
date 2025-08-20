@@ -159,6 +159,7 @@ export interface TextFieldProps {
   infoTitle?: string;
   showInfo?: boolean;
   inputType?: 'text' | 'textarea';
+  isModern?: boolean; // added for modern text field
 }
 
 export interface TextAreaProps {
