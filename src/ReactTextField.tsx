@@ -1,28 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from "react";
 
-import { TextFieldProps } from './commontypes';
-import CustomIcons from './components/customIcons';
-import ModernAutoComplete from './ReactAutoComplete';
-import { applyPositionClass } from './utilities/getPosition';
+import { TextFieldProps } from "./commontypes";
+import CustomIcons from "./components/customIcons";
+import ModernAutoComplete from "./ReactAutoComplete";
+import { applyPositionClass } from "./utilities/getPosition";
 
 const TextField: React.FC<TextFieldProps> = ({
   name,
   id,
   label,
-  type = 'text',
+  type = "text",
   disabled = false,
   readOnly = false,
   fullwidth = true,
   uppercase = false,
-  adorementPosition = 'end',
+  adorementPosition = "end",
   register,
   adorement,
   className: propsClassName,
   value,
-  placeholder = '',
+  placeholder = "",
   min,
   max,
-  size = 'md',
+  size = "md",
   required = false,
   autoComplete = false,
   isValid,
@@ -79,7 +79,7 @@ const TextField: React.FC<TextFieldProps> = ({
     setWidth(innerwidth);
   }, [adorement, infoTitle, showInfo]);
   const getErrors = (err?: any) => {
-    let errMsg = '';
+    let errMsg = "";
     if (err?.message) {
       errMsg = err?.message;
     }
@@ -93,76 +93,76 @@ const TextField: React.FC<TextFieldProps> = ({
 
   const getHeight = () => {
     switch (size) {
-      case 'xs':
-        return ' h-10 ';
-      case 'xxs':
-        return ' h-[25px] ';
-      case 'sm':
-        return ' h-[34px] ';
-      case 'md':
-        return ' h-10 ';
-      case 'lg':
-        return ' h-10 ';
+      case "xs":
+        return " h-10 ";
+      case "xxs":
+        return " h-[25px] ";
+      case "sm":
+        return " h-[34px] ";
+      case "md":
+        return " h-10 ";
+      case "lg":
+        return " h-10 ";
       default:
-        return ' h-10 ';
+        return " h-10 ";
     }
   };
-  const getBg = () => backGround || 'bg-transparent'; //added for set background colour according to the form
+  const getBg = () => backGround || "bg-transparent"; //added for set background colour according to the form
   const generateClassName = (
-    from: 'input' | 'label' | 'message' | 'adorement'
+    from: "input" | "label" | "message" | "adorement"
   ): string => {
     let className = `${propsClassName} `;
 
     switch (from) {
-      case 'input':
+      case "input":
         className += `block ${
-          size === 'xxs' ? ' text-xxs' : 'text-common'
+          size === "xxs" ? " text-xxs" : "text-common"
         }  text-input-text font-normal ${
-          step && adorement ? 'px-2.5' : 'px-3.5'
+          step && adorement ? "px-2.5" : "px-3.5"
         } w-full text-sm text-gray-900 ${getBg()} border appearance-none peer rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
-          hideLabel ? '' : label && isModern ? 'placeholder-transparent' : ''
+          hideLabel ? "" : label && isModern ? "placeholder-transparent" : ""
         } focus:placeholder-grey-secondary ${
-          adorementPosition === 'start' && ' !pl-[45px] '
+          adorementPosition === "start" && " !pl-[45px] "
         }  ${getHeight()}`;
 
         if (errors && errors[name]) {
           className +=
-            ' border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline';
+            " border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline";
         } else {
           className +=
-            ' text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0';
+            " text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0";
         }
 
         break;
-      case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
+      case "label": // changes made for remove bg-white from placeolder is field disable and or with data
         className += `flex modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-2 z-1 origin-[0] px-0 
     peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
     peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto  ${
-      isDisabled ? 'cursor-pointer' : 'cursor-text peer-focus:cursor-pointer'
+      isDisabled ? "cursor-pointer" : "cursor-text peer-focus:cursor-pointer"
     } ${
           isDisabled && !checkIsEmptyField()
-            ? 'disabled-input-label-bg'
+            ? "disabled-input-label-bg"
             : !isDisabled || !checkIsEmptyField()
-            ? 'active-input-label-bg'
-            : ''
+            ? "active-input-label-bg"
+            : ""
         } ${
           checkIsEmptyField()
-            ? 'modern-input-label-size'
-            : 'modern-input-peer-focus-label-size'
+            ? "modern-input-label-size"
+            : "modern-input-peer-focus-label-size"
         }`;
 
         if (errors && errors[name]) {
-          className += ' text-error-light ';
+          className += " text-error-light ";
         } else {
-          className += ' text-grey-dark peer-focus:text-blue-navy';
+          className += " text-grey-dark peer-focus:text-blue-navy";
         }
         break;
-      case 'message':
-        className = ' text-error-icon ';
+      case "message":
+        className = " text-error-icon ";
         break;
-      case 'adorement':
+      case "adorement":
         className += `${
-          isDisabled ? 'bg-bodyBG' : 'bg-white'
+          isDisabled ? "bg-bodyBG" : "bg-white"
         } absolute right-0 adorement gap-1 flex items-center`;
         break;
 
@@ -174,18 +174,18 @@ const TextField: React.FC<TextFieldProps> = ({
 
   const handleError = (data: any) => {
     if (
-      getErrors(data[name]) === 'required' ||
-      getErrors(data[name]) === 'Required'
+      getErrors(data[name]) === "required" ||
+      getErrors(data[name]) === "Required"
     ) {
       return `${label ?? labelTitle} is ${getErrors(data[name])}`;
     } else {
-      return getErrors(data[name]) ?? '';
+      return getErrors(data[name]) ?? "";
     }
   };
 
   // Added handle key press function on textfield to restrict typing letter 'e' on number type
   const handleKeyPress = (e: any) => {
-    if (type === 'number' && e.key === 'e') e.preventDefault();
+    if (type === "number" && e.key === "e") e.preventDefault();
   };
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -201,14 +201,14 @@ const TextField: React.FC<TextFieldProps> = ({
   const renderPrefix = () => {
     if (prefixes) {
       switch (prefixes?.type) {
-        case 'custom_select':
+        case "custom_select":
           return (
             <ModernAutoComplete
               key={prefixes.name}
               placeholder={prefixes.placeholder}
               onChange={(e: any) => onPrefixChange?.(e)}
               name={prefixes.name}
-              value={prefixValue ?? { id: '', name: '' }}
+              value={prefixValue ?? { id: "", name: "" }}
               type="custom_select"
               isCustomPlaceholder
               fullWidth={false}
@@ -224,6 +224,8 @@ const TextField: React.FC<TextFieldProps> = ({
               autoFilter={prefixes.autoFilter ? prefixes.autoFilter : false}
             />
           );
+        case "text":
+          return <div className="text-sm text-gray-500 textfield-text-prefix">{prefixes.data}</div>;
         default:
           return <></>;
       }
@@ -240,7 +242,7 @@ const TextField: React.FC<TextFieldProps> = ({
     return undefined;
   };
 
-  const handleMouseDown = (type: 'up' | 'down') => {
+  const handleMouseDown = (type: "up" | "down") => {
     setIsHolding(true);
     //handleAction(type)
     intervalRef.current = setInterval(() => handleAction(type), 100);
@@ -249,8 +251,8 @@ const TextField: React.FC<TextFieldProps> = ({
     }
   };
 
-  const handleAction = (type: 'up' | 'down') => {
-    if (type === 'up') onStepUp?.();
+  const handleAction = (type: "up" | "down") => {
+    if (type === "up") onStepUp?.();
     else onStepDown?.();
   };
 
@@ -261,7 +263,7 @@ const TextField: React.FC<TextFieldProps> = ({
     }
   }
 
-  const handleClick = (type: 'up' | 'down') => {
+  const handleClick = (type: "up" | "down") => {
     if (!isHolding) {
       clickTimeoutRef.current = setTimeout(() => {
         handleAction(type);
@@ -276,7 +278,7 @@ const TextField: React.FC<TextFieldProps> = ({
   return (
     <div
       ref={textFieldRef}
-      className={`qbs-textfield ${fullwidth ? 'w-full' : 'w-auto'}`}
+      className={`qbs-textfield ${fullwidth ? "w-full" : "w-auto"}`}
     >
       {label && !isModern && !hideLabel && (
         <div className="mb-3">
@@ -293,10 +295,10 @@ const TextField: React.FC<TextFieldProps> = ({
         {isHovered && infoTitle && (
           <span className="tooltip-info">{infoTitle} </span>
         )}
-        <div className={`w-full ${prefixes ? 'flex' : ''}`}>
+        <div className={`w-full ${prefixes ? "flex" : ""}`}>
           {prefixes && renderPrefix()}
           <div
-            className={`flex relative ${fullwidth ? 'w-full' : 'w-auto'}`}
+            className={`flex relative ${fullwidth ? "w-full" : "w-auto"}`}
             style={{ width: width }}
           >
             <div className="relative w-full ">
@@ -324,15 +326,15 @@ const TextField: React.FC<TextFieldProps> = ({
                       }
                     : {}),
                 }}
-                className={` ${generateClassName('input')} ${
-                  uppercase ? 'uppercase placeholder:normal-case' : ''
+                className={` ${generateClassName("input")} ${
+                  uppercase ? "uppercase placeholder:normal-case" : ""
                 } ''}`}
                 placeholder={placeholder}
                 onChange={(e) => {
                   handleChange(e);
                 }}
                 onKeyDown={handleKeyPress}
-                autoComplete={autoComplete ? 'on' : 'off'}
+                autoComplete={autoComplete ? "on" : "off"}
                 onBlur={(e) => onBlur?.(e)}
                 // autoFocus={autoFocus}
                 value={value}
@@ -341,9 +343,9 @@ const TextField: React.FC<TextFieldProps> = ({
                 <label
                   htmlFor={id}
                   onClick={() => onLabelClick()}
-                  className={generateClassName('label')}
+                  className={generateClassName("label")}
                 >
-                  {label ? <span className="truncate">{label}</span> : ''}
+                  {label ? <span className="truncate">{label}</span> : ""}
                   {required ? <span className="text-error"> *</span> : <></>}
                 </label>
               )}
@@ -354,10 +356,10 @@ const TextField: React.FC<TextFieldProps> = ({
               (!isValid && isTooltip && errors && errors[name]) ||
               isValid) && (
               <div className="flex items-center justify-center gap-1 ">
-                {adorement && adorementPosition === 'start' && (
+                {adorement && adorementPosition === "start" && (
                   <div
                     className={`  ${
-                      isDisabled ? 'text-zinc-500' : 'text-grey-medium'
+                      isDisabled ? "text-zinc-500" : "text-grey-medium"
                     } absolute adorement left-0  `} // adorement  position added for start
                   >
                     <>{adorement}</>
@@ -366,14 +368,14 @@ const TextField: React.FC<TextFieldProps> = ({
 
                 <div
                   className={`${generateClassName(
-                    'adorement'
+                    "adorement"
                   )} h-[20px] right-[1px]`} //added adorment bg color
                   ref={adorementRef}
                 >
-                  {adorement && adorementPosition === 'end' && (
+                  {adorement && adorementPosition === "end" && (
                     <div
                       className={`  ${
-                        isDisabled ? 'text-zinc-500' : 'text-grey-medium'
+                        isDisabled ? "text-zinc-500" : "text-grey-medium"
                       } `} // changed for adorment text blurness while disabled
                     >
                       <>{adorement}</>
@@ -385,13 +387,13 @@ const TextField: React.FC<TextFieldProps> = ({
                       <CustomIcons
                         name="TreeUp_Arrow"
                         className={`text-gray-500 hover:text-dark cursor-pointer ${
-                          isDisabled ? 'hidden' : 'block'
+                          isDisabled ? "hidden" : "block"
                         }`}
                         type="medium"
                         onClick={() => {
-                          handleClick('up');
+                          handleClick("up");
                         }}
-                        onMouseDown={() => handleMouseDown('up')}
+                        onMouseDown={() => handleMouseDown("up")}
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseUp}
                         viewBox={true}
@@ -399,13 +401,13 @@ const TextField: React.FC<TextFieldProps> = ({
                       <CustomIcons
                         name="TreeDown_Arrow"
                         className={`text-gray-500 hover:text-dark cursor-pointer ${
-                          isDisabled ? 'hidden' : 'block'
+                          isDisabled ? "hidden" : "block"
                         }`}
                         type="medium"
                         onClick={() => {
-                          handleClick('down');
+                          handleClick("down");
                         }}
-                        onMouseDown={() => handleMouseDown('down')}
+                        onMouseDown={() => handleMouseDown("down")}
                         onMouseUp={handleMouseUp}
                         onMouseLeave={handleMouseUp}
                         viewBox={true}
@@ -416,7 +418,7 @@ const TextField: React.FC<TextFieldProps> = ({
                   {!isValid && isTooltip && errors && errors[name] && (
                     <div
                       className={` text-error-label relative bg-white cursor-pointer ${generateClassName(
-                        'message'
+                        "message"
                       )}`}
                       onMouseEnter={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
