@@ -40,6 +40,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       readOnly = false,
       disabled = false,
       value,
+      searchValue: propsSearchValue = '',
       isMultiple = false,
       desc = 'name',
       descId = 'id',
@@ -54,6 +55,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       notDataMessage,
       initialDataMessage,
       onFocus,
+      onSearchValueChange,
       expandable = false,
       textCount = 10,
       itemCount = 1,
@@ -86,11 +88,12 @@ const AutoCompleteWithSelectedList = forwardRef<
     // State Hooks Section
     const [isInitialRender, setIsInitialRender] = useState(true);
     const [inputValue, setInputValue] = useState<string>(value);
-    const [searchValue, setSearchValue] = useState<string>('');
+    const [searchValue, setSearchValue] = useState<string>(propsSearchValue);
     const [searchOldValue, setSearchOldValue] = useState<string>('');
     const [nextPage, setNextPage] = useState<number | undefined>(1);
     const [dropOpen, setDropOpen] = useState<boolean>(false);
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
+    const [searchLoaded, setSearchLoaded] = useState<boolean>(propsSearchValue ? false : true);
     const [showAllSelected, setShowAllSelected] = useState<boolean>(false);
     const [selHeight, setSelHeight] = useState<number>(184);
     const [expandArrowClick, setExpandArrowClick] = useState<
@@ -302,8 +305,13 @@ const AutoCompleteWithSelectedList = forwardRef<
       //setVisibleDrop();
       setSearchValue(value);
       handleChangeWithDebounce(value);
+      
+      if(!tabInlineSearch) {
+        onSearchValueChange?.(value);
+      }
+      
       if (!value) {
-        setInputValue('');
+        if (!typeOnlyFetch) setInputValue('');
         // onChange({ [descId]: '', [desc]: '' });
       }
 
@@ -365,6 +373,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         ) {
           setTimeout(() => {
             setDropOpen(false);
+            if (!typeOnlyFetch) setSearchValue('');
           }, 200);
           //setSearchValue("");
         }
@@ -744,11 +753,23 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleOpenDropdown = (e: any) => {
       if (!suggestions || suggestions?.length === 0 || refetchData) {
         if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
-          handlePickSuggestions('*', 1);
+          if (tabInlineSearch && tab.length > 0) {
+            const activeTabVal =
+              tab.length > 0 ? tab?.[activeTab].id : undefined;
+          handlePickSuggestions('*', 1, false, activeTabVal);
+          } else {
+            handlePickSuggestions('*', 1);
+          }
           setRefetchData(false);
           setAllDataLoaded(true);
         } else if (!refetchData && inputValue !== '') {
-          handlePickSuggestions(inputValue, 1);
+          if (tabInlineSearch && tab.length > 0) {
+            const activeTabVal =
+              tab.length > 0 ? tab?.[activeTab].id : undefined;
+            handlePickSuggestions(inputValue, 1, false, activeTabVal);
+          } else {
+            handlePickSuggestions(inputValue, 1);
+          }
           setRefetchData(true);
           setAllDataLoaded(false);
         }
@@ -860,7 +881,13 @@ const AutoCompleteWithSelectedList = forwardRef<
               }
               onChange={handleChange}
               // onBlur={handleBlur}
-              onFocus={onFocus}
+              onFocus={(e) => {
+                onFocus?.(e);
+                if(!searchLoaded && searchValue && searchValue !== '') {
+                  handleChangeWithDebounce(searchValue);
+                  setSearchLoaded(true);
+                }
+              }}
               onClick={() => handleOnClick()}
               className={generateClassName()}
               placeholder={
