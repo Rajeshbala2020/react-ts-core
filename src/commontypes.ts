@@ -13,6 +13,7 @@ export interface AutoSuggestionInputProps {
   fullWidth?: boolean;
   required?: boolean;
   value?: string;
+  searchValue?: string; // if search is started then this value will be used to search the data
   onChange: (value?: ValueProps | ValueProps[]) => void;
   data?: any[];
   type?:
@@ -46,6 +47,7 @@ export interface AutoSuggestionInputProps {
   initialDataMessage?: string;
   selectedItems?: any[];
   onFocus?: (e: React.FocusEvent<HTMLInputElement, Element>) => void;
+  onSearchValueChange?: (value: string) => void;
   dopDownRef?: HTMLInputElement;
   expandable?: boolean;
   textCount?: number;
