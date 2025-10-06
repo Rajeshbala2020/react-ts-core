@@ -575,6 +575,12 @@ const AutoCompleteWithSelectedList = forwardRef<
             .join(', ')
         : '';
 
+    const allSelectedTooltipContent =
+        selectedItems?.length > 0
+          ? selectedItems?.map((item) => item[desc])
+              .join(', ')
+          : '';
+
     const handleDropOpen = (e: any) => {
       setVisibleDrop();
     };
@@ -620,7 +626,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           }
         } else if (!tabInlineSearch) {
           resetSuggections?.();
-          const activeTabVal = tab.length > 0 ? tab?.[activeTab].id : undefined;
+          const activeTabVal = tab.length > 0 ? tab?.[index].id : undefined;
           handlePickSuggestions(searchValue, 1, false, activeTabVal);
         }
         setActiveTab(index);
@@ -828,9 +834,11 @@ const AutoCompleteWithSelectedList = forwardRef<
                 getSelectedItems(false)
               ) : !tabInlineSearch ? (
                 <div className="selected-items-counter-container qbs-text-sm qbs-gap-1">
-                  <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
-                    {selectedItems?.length}
-                  </span>
+                  <Tooltip title={allSelectedTooltipContent} enabled={selectedItems?.length > 0 ? true : false}>
+                    <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
+                      {selectedItems?.length}
+                    </span>
+                  </Tooltip>
                 </div>
               ) : (
                 <div
