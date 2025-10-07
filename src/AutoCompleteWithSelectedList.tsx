@@ -621,7 +621,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           } else {
             resetSuggections?.();
             const activeTabVal =
-              tab.length > 0 ? tab?.[activeTab].id : undefined;
+              tab.length > 0 ? tab?.[index].id : undefined;
             handlePickSuggestions(searchValue, 1, false, activeTabVal);
           }
         } else if (!tabInlineSearch) {
