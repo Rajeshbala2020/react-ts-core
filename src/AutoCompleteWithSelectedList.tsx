@@ -624,6 +624,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               tab.length > 0 ? tab?.[index].id : undefined;
             handlePickSuggestions(searchValue, 1, false, activeTabVal);
           }
+          setAllDataLoaded(false);
         } else if (!tabInlineSearch) {
           resetSuggections?.();
           const activeTabVal = tab.length > 0 ? tab?.[index].id : undefined;
