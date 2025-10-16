@@ -162,6 +162,8 @@ export interface TextFieldProps {
   showInfo?: boolean;
   inputType?: 'text' | 'textarea';
   isModern?: boolean; // added for modern text field
+  enableSearch?: boolean; // enable search button in text field 
+  onSearchClick?: (value: string) => void; // on search click event
 }
 
 export interface TextAreaProps {

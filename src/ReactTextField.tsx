@@ -47,6 +47,8 @@ const TextField: React.FC<TextFieldProps> = ({
   labelTitle,
   hideLabel = false,
   isModern = true,
+  enableSearch = false,
+  onSearchClick,
   ///
 }) => {
   // const [editState, setEditState] = useState<boolean>(false)
@@ -58,7 +60,7 @@ const TextField: React.FC<TextFieldProps> = ({
   const intervalRef = useRef<any>(null);
   const clickTimeoutRef = useRef<any>(null);
   const [isHolding, setIsHolding] = useState<boolean>(false);
-
+  const searchBtnRef = useRef<HTMLDivElement>(null);  
   const onLabelClick = () => {
     if (!isDisabled) {
       inputRef?.current?.focus();
@@ -75,7 +77,7 @@ const TextField: React.FC<TextFieldProps> = ({
   useEffect(() => {
     const innerwidth = adorementRef.current
       ? adorementRef.current.offsetWidth
-      : 15;
+      : enableSearch ? searchBtnRef.current?.offsetWidth || 38 : 15;
     setWidth(innerwidth);
   }, [adorement, infoTitle, showInfo]);
   const getErrors = (err?: any) => {
@@ -109,7 +111,7 @@ const TextField: React.FC<TextFieldProps> = ({
   };
   const getBg = () => backGround || "bg-transparent"; //added for set background colour according to the form
   const generateClassName = (
-    from: "input" | "label" | "message" | "adorement"
+    from: "input" | "label" | "message" | "adorement" | "search"
   ): string => {
     let className = `${propsClassName} `;
 
@@ -119,7 +121,7 @@ const TextField: React.FC<TextFieldProps> = ({
           size === "xxs" ? " text-xxs" : "text-common"
         }  text-input-text font-normal ${
           step && adorement ? "px-2.5" : "px-3.5"
-        } w-full text-sm text-gray-900 ${getBg()} border appearance-none peer rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
+        } ${enableSearch ? "search-btn-input" : ""} w-full text-sm text-gray-900 ${getBg()} border appearance-none peer rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
           hideLabel ? "" : label && isModern ? "placeholder-transparent" : ""
         } focus:placeholder-grey-secondary ${
           adorementPosition === "start" && " !pl-[45px] "
@@ -165,6 +167,10 @@ const TextField: React.FC<TextFieldProps> = ({
           isDisabled ? "bg-bodyBG" : "bg-white"
         } absolute right-0 adorement gap-1 flex items-center`;
         break;
+
+      case "search":
+          className += `absolute inner-search-button gap-1 flex items-center cursor-pointer`;
+          break;
 
       default:
         break;
@@ -350,6 +356,11 @@ const TextField: React.FC<TextFieldProps> = ({
                 </label>
               )}
             </div>
+            {enableSearch && (
+              <div className={`${generateClassName("search")}`} ref={searchBtnRef}>
+                <CustomIcons name="search" type="medium" onClick={() => onSearchClick?.(inputRef.current?.value || value || '')} />
+              </div>
+            )}
             {(adorement ||
               (showInfo && infoTitle) ||
               step ||
