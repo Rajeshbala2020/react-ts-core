@@ -697,3 +697,21 @@ span.dropdown-search-icon {
   white-space: nowrap;
   margin: 0px 5px;
 }
+
+/* TextField Inner Search Button */
+.inner-search-button {
+  background: #f8f8f8;
+  border-radius: 6px;
+  padding: 0px 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;  
+  cursor: pointer;
+  height: 38px;
+  width: 38px;
+  top: 1px;
+  right: 2px;
+}
+.search-btn-input {
+  padding-right: 38px;
+}
