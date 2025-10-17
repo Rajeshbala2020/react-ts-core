@@ -208,7 +208,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             }
         };
 
-        const handleMultiSelect = (e: any, suggestion: ValueProps) => {
+        const handleMultiSelect = useCallback((e: any, suggestion: ValueProps) => {
             const { checked } = e.target;
             if (isMultiple) {
                 if (checked) {
@@ -230,7 +230,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     setInputValue('');
                 }
             }
-        };
+        }, [isMultiple, descId, desc, onChange]);
         useEffect(() => {
             // Only update if different
             if (!deepEqual(selectedItems, propsSeelctedItems)) {
@@ -243,7 +243,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             setInputValue(value ?? '');
         }, [value]);
 
-        const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const handleChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
             //setVisibleDrop();
             setSearchValue(value);
@@ -262,17 +262,18 @@ const AutoCompleteWithTabFilter = forwardRef<
                 setDropOpen(true);
                 setShowToolsTab(false);
             }
-        };
-        const handleSuggestionChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        }, [handleChangeWithDebounce, tabInlineSearch, onSearchValueChange, typeOnlyFetch]);
+        
+        const handleSuggestionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
             //setVisibleDrop();
             const trimStart = value.trimStart();
             setSearchValue(trimStart);
             handleChangeWithDebounce(trimStart);
             setAllDataLoaded(false);
-        };
+        }, [handleChangeWithDebounce]);
 
-        const handleClearSelected = () => {
+        const handleClearSelected = useCallback(() => {
             setSelectedItems([]);
             setShowAllSelected(false);
             if (searchValue && type === 'auto_suggestion' && tabInlineSearch) {
@@ -281,17 +282,17 @@ const AutoCompleteWithTabFilter = forwardRef<
             if (isMultiple) onChange([]);
             else onChange({ [descId]: '', [desc]: '' });
             if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
-        };
+        }, [searchValue, type, tabInlineSearch, isMultiple, onChange, descId, desc, async, resetSuggections]);
 
         const generateClassName = useCallback(() => {
             return `qbs-textfield-default ${className} ${errors && errors?.message ? 'textfield-error' : 'textfield'
                 } ${expandable ? 'expandable' : ''}`;
         }, [errors, name]);
-        const handleRemoveSelectedItem = (index: number) => {
+        const handleRemoveSelectedItem = useCallback((index: number) => {
             setSelectedItems((prev) => {
                 return prev.filter((_, i) => i !== index);
             });
-        };
+        }, []);
 
         const uniqueDropArrowId = `${name}-drop-arrow-selected-list-icon`;
         useEffect(() => {
@@ -562,19 +563,19 @@ const AutoCompleteWithTabFilter = forwardRef<
             }
         };
 
-        const handleShowAllSelected = (enabled: boolean) => {
+        const handleShowAllSelected = useCallback((enabled: boolean) => {
             setExpandArrowClick(expandArrowClick + 1);
             if (enabled) {
                 setShowAllSelected(true);
             } else {
                 setShowAllSelected(false);
             }
-        };
+        }, [expandArrowClick]);
 
-        const handleCollapseArrowClick = () => {
+        const handleCollapseArrowClick = useCallback(() => {
             setExpandArrowClick(expandArrowClick + 1);
             setShowAllSelected(false);
-        };
+        }, [expandArrowClick]);
 
         const tooltipContent =
             selectedItems?.length > itemCount
@@ -614,7 +615,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             }, 200);
         };
 
-        const handleTabClick = (index: number) => {
+        const handleTabClick = useCallback((index: number) => {
             if (activeTab !== index) {
                 if (clearTabSwitch) {
                     handleClearSelected();
@@ -636,18 +637,18 @@ const AutoCompleteWithTabFilter = forwardRef<
                 }
                 setActiveTab(index);
             }
-        };
+        }, [activeTab, clearTabSwitch, handleClearSelected, tabInlineSearch, tab, searchValue, handlePickSuggestions, resetSuggections]);
 
-        const getSelectedRowLimit = () => {
+        const getSelectedRowLimit = useCallback(() => {
             let maxHeight = 36;
             if (selItemRef?.current && selItemRef?.current.clientWidth < 300) {
                 maxHeight = 24;
             }
 
             return selectedRowLimit * maxHeight + 5;
-        };
+        }, [selectedRowLimit]);
 
-        const getSelectedItems = (dropdown: boolean) => {
+        const getSelectedItems = useCallback((dropdown: boolean) => {
             return (
                 <div
                     ref={selItemRef}
@@ -704,9 +705,9 @@ const AutoCompleteWithTabFilter = forwardRef<
                     )}
                 </div>
             );
-        };
+        }, [selectedItems, getSelectedRowLimit, itemCount, showAllSelected, desc, textCount, viewMode, handleRemoveSelectedItem, tooltipContent, handleShowAllSelected]);
 
-        const getTabItems = () => {
+        const getTabItems = useCallback(() => {
             return (
                 <ul
                     className="qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2"
@@ -727,9 +728,9 @@ const AutoCompleteWithTabFilter = forwardRef<
                     ))}
                 </ul>
             );
-        };
+        }, [tab, activeTab, handleTabClick]);
 
-        const handleSelectAll = () => {
+        const handleSelectAll = useCallback(() => {
             if (isMultiple) {
                 if (selectAll) {
                     setSelectedItems((prev) =>
@@ -742,25 +743,28 @@ const AutoCompleteWithTabFilter = forwardRef<
                         )
                     );
                 } else {
-                    filteredData.map((suggestion: ValueProps) =>
-                        setSelectedItems((prev) => {
+                    // Add only items from current tab - batch all updates in single setState
+                    setSelectedItems((prev) => {
+                        const newItems: ValueProps[] = [];
+                        
+                        filteredData.forEach((suggestion: ValueProps) => {
                             const isAdded = prev.some(
                                 (item) =>
                                     getKeyValue(item, descId, 'id') ===
                                     getKeyValue(suggestion, descId, 'id')
                             );
-                            if (isAdded) {
-                                return prev;
-                            } else {
-                                return [...prev, suggestion];
+                            if (!isAdded) {
+                                newItems.push(suggestion);
                             }
-                        })
-                    );
+                        });
+                        
+                        return [...prev, ...newItems];
+                    });
                 }
             }
-        };
+        }, [isMultiple, selectAll, filteredData, descId]);
 
-        const handleOpenDropdown = (e: any) => {
+        const handleOpenDropdown = useCallback((e: any) => {
             if (!suggestions || suggestions?.length === 0 || refetchData) {
                 if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
                     if (tabInlineSearch && tab.length > 0) {
@@ -784,12 +788,12 @@ const AutoCompleteWithTabFilter = forwardRef<
                     setAllDataLoaded(false);
                 }
             }
-        };
+        }, [suggestions, refetchData, autoDropdown, inputValue, tabInlineSearch, tab, activeTab, handlePickSuggestions]);
 
-        const handleOpenToolsTab = (e: any) => {
+        const handleOpenToolsTab = useCallback((e: any) => {
             setShowToolsTab(showToolsTab ? false : true);
             setDropOpen(false);
-        };
+        }, [showToolsTab]);
 
         useEffect(() => {
             const allSelected =
