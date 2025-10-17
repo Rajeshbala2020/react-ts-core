@@ -1,7 +1,7 @@
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 export type ValueProps = {
-  [key: string]: string;
+  [key: string]: string | number | any;
 };
 export type TabPops = {
   id: number | string;
@@ -85,6 +85,18 @@ export interface AutoSuggestionInputProps {
   matchFromStart?: boolean // match data's from the starting position
   autoDropdown?: boolean; // enable all items list items
   enableSelectAll?: boolean // enable select all option
+
+  tabName?: string;
+  tabDesc?: string;
+  tabDescId?: string;
+  tabSelectedItems?: any[];
+  getTabData?: (key?: string) => Promise<any>;
+  tabData?: any[];
+  enableToolsTab?: boolean;
+  toolTabs?: TabPops[];
+  toolTabClearSwitch?: boolean;
+  onToolTabChange?: (value?: ValueProps | ValueProps[]) => void;
+  autoRefreshMainDropdown?: boolean;
 }
 export interface IconsProps {
   name: any;

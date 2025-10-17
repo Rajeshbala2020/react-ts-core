@@ -166,3 +166,14 @@
 .qbs-select-all-link  .qbs-autocomplete-listitem-container:hover {
   background-color:#fff !important;
 }
+
+.has-selected-items {
+  color: #FF681D !important;
+}
+
+.tools-drop-btn-active {
+  color: #FF681D !important;
+}
+.qbs-tab-has-selected-items .qbs-tab-item{
+  color: #FF681D !important;
+}

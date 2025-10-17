@@ -3,10 +3,12 @@ import React, { useState } from 'react';
 import {
   AutoComplete,
   AutoCompleteWithSelectedList,
+  AutoCompleteWithTabFilter,
   AutoCompleteWithTreeStructure,
   ExpandableAutoComplete,
   ModernAutoComplete,
   ModernAutoCompleteDropdown,
+  ModernTextField,
 } from '../src/index';
 import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
@@ -18,8 +20,12 @@ export default function App() {
   const [dropData, setDropData] = useState();
   const [nexBlock, setNexBlock] = useState(1);
   const [prev, setPrev] = useState(1);
+  const [selectedTabItems, setSelectedTabItems] = useState([]);
+  const [selectedItems, setSelectedItems] = useState([]);
+
 
   const getData = (keyName?: string, next?: number) => {
+    console.log(keyName, 'keyName');
     return fetch(
       keyName
         ? `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10&title_like=${keyName}`
@@ -37,7 +43,9 @@ export default function App() {
   const getDatas = (keyName?: string) => {
     return fetch(
       keyName
-        ? `https://jsonplaceholder.typicode.com/posts?title_like=${keyName === '*' ? '' : keyName}`
+        ? `https://jsonplaceholder.typicode.com/posts?title_like=${
+            keyName === '*' ? '' : keyName
+          }`
         : `https://jsonplaceholder.typicode.com/posts`
     )
       .then((res) => res.json())
@@ -65,7 +73,7 @@ export default function App() {
       .then((res) => {
         setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
-          return { ...item, ['name']: item?.title, id: item?.id.toString() };
+          return { ...item, ['name']: item?.title + ' - ' + tab?.toString(), id: `${item?.id.toString()}-${tab?.toString()}`};
         });
         return result;
       });
@@ -91,6 +99,58 @@ export default function App() {
             overflowY: 'scroll',
           }}
         >
+          
+          <div style={{ width: 500 }}>
+            <AutoCompleteWithTabFilter
+                label="Auto Suggestion With Data"
+                name="sample"
+                type="auto_suggestion"
+                async={true}
+                typeOnlyFetch={true}
+                desc="name"
+                isMultiple={true}
+                singleSelect={false}
+                descId="id"
+                getData={getData}
+                paginationEnabled={false}
+                initialLoad={false}
+                itemCount={3}
+                placeholder="Auto Suggestion"
+                selectedItems={selectedItems}
+                onChange={(e) => setSelectedItems(e)}
+                tabSelectedItems={selectedTabItems}
+                getTabData={getDataWithTab}
+                onToolTabChange={(value) => setSelectedTabItems(value)}
+                countOnly={true}
+                toolTabClearSwitch={false}
+                enableToolsTab={true}
+                toolTabs={[
+                  { id: 1, label: 'Tab 1' },
+                  { id: 2, label: 'Tab 2' },
+                ]}
+                tabName="sample"
+                tabDesc="name"
+                tabDescId="id"
+                enableSelectAll={true}
+                autoDropdown={true}
+              />
+            
+          </div>
+
+          <div style={{ width: 300 }}>
+            <ModernTextField
+              name="sample"
+              label="TextField Enable Search"
+              id="id"
+              type="text" 
+              placeholder="TextField"
+              required
+              onChange={(e) => console.log(e, 'onchange')}
+              enableSearch={true}
+              onSearchClick={(value) => console.log(value, 'onSearchClick')}
+            />
+          </div>
+
           <div style={{ width: 300 }}>
             <ModernAutoComplete
               name="sample"
@@ -102,8 +162,8 @@ export default function App() {
               required
               getData={getDatas}
               onChange={(e) => console.log(e, 'onchange')}
-              shortCode='id'
-              labelCode='userId'
+              shortCode="id"
+              labelCode="userId"
             />
           </div>
 
@@ -120,7 +180,6 @@ export default function App() {
             />
           </div>
 
-          
           <div className="autocomplete-section">
             <h2>Expandable Auto Suggestion</h2>
             <p>
@@ -135,7 +194,10 @@ export default function App() {
               label="Auto Suggestion"
               name="sample"
               type="auto_suggestion"
-              // async
+              enableSelectAll={true}
+              async
+              typeOnlyFetch
+              autoDropdown
               desc="name"
               isMultiple
               expandable={true}
@@ -206,9 +268,14 @@ export default function App() {
               initialLoad={false}
               itemCount={3}
               placeholder="Auto Suggestion"
-              selectedItems={[]}
+              selectedItems={[
+                {
+                  name: 'Port G - A small',
+                  id: 2,
+                },
+              ]}
               onChange={(e) => console.log(e, 'onchange')}
-              countOnly={true}  
+              countOnly={true}
             />
           </div>
           <div style={{ width: 300 }}>
@@ -227,8 +294,11 @@ export default function App() {
               selectedItems={[]}
               onChange={(e) => console.log(e, 'onchange')}
               countOnly={true}
+              enableSelectAll={true}
+              autoDropdown={true}
             />
           </div>
+          
 
           <div style={{ width: 300 }}>
             <AutoCompleteWithSelectedList
@@ -252,6 +322,34 @@ export default function App() {
               ]}
               clearTabSwitch={true}
               tabInlineSearch={false}
+              searchValue='Hello'
+              onSearchValueChange={(value) => console.log(value, 'onSearchValueChange')}
+            />
+          </div>
+
+          <div style={{ width: 300 }}>
+            <AutoCompleteWithSelectedList
+              label="Auto Suggestion API Data With Tab Inline"
+              name="sample"
+              type="auto_suggestion"
+              async={true}
+              desc="name"
+              isMultiple={true}
+              typeOnlyFetch={true}
+              descId="id"
+              getData={getDataWithTab}
+              itemCount={3}
+              placeholder="Auto Suggestion"
+              selectedItems={[]}
+              onChange={(e) => console.log(e, 'onchange')}
+              countOnly={true}
+              tab={[
+                { id: 1, label: 'Tab 1' },
+                { id: 2, label: 'Tab 2' },
+              ]}
+              clearTabSwitch={true}
+              tabInlineSearch={true}
+              autoDropdown={true}
             />
           </div>
           <div className="autocomplete-section">
@@ -267,6 +365,8 @@ export default function App() {
               name="sample"
               placeholder="Custom Select"
               desc="name"
+              isMultiple={true}
+              selectedItems={[]}
               descId="id"
               type="custom_select"
               data={[
@@ -453,6 +553,7 @@ export default function App() {
               name="sample"
               label="React TextField ."
               id="id"
+              isModern={false}
               type="number"
               adorementPosition="start"
               placeholder="TextField"
