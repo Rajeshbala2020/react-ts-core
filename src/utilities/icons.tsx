@@ -177,3 +177,13 @@ export const AllDropArrow: React.FC<any> = ({
     </svg>
   );
 };
+
+export const Tools: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+  return (
+    <div role="status">
+      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M18.3334 2.5H1.66675L8.33341 10.3833V15.8333L11.6667 17.5V10.3833L18.3334 2.5Z" stroke="currentColor" strokeWidth="1.66667" strokeLinecap="round" strokeLinejoin="round"/>
+      </svg>
+    </div>
+  );
+};

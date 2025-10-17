@@ -60,7 +60,7 @@ const TextField: React.FC<TextFieldProps> = ({
   const intervalRef = useRef<any>(null);
   const clickTimeoutRef = useRef<any>(null);
   const [isHolding, setIsHolding] = useState<boolean>(false);
-  const searchBtnRef = useRef<HTMLDivElement>(null);  
+  const searchBtnRef = useRef<HTMLButtonElement>(null);  
   const onLabelClick = () => {
     if (!isDisabled) {
       inputRef?.current?.focus();
@@ -357,9 +357,17 @@ const TextField: React.FC<TextFieldProps> = ({
               )}
             </div>
             {enableSearch && (
-              <div className={`${generateClassName("search")}`} ref={searchBtnRef}>
-                <CustomIcons name="search" type="medium" onClick={() => onSearchClick?.(inputRef.current?.value || value || '')} />
-              </div>
+               <button
+                  disabled={disabled ?? readOnly}
+                  onClick={() => onSearchClick?.(inputRef.current?.value || value || '')} 
+                  className={`${generateClassName("search")}`}
+                  data-testid="tools-drop-arrow"
+                  type="button"
+                  id="search-btn-textfield"
+                  ref={searchBtnRef}
+              >
+                <CustomIcons name="search" type="medium" />
+              </button>
             )}
             {(adorement ||
               (showInfo && infoTitle) ||
