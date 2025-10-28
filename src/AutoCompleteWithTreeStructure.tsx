@@ -1,11 +1,4 @@
-import React, {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react';
+import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 
 import { AutoSuggestionInputProps } from './commontypes';
@@ -73,6 +66,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       inputType = 'text',
       onFocusTreeDropdown,
       filterCondition,
+      singleSelectIcon,
     },
     ref
   ) => {
@@ -454,6 +448,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
             updateNode={updateNode}
             desc={desc}
             descId={descId}
+            singleSelectIcon={singleSelectIcon}
             toggleExpand={toggleExpand}
           >
             {node.expanded &&
@@ -769,6 +764,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                         hasDisableSelection={hasDisableSelection?.(suggestion)}
                         updateNode={updateNode}
                         desc={desc}
+                        singleSelectIcon={singleSelectIcon}
                         descId={descId}
                         toggleExpand={toggleExpand}
                       >

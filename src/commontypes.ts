@@ -97,6 +97,7 @@ export interface AutoSuggestionInputProps {
   toolTabClearSwitch?: boolean;
   onToolTabChange?: (value?: ValueProps | ValueProps[]) => void;
   autoRefreshMainDropdown?: boolean;
+  singleSelectIcon?: any;
 }
 export interface IconsProps {
   name: any;
