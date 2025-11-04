@@ -113,7 +113,6 @@ const AutoCompleteWithSelectedList = forwardRef<
         if (tab.length > 0) {
           if (tabRef?.current) dropdownHeight += tabRef?.current?.clientHeight;
         }
-        console.log(dropdownHeight);
         if (spaceBelow >= dropdownHeight) {
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;

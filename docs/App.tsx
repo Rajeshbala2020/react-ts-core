@@ -138,6 +138,45 @@ export default function App() {
             
           </div>
 
+          <div style={{ width: 500 }}>
+            <AutoCompleteWithTabFilter
+                label="Inline Auto Suggestion With Data"
+                name="sample"
+                type="auto_suggestion"
+                async={true}
+                typeOnlyFetch={true}
+                desc="name"
+                isMultiple={true}
+                singleSelect={false}
+                descId="id"
+                getData={getData}
+                paginationEnabled={false}
+                initialLoad={false}
+                itemCount={3}
+                placeholder="Auto Suggestion"
+                selectedItems={selectedItems}
+                onChange={(e) => setSelectedItems(Array.isArray(e) ? e : e ? [e] : [])}
+                tabSelectedItems={selectedTabItems}
+                getTabData={getDataWithTab}
+                onToolTabChange={(value) => setSelectedTabItems(Array.isArray(value) ? value : value ? [value] : [])}
+                countOnly={true}
+                toolTabClearSwitch={false}
+                enableToolsTab={true}
+                toolTabs={[
+                  { id: 1, label: 'Tab 1' },
+                  { id: 2, label: 'Tab 2' },
+                ]}
+                tabName="sample"
+                tabDesc="name"
+                tabDescId="id"
+                enableSelectAll={true}
+                autoDropdown={true}
+                tabInlineSearch={false}
+                //autoTabSelectAll={false}
+              />
+            
+          </div>
+
           <div style={{ width: 300 }}>
             <ModernTextField
               name="sample"
@@ -299,6 +338,28 @@ export default function App() {
               autoDropdown={true}
             />
           </div>
+
+          <div style={{ width: 300 }}>
+            <AutoCompleteWithSelectedList
+              label="Inline Auto Suggestion API Data"
+              name="sample"
+              type="auto_suggestion"
+              async={true}
+              desc="name"
+              isMultiple={true}
+              typeOnlyFetch={true}
+              descId="id"
+              getData={getData}
+              itemCount={3}
+              placeholder="Auto Suggestion"
+              selectedItems={[]}
+              onChange={(e) => console.log(e, 'onchange')}
+              countOnly={true}
+              enableSelectAll={true}
+              autoDropdown={true}
+              tabInlineSearch={false}
+            />
+          </div>
           
 
           <div style={{ width: 300 }}>
@@ -323,6 +384,7 @@ export default function App() {
               ]}
               clearTabSwitch={true}
               tabInlineSearch={false}
+             // autoDropdown={true}
               searchValue='Hello'
               onSearchValueChange={(value) => console.log(value, 'onSearchValueChange')}
             />

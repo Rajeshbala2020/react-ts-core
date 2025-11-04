@@ -89,6 +89,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             toolTabClearSwitch = false,
             onToolTabChange,
             autoRefreshMainDropdown = true,
+            autoTabSelectAll = true
         },
         ref
     ) => {
@@ -113,6 +114,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             number | undefined
         >(1);
         const [visible, setVisible] = useState<boolean>(false);
+        const lastEmittedSelectedRef = useRef<ValueProps[] | null>(null);
         const [activeTab, setActiveTab] = useState<number>(currentTab);
         const [focusedIndex, setFocusedIndex] = useState(0);
         const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
@@ -132,10 +134,12 @@ const AutoCompleteWithTabFilter = forwardRef<
         const [selectAll, setSelectAll] = useState(false);
         const [refetchData, setRefetchData] = useState(false);
         const [allDataLoaded, setAllDataLoaded] = useState(false);
+        const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
         const toolsBtnRef = useRef<HTMLButtonElement>(null);
         const [showToolsTab, setShowToolsTab] = useState(false);
         // Track previous tabSelectedItems to detect new items
         const prevTabSelectedItemsRef = useRef<ValueProps[]>([]);
+        const [applyTabFilter, setApplyTabFilter] = useState(false);
 
         let originalOverflow = '';
         let hasScrollbar = false;
@@ -187,6 +191,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     onChange(suggestion);
                     setDropOpen(false);
                     setShowToolsTab(false);
+                    setAllDataLoaded(false);
                 }
             },
             [tab, activeTab, descId, desc, onChange]
@@ -232,6 +237,14 @@ const AutoCompleteWithTabFilter = forwardRef<
             }
         }, [isMultiple, descId, desc, onChange]);
         useEffect(() => {
+            // Avoid feedback loops: if props equal last emitted value, skip syncing to state
+            if (
+                propsSeelctedItems &&
+                lastEmittedSelectedRef.current &&
+                deepEqual(propsSeelctedItems, lastEmittedSelectedRef.current)
+            ) {
+                return;
+            }
             // Only update if different
             if (!deepEqual(selectedItems, propsSeelctedItems)) {
                 setSelectedItems(propsSeelctedItems);
@@ -263,7 +276,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                 setShowToolsTab(false);
             }
         }, [handleChangeWithDebounce, tabInlineSearch, onSearchValueChange, typeOnlyFetch]);
-        
+
         const handleSuggestionChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
             const { value } = e.target;
             //setVisibleDrop();
@@ -276,6 +289,7 @@ const AutoCompleteWithTabFilter = forwardRef<
         const handleClearSelected = useCallback(() => {
             setSelectedItems([]);
             setShowAllSelected(false);
+            setShowToolsTab(false);
             if (searchValue && type === 'auto_suggestion' && tabInlineSearch) {
                 setSearchValue('');
             }
@@ -295,50 +309,124 @@ const AutoCompleteWithTabFilter = forwardRef<
         }, []);
 
         const uniqueDropArrowId = `${name}-drop-arrow-selected-list-icon`;
+        const isKeyboardOpenRef = useRef(false);
+
+        // Keep ref in sync with state for use in event handlers
         useEffect(() => {
-            const handleClickOutside = (event: any) => {
-                if (
-                    dropRef.current &&
-                    event.target instanceof Node &&
-                    !dropRef.current.contains(event.target) &&
-                    event.target?.id !== uniqueDropArrowId &&
-                    !event.target?.closest('.tools-drop-btn')
-                ) {
+            isKeyboardOpenRef.current = isKeyboardOpen;
+        }, [isKeyboardOpen]);
+
+        useEffect(() => {
+            const handleScroll = (event: any) => {
+                // On mobile: Don't close dropdown on scroll when keyboard is open
+                // On desktop: Always allow closing on scroll
+                if (isKeyboardOpenRef.current) {
+                    // Only prevent closing if keyboard is actually open (mobile scenario)
+                    // Also check if input is focused to avoid closing while typing
+                    const activeElement = document.activeElement;
+                    if (activeElement && (
+                        activeElement === inputRef.current ||
+                        activeElement === inputSearchRef.current ||
+                        (dropRef.current && dropRef.current.contains(activeElement))
+                    )) {
+                        return;
+                    }
+                }
+
+                // Check if scroll is happening within the dropdown itself - if so, don't close
+                const scrollTarget = event.target;
+                if (dropRef.current && scrollTarget instanceof Node && dropRef.current.contains(scrollTarget)) {
+                    return;
+                }
+
+                // On desktop (keyboard not open), close on scroll
+                if (dropRef.current && dropOpen) {
                     setTimeout(() => {
                         setDropOpen(false);
                         setShowToolsTab(false);
+                        setAllDataLoaded(false);
                         if (!typeOnlyFetch) setSearchValue('');
                     }, 200);
-                    //setSearchValue("");
+                }
+            };
+
+            const handleClickOutside = (event: any) => {
+                const target = event.target as HTMLElement;
+
+                // Always check if click is inside component container first
+                const insideComponent = dropdownRef.current ? dropdownRef.current.contains(target) : false;
+
+                // If clicking inside component, don't close (let onClick handlers handle it)
+                if (insideComponent) {
+                    return;
+                }
+
+                // When keyboard is open, be more lenient - only close on clear outside clicks
+                if (isKeyboardOpenRef.current) {
+                    // Only close if it's a clear click outside, not on input/textarea elements
+                    if (
+                        dropRef.current &&
+                        target instanceof Node &&
+                        !dropRef.current.contains(target) &&
+                        target?.id !== uniqueDropArrowId &&
+                        !target?.closest('.tools-drop-btn') &&
+                        event.type === 'mousedown' &&
+                        target.closest &&
+                        !target.closest('input') &&
+                        !target.closest('textarea')
+                    ) {
+                        setTimeout(() => {
+                            setDropOpen(false);
+                            setShowToolsTab(false);
+                            setAllDataLoaded(false);
+                            if (!typeOnlyFetch) setSearchValue('');
+                        }, 200);
+                    }
+                    return;
+                }
+
+                // Normal behavior when keyboard is not open
+                const clickedToolsBtn = !!target?.closest?.('.tools-drop-btn');
+                const insideMainDropdown = dropRef.current ? dropRef.current.contains(target) : false;
+                const insideAnyDropdown = !!target?.closest?.('.qbs-autocomplete-selected-suggestions');
+
+                // Close only when click is outside both dropdowns and not on tools button
+                if (!insideMainDropdown && !insideAnyDropdown && !clickedToolsBtn) {
+                    setTimeout(() => {
+                        setDropOpen(false);
+                        setShowToolsTab(false);
+                        setAllDataLoaded(false);
+                        if (!typeOnlyFetch) setSearchValue('');
+                    }, 200);
                 }
             };
 
             document.addEventListener('mousedown', handleClickOutside as any);
-            window.addEventListener('scroll', handleClickOutside as any);
+            window.addEventListener('scroll', handleScroll as any);
 
             const scrollableDivs = document.querySelectorAll(
                 'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
             );
             scrollableDivs.forEach((div) =>
-                div.addEventListener('scroll', handleClickOutside as any)
+                div.addEventListener('scroll', handleScroll as any)
             );
             if (scrollRef && scrollRef.current && scrollRef.current !== null) {
-                scrollRef.current.addEventListener('scroll', handleClickOutside as any);
+                scrollRef.current.addEventListener('scroll', handleScroll as any);
             }
             return () => {
                 document.removeEventListener('mousedown', handleClickOutside as any);
-                window.removeEventListener('scroll', handleClickOutside as any);
+                window.removeEventListener('scroll', handleScroll as any);
                 scrollableDivs.forEach((div) =>
-                    div.removeEventListener('scroll', handleClickOutside as any)
+                    div.removeEventListener('scroll', handleScroll as any)
                 );
                 if (scrollRef && scrollRef.current && scrollRef.current !== null) {
                     scrollRef.current.removeEventListener(
                         'scroll',
-                        handleClickOutside as any
+                        handleScroll as any
                     );
                 }
             };
-        }, []);
+        }, [dropOpen, typeOnlyFetch, uniqueDropArrowId]);
 
         // Filtering suggestions based on type and search value
         const selected: any = isMultiple ? selectedItems : inputValue;
@@ -440,11 +528,30 @@ const AutoCompleteWithTabFilter = forwardRef<
             };
         }, [adjustDropdownPosition]);
 
+        // Detect keyboard open on mobile using Visual Viewport API
+        useEffect(() => {
+            const vv = (window as any).visualViewport;
+            if (!vv) return;
+            const onResize = () => {
+                // Heuristic: if visual viewport height shrinks a lot, keyboard is likely open
+                const open = vv.height < window.innerHeight - 100;
+                setIsKeyboardOpen(open);
+            };
+            vv.addEventListener("resize", onResize);
+            vv.addEventListener("scroll", onResize); // iOS sometimes fires scroll instead
+            onResize();
+            return () => {
+                vv.removeEventListener("resize", onResize);
+                vv.removeEventListener("scroll", onResize);
+            };
+        }, []);
+
         useEffect(() => {
             if (isInitialRender) {
                 setIsInitialRender(false);
             } else {
                 onChange(selectedItems);
+                lastEmittedSelectedRef.current = selectedItems;
             }
             adjustDropdownPosition();
             setTimeout(() => {
@@ -506,6 +613,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     case 'Escape':
                         e.preventDefault();
                         setDropOpen(false);
+                        setAllDataLoaded(false);
                         break;
 
                     default:
@@ -591,13 +699,21 @@ const AutoCompleteWithTabFilter = forwardRef<
                     .join(', ')
                 : '';
 
-        const setVisibleDrop = () => {
+        const setVisibleDrop = (skipAnimation = false) => {
             hasScrollbar = document.body.scrollHeight > window.innerHeight;
             if (!originalOverflow && !hasScrollbar) {
                 originalOverflow = document.body.style.overflow;
                 document.body.style.overflow = 'hidden';
             }
 
+            // If skipAnimation is true (dropdown already open but not visible), just make it visible
+            if (skipAnimation && dropOpen) {
+                setVisible(true);
+                setFocusedIndex(0);
+                return;
+            }
+
+            // Normal opening animation
             setVisible(false);
             if (!dropOpen) {
                 setDropOpen(true);
@@ -612,7 +728,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     document.body.style.overflow = originalOverflow || '';
                 }
                 originalOverflow = '';
-            }, 200);
+            }, 100);
         };
 
         const handleTabClick = useCallback((index: number) => {
@@ -746,7 +862,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     // Add only items from current tab - batch all updates in single setState
                     setSelectedItems((prev) => {
                         const newItems: ValueProps[] = [];
-                        
+
                         filteredData.forEach((suggestion: ValueProps) => {
                             const isAdded = prev.some(
                                 (item) =>
@@ -757,7 +873,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                 newItems.push(suggestion);
                             }
                         });
-                        
+
                         return [...prev, ...newItems];
                     });
                 }
@@ -765,6 +881,22 @@ const AutoCompleteWithTabFilter = forwardRef<
         }, [isMultiple, selectAll, filteredData, descId]);
 
         const handleOpenDropdown = useCallback((e: any) => {
+            if (!tabInlineSearch) {
+                // Toggle the main dropdown when not using inline search
+                if (dropOpen && visible && allDataLoaded) {
+                    // If dropdown is open and visible, close it
+                    setDropOpen(false);
+                    setVisible(false);
+                    setAllDataLoaded(false);
+                    return
+                } else if (!dropOpen) {
+                    // If dropdown is closed, open it
+                    setVisibleDrop(false);
+                } else if (dropOpen && !visible) {
+                    // If dropdown is open but not visible, make it visible
+                    setVisible(true);
+                }
+            }
             if (!suggestions || suggestions?.length === 0 || refetchData) {
                 if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
                     if (tabInlineSearch && tab.length > 0) {
@@ -788,12 +920,52 @@ const AutoCompleteWithTabFilter = forwardRef<
                     setAllDataLoaded(false);
                 }
             }
-        }, [suggestions, refetchData, autoDropdown, inputValue, tabInlineSearch, tab, activeTab, handlePickSuggestions]);
+        }, [suggestions, refetchData, autoDropdown, inputValue, tabInlineSearch, tab, activeTab, handlePickSuggestions, dropOpen, visible]);
+
+        useEffect(() => {
+            if (applyTabFilter && !isLoading && suggestions) {
+                // Auto select all currently loaded suggestions (dedup by descId)
+                if (isMultiple && Array.isArray(suggestions) && autoTabSelectAll) {
+                    setSelectedItems((prev) => {
+                        const existingIds = new Set(
+                            (prev || []).map((item) => getKeyValue(item, descId, 'id'))
+                        );
+                        const toAdd: ValueProps[] = [];
+                        suggestions.forEach((s: ValueProps) => {
+                            const sid = getKeyValue(s, descId, 'id');
+                            if (!existingIds.has(sid)) {
+                                toAdd.push(s);
+                            }
+                        });
+                        return toAdd.length > 0 ? [...prev, ...toAdd] : prev;
+                    });
+                }
+
+                // Clear tabSelectedItems after applying filter and data is loaded
+                onToolTabChange?.([]);
+                setShowToolsTab(false);
+                // Open dropdown immediately when data is ready (tools tab was open so dropdown is closed)
+                if (!dropOpen) {
+                    setVisibleDrop(false); // Full animation for closed dropdown
+                } else if (dropOpen && !visible) {
+                    // If for some reason dropdown is open but not visible, just make it visible
+                    setVisible(true);
+                }
+                setApplyTabFilter(false);
+            }
+        }, [applyTabFilter, isLoading, suggestions, onToolTabChange, isMultiple, descId, dropOpen, visible]);
 
         const handleOpenToolsTab = useCallback((e: any) => {
             setShowToolsTab(showToolsTab ? false : true);
             setDropOpen(false);
+            setAllDataLoaded(false);
         }, [showToolsTab]);
+
+        const handleApplyTabFilter = useCallback(() => {
+            // Set flag to trigger effect when data loads
+            setApplyTabFilter(true);
+            handlePickSuggestions(searchValue ? searchValue : '*', 1);
+        }, [searchValue, handlePickSuggestions]);
 
         useEffect(() => {
             const allSelected =
@@ -830,14 +1002,14 @@ const AutoCompleteWithTabFilter = forwardRef<
                 // Check if there are changes by comparing with previous state
                 const hasChanges = tabSelectedItems.length !== prevTabSelectedItemsRef.current.length ||
                     !deepEqual(tabSelectedItems, prevTabSelectedItemsRef.current);
-                
+
                 // Trigger refresh if there are changes (items added, removed, or modified)
                 if (hasChanges) {
                     if (tabInlineSearch && toolTabs.length > 0 && searchValue) {
                         handlePickSuggestions(searchValue, 1);
                     }
                 }
-                
+
                 // Update the previous state
                 prevTabSelectedItemsRef.current = tabSelectedItems;
             }
@@ -872,12 +1044,13 @@ const AutoCompleteWithTabFilter = forwardRef<
                     className={`qbs-relative  qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-container'
                         }`}
                 >
+
                     {(selectedItems?.length > 0 || !tabInlineSearch) && (
                         <>
                             {!countOnly ? (
                                 getSelectedItems(false)
                             ) : !tabInlineSearch ? (
-                                <div className="selected-items-counter-container qbs-text-sm qbs-gap-1">
+                                <div className={`selected-items-counter-container selected-item-inline-counter qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown ? 'selected-item-tool-direct-counter' : ''}`}>
                                     <Tooltip title={allSelectedTooltipContent} enabled={selectedItems?.length > 0 ? true : false}>
                                         <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                                             {selectedItems?.length}
@@ -906,6 +1079,28 @@ const AutoCompleteWithTabFilter = forwardRef<
                             )}
                         </>
                     )}
+
+                    <>
+                        {autoDropdown && !tabInlineSearch && !disabled && !readOnly && (
+                            <div className='qbs-inline-all-dropdown-btn'>
+                                <button
+                                    disabled={disabled ?? readOnly}
+                                    onClick={(e) => handleOpenDropdown(e)}
+                                    className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                                    data-testid="drop-arrow"
+                                    type="button"
+                                    id="autocomplete-drop-icon"
+                                    ref={dropBtnRef}
+                                >
+                                    <AllDropArrow
+                                        type={!allDataLoaded ? 'down' : 'up'}
+                                        uniqueId="all-dropdow-arrow-icon"
+                                        className="all-dropdow-arrow-icon"
+                                    />
+                                </button>
+                            </div>
+                        )}
+                    </>
 
                     <div
                         className={`qbs-textfield-expandable ${!expandable ? 'qbs-normal' : ''
@@ -1164,6 +1359,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                                             }`}
                                                         onClick={() => {
                                                             setDropOpen(false);
+                                                            setAllDataLoaded(false);
                                                         }}
                                                     >
                                                         Done
@@ -1223,6 +1419,8 @@ const AutoCompleteWithTabFilter = forwardRef<
                             open={showToolsTab}
                             data={tabData}
                             enableSelectAll={enableSelectAll}
+                            applyTabFilter={handleApplyTabFilter}
+                            onToolClose={() => setShowToolsTab(false)}
                         />)
                     }
                 </div>
