@@ -12,6 +12,7 @@ import {
 } from '../src/index';
 import ModernTextArea from '../src/ReactTextArea';
 import TextField from '../src/ReactTextField';
+import { ValueProps } from '../src/commontypes';
 import { treeDropData } from './store';
 
 import '../src/styles/global.css';
@@ -20,8 +21,8 @@ export default function App() {
   const [dropData, setDropData] = useState();
   const [nexBlock, setNexBlock] = useState(1);
   const [prev, setPrev] = useState(1);
-  const [selectedTabItems, setSelectedTabItems] = useState([]);
-  const [selectedItems, setSelectedItems] = useState([]);
+  const [selectedTabItems, setSelectedTabItems] = useState<ValueProps[]>([]);
+  const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
 
 
   const getData = (keyName?: string, next?: number) => {
@@ -117,10 +118,10 @@ export default function App() {
                 itemCount={3}
                 placeholder="Auto Suggestion"
                 selectedItems={selectedItems}
-                onChange={(e) => setSelectedItems(e)}
+                onChange={(e) => setSelectedItems(Array.isArray(e) ? e : e ? [e] : [])}
                 tabSelectedItems={selectedTabItems}
                 getTabData={getDataWithTab}
-                onToolTabChange={(value) => setSelectedTabItems(value)}
+                onToolTabChange={(value) => setSelectedTabItems(Array.isArray(value) ? value : value ? [value] : [])}
                 countOnly={true}
                 toolTabClearSwitch={false}
                 enableToolsTab={true}
