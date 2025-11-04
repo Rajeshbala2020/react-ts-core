@@ -98,6 +98,7 @@ export interface AutoSuggestionInputProps {
   onToolTabChange?: (value?: ValueProps | ValueProps[]) => void;
   autoRefreshMainDropdown?: boolean;
   singleSelectIcon?: any;
+  autoTabSelectAll?: boolean; // auto select all when tab is selected
 }
 export interface IconsProps {
   name: any;

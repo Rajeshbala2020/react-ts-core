@@ -382,6 +382,21 @@ ul {
   color: #e76458;
 }
 
+.qbs-inline-all-dropdown-btn {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  position: absolute;
+  right: 25px;
+  z-index: 99;
+  top: 18px;
+  flex-wrap: wrap;
+}
+
+.qbs-inline-all-direct-dropdown-btn {
+  right: 0px;
+}
+
 .selected-items-container {
   display: flex;
   gap: 12px;
@@ -414,6 +429,18 @@ ul {
 .selected-items-counter-container .badge {
   background-color: #c63a3a;
   color: #fff;
+}
+
+.selected-item-inline-counter {
+  right: 30px;
+}
+
+.selected-item-tool-direct-counter {
+  right: 60px;
+}
+
+.selected-item-nontool-direct-counter {
+  right: 35px;
 }
 
 .selected-item-more {

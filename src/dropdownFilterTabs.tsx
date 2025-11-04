@@ -24,6 +24,9 @@ const DropdownFilterTabs = forwardRef<
   AutoSuggestionInputProps & {
     dropdownRef?: React.RefObject<HTMLDivElement>;
     open?: boolean;
+    applyTabFilter?: () => void;
+    onToolClose?: () => void;
+
   }
 >(
   (
@@ -81,6 +84,8 @@ const DropdownFilterTabs = forwardRef<
       enableSelectAll = false,
       dropdownRef,
       open = false,
+      applyTabFilter,
+      onToolClose
     },
     ref
   ) => {
@@ -128,8 +133,6 @@ const DropdownFilterTabs = forwardRef<
       return selectedItems.filter(item => item.tabId === currentTabId);
     }, [selectedItems, currentTabId]);
 
-    let originalOverflow = '';
-    let hasScrollbar = false;
 
     useEffect(() => {
       setDropOpen(open);
@@ -347,10 +350,6 @@ const DropdownFilterTabs = forwardRef<
       if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
     };
 
-    const generateClassName = useCallback(() => {
-      return `qbs-textfield-default ${className} ${errors && errors?.message ? 'textfield-error' : 'textfield'
-        } ${expandable ? 'expandable' : ''}`;
-    }, [errors, name]);
     const handleRemoveSelectedItem = useCallback((index: number) => {
       const itemToRemove = filteredSelectedItems[index];
       setSelectedItems((prev) => {
@@ -371,9 +370,9 @@ const DropdownFilterTabs = forwardRef<
         ) {
           setTimeout(() => {
             setDropOpen(false);
+            onToolClose?.();
             if (!typeOnlyFetch) setSearchValue('');
           }, 200);
-          //setSearchValue("");
         }
       };
 
@@ -745,6 +744,11 @@ const DropdownFilterTabs = forwardRef<
       }
     };
 
+    const handleApplySelected = () => {
+      setDropOpen(false);
+      applyTabFilter?.();
+    };
+
     useEffect(() => {
       const allSelected =
         filteredData?.length > 0 && filteredSelectedItems?.length > 0 &&
@@ -959,10 +963,10 @@ const DropdownFilterTabs = forwardRef<
                           className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
                             }`}
                           onClick={() => {
-                            setDropOpen(false);
+                            handleApplySelected();
                           }}
                         >
-                          Done
+                          Apply
                         </div>
                       </div>
 

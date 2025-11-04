@@ -827,6 +827,24 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const handleOpenDropdown = (e: any) => {
+
+      if (!tabInlineSearch) {
+        // Toggle the main dropdown when not using inline search
+        if (dropOpen && visible && allDataLoaded) {
+            // If dropdown is open and visible, close it
+            setDropOpen(false);
+            setVisible(false);
+            setAllDataLoaded(false);
+            return
+        } else if (!dropOpen) {
+            // If dropdown is closed, open it
+            setVisibleDrop();
+        } else if (dropOpen && !visible) {
+            // If dropdown is open but not visible, make it visible
+            setVisible(true);
+        }
+      }
+      
       if (!suggestions || suggestions?.length === 0 || refetchData) {
         if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
           if (tabInlineSearch && tab.length > 0) {
@@ -903,7 +921,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               {!countOnly ? (
                 getSelectedItems(false)
               ) : !tabInlineSearch ? (
-                <div className="selected-items-counter-container qbs-text-sm qbs-gap-1">
+                <div className={`selected-items-counter-container qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown ? 'selected-item-nontool-direct-counter' : ''}`}>
                   <Tooltip title={allSelectedTooltipContent} enabled={selectedItems?.length > 0 ? true : false}>
                     <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                       {selectedItems?.length}
@@ -933,6 +951,28 @@ const AutoCompleteWithSelectedList = forwardRef<
               )}
             </>
           )}
+
+          <>
+            {autoDropdown && !tabInlineSearch && !disabled && !readOnly && (
+                <div className={`qbs-inline-all-dropdown-btn ${!tabInlineSearch && autoDropdown ? 'qbs-inline-all-direct-dropdown-btn' : ''}`}>
+                    <button
+                        disabled={disabled ?? readOnly}
+                        onClick={(e) => handleOpenDropdown(e)}
+                        className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                        data-testid="drop-arrow"
+                        type="button"
+                        id="autocomplete-drop-icon"
+                        ref={dropBtnRef}
+                    >
+                        <AllDropArrow
+                            type={!allDataLoaded ? 'down' : 'up'}
+                            uniqueId="all-dropdow-arrow-icon"
+                            className="all-dropdow-arrow-icon"
+                        />
+                    </button>
+                </div>
+            )}
+          </>
 
           <div
             className={`qbs-textfield-expandable ${
@@ -1002,6 +1042,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             countOnly={countOnly}
             uniqueDropArrowId={uniqueDropArrowId}
             viewMode={viewMode}
+            autoDropdown={autoDropdown && !tabInlineSearch ? true : false}
           />
           {/* Displaying Loading Spinner */}
 
