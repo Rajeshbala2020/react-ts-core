@@ -118,6 +118,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [selectAll, setSelectAll] = useState(false);
     const [refetchData, setRefetchData] = useState(false);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
+    const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
     let originalOverflow = '';
     let hasScrollbar = false;
@@ -197,6 +198,24 @@ const AutoCompleteWithSelectedList = forwardRef<
         window.removeEventListener('resize', adjustDropdownPosition);
       };
     }, [dropOpen, expandArrowClick]);
+
+    // Detect keyboard open on mobile using Visual Viewport API
+    useEffect(() => {
+      const vv = (window as any).visualViewport;
+      if (!vv) return;
+      const onResize = () => {
+        // Heuristic: if visual viewport height shrinks a lot, keyboard is likely open
+        const open = vv.height < window.innerHeight - 100;
+        setIsKeyboardOpen(open);
+      };
+      vv.addEventListener("resize", onResize);
+      vv.addEventListener("scroll", onResize); // iOS sometimes fires scroll instead
+      onResize();
+      return () => {
+        vv.removeEventListener("resize", onResize);
+        vv.removeEventListener("scroll", onResize);
+      };
+    }, []);
 
     const { suggestions, isLoading, handlePickSuggestions, resetSuggections } =
       useSuggestions(
@@ -363,58 +382,108 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const uniqueDropArrowId = `${name}-drop-arrow-selected-list-icon`;
+    const isKeyboardOpenRef = useRef(false);
+    
+    // Keep ref in sync with state for use in event handlers
     useEffect(() => {
+      isKeyboardOpenRef.current = isKeyboardOpen;
+    }, [isKeyboardOpen]);
+
+    useEffect(() => {
+      const handleScroll = (event: any) => {
+        // On mobile: Don't close dropdown on scroll when keyboard is open
+        // On desktop: Always allow closing on scroll
+        if (isKeyboardOpenRef.current) {
+          // Only prevent closing if keyboard is actually open (mobile scenario)
+          // Also check if input is focused to avoid closing while typing
+          const activeElement = document.activeElement;
+          if (activeElement && (
+            activeElement === inputRef.current || 
+            activeElement === inputSearchRef.current ||
+            (dropRef.current && dropRef.current.contains(activeElement))
+          )) {
+            return;
+          }
+        }
+        
+        // Check if scroll is happening within the dropdown itself - if so, don't close
+        const scrollTarget = event.target;
+        if (dropRef.current && scrollTarget instanceof Node && dropRef.current.contains(scrollTarget)) {
+          return;
+        }
+        
+        // On desktop (keyboard not open), close on scroll
+        if (dropRef.current && dropOpen) {
+          setTimeout(() => {
+            setDropOpen(false);
+            if (!typeOnlyFetch) setSearchValue('');
+          }, 200);
+        }
+      };
+
       const handleClickOutside = (event: any) => {
+        // When keyboard is open, be more lenient - only close on clear outside clicks
+        if (isKeyboardOpenRef.current) {
+          const target = event.target as HTMLElement;
+          // Only close if it's a clear click outside, not on input/textarea elements
+          if (
+            dropRef.current &&
+            target instanceof Node &&
+            !dropRef.current.contains(target) &&
+            target?.id !== uniqueDropArrowId &&
+            event.type === 'mousedown' &&
+            target.closest &&
+            !target.closest('input') &&
+            !target.closest('textarea')
+          ) {
+            setTimeout(() => {
+              setDropOpen(false);
+              if (!typeOnlyFetch) setSearchValue('');
+            }, 200);
+          }
+          return;
+        }
+
+        // Normal behavior when keyboard is not open
         if (
           dropRef.current &&
           event.target instanceof Node &&
           !dropRef.current.contains(event.target) &&
-          event.target?.id !== uniqueDropArrowId
+          (event.target as HTMLElement)?.id !== uniqueDropArrowId
         ) {
           setTimeout(() => {
             setDropOpen(false);
             if (!typeOnlyFetch) setSearchValue('');
           }, 200);
-          //setSearchValue("");
         }
       };
 
-      // const observer = new MutationObserver(() => {
-      //   adjustDropdownPosition();
-      // });
-
-      // observer.observe(document.body, {
-      //   childList: true,
-      //   subtree: true,
-      //   attributes: true,
-      // });
-
       document.addEventListener('mousedown', handleClickOutside as any);
-      window.addEventListener('scroll', handleClickOutside as any);
+      window.addEventListener('scroll', handleScroll as any);
 
       const scrollableDivs = document.querySelectorAll(
         'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
-        div.addEventListener('scroll', handleClickOutside as any)
+        div.addEventListener('scroll', handleScroll as any)
       );
       if (scrollRef && scrollRef.current && scrollRef.current !== null) {
-        scrollRef.current.addEventListener('scroll', handleClickOutside as any);
+        scrollRef.current.addEventListener('scroll', handleScroll as any);
       }
       return () => {
         document.removeEventListener('mousedown', handleClickOutside as any);
-        window.removeEventListener('scroll', handleClickOutside as any);
+        window.removeEventListener('scroll', handleScroll as any);
         scrollableDivs.forEach((div) =>
-          div.removeEventListener('scroll', handleClickOutside as any)
+          div.removeEventListener('scroll', handleScroll as any)
         );
         if (scrollRef && scrollRef.current && scrollRef.current !== null) {
           scrollRef.current.removeEventListener(
             'scroll',
-            handleClickOutside as any
+            handleScroll as any
           );
         }
       };
-    }, []);
+    }, [dropOpen, typeOnlyFetch, uniqueDropArrowId]);
 
     // Filtering suggestions based on type and search value
     const selected: any = isMultiple ? selectedItems : inputValue;
