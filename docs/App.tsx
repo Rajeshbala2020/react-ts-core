@@ -1,21 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 
-import {
-  AutoComplete,
-  AutoCompleteWithSelectedList,
-  AutoCompleteWithTabFilter,
-  AutoCompleteWithTreeStructure,
-  ExpandableAutoComplete,
-  ModernAutoComplete,
-  ModernAutoCompleteDropdown,
-  ModernTextField,
-} from '../src/index';
-import ModernTextArea from '../src/ReactTextArea';
-import TextField from '../src/ReactTextField';
-import { ValueProps } from '../src/commontypes';
-import { treeDropData } from './store';
+import { ValueProps } from "../src/commontypes";
+import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernTextField } from "../src/index";
+import ModernTextArea from "../src/ReactTextArea";
+import TextField from "../src/ReactTextField";
+import { treeDropData } from "./store";
 
-import '../src/styles/global.css';
+import "../src/styles/global.css";
 
 export default function App() {
   const [dropData, setDropData] = useState();
@@ -24,9 +15,8 @@ export default function App() {
   const [selectedTabItems, setSelectedTabItems] = useState<ValueProps[]>([]);
   const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
 
-
   const getData = (keyName?: string, next?: number) => {
-    console.log(keyName, 'keyName');
+    console.log(keyName, "keyName");
     return fetch(
       keyName
         ? `https://jsonplaceholder.typicode.com/posts?_page=${next}&_limit=10&title_like=${keyName}`
@@ -36,7 +26,7 @@ export default function App() {
       .then((res) => {
         setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
-          return { ...item, ['name']: item?.title, id: item?.id.toString() };
+          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -45,7 +35,7 @@ export default function App() {
     return fetch(
       keyName
         ? `https://jsonplaceholder.typicode.com/posts?title_like=${
-            keyName === '*' ? '' : keyName
+            keyName === "*" ? "" : keyName
           }`
         : `https://jsonplaceholder.typicode.com/posts`
     )
@@ -53,7 +43,7 @@ export default function App() {
       .then((res) => {
         setPrev(prev + 1);
         const result = res.map((item: any) => {
-          return { ...item, ['name']: item?.title, id: item?.id.toString() };
+          return { ...item, ["name"]: item?.title, id: item?.id.toString() };
         });
         return result;
       });
@@ -74,7 +64,11 @@ export default function App() {
       .then((res) => {
         setNexBlock(nexBlock + 1);
         const result = res.map((item: any) => {
-          return { ...item, ['name']: item?.title + ' - ' + tab?.toString(), id: `${item?.id.toString()}-${tab?.toString()}`};
+          return {
+            ...item,
+            ["name"]: item?.title + " - " + tab?.toString(),
+            id: `${item?.id.toString()}-${tab?.toString()}`,
+          };
         });
         return result;
       });
@@ -83,98 +77,107 @@ export default function App() {
     <React.Fragment>
       <div
         style={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
         }}
       >
         <div
           style={{
-            display: 'flex',
-            flexDirection: 'column',
+            display: "flex",
+            flexDirection: "column",
             gap: 20,
             padding: 20,
-            maxWidth: '75%',
+            maxWidth: "75%",
 
-            overflowY: 'scroll',
+            overflowY: "scroll",
           }}
         >
-          
           <div style={{ width: 500 }}>
             <AutoCompleteWithTabFilter
-                label="Auto Suggestion With Data"
-                name="sample"
-                type="auto_suggestion"
-                async={true}
-                typeOnlyFetch={true}
-                desc="name"
-                isMultiple={true}
-                singleSelect={false}
-                descId="id"
-                getData={getData}
-                paginationEnabled={false}
-                initialLoad={false}
-                itemCount={3}
-                placeholder="Auto Suggestion"
-                selectedItems={selectedItems}
-                onChange={(e) => setSelectedItems(Array.isArray(e) ? e : e ? [e] : [])}
-                tabSelectedItems={selectedTabItems}
-                getTabData={getDataWithTab}
-                onToolTabChange={(value) => setSelectedTabItems(Array.isArray(value) ? value : value ? [value] : [])}
-                countOnly={true}
-                toolTabClearSwitch={false}
-                enableToolsTab={true}
-                toolTabs={[
-                  { id: 1, label: 'Tab 1' },
-                  { id: 2, label: 'Tab 2' },
-                ]}
-                tabName="sample"
-                tabDesc="name"
-                tabDescId="id"
-                enableSelectAll={true}
-                autoDropdown={true}
-              />
-            
+              label="Auto Suggestion With Data"
+              name="sample"
+              type="auto_suggestion"
+              async={true}
+              typeOnlyFetch={true}
+              desc="name"
+              isMultiple={true}
+              singleSelect={false}
+              descId="id"
+              getData={getData}
+              paginationEnabled={false}
+              initialLoad={false}
+              itemCount={3}
+              placeholder="Auto Suggestion"
+              selectedItems={selectedItems}
+              onChange={(e) =>
+                setSelectedItems(Array.isArray(e) ? e : e ? [e] : [])
+              }
+              tabSelectedItems={selectedTabItems}
+              getTabData={getDataWithTab}
+              onToolTabChange={(value) =>
+                setSelectedTabItems(
+                  Array.isArray(value) ? value : value ? [value] : []
+                )
+              }
+              countOnly={true}
+              toolTabClearSwitch={false}
+              enableToolsTab={true}
+              toolTabs={[
+                { id: 1, label: "Tab 1" },
+                { id: 2, label: "Tab 2" },
+              ]}
+              tabName="sample"
+              tabDesc="name"
+              tabDescId="id"
+              enableSelectAll={true}
+              autoDropdown={true}
+            />
           </div>
 
           <div style={{ width: 500 }}>
             <AutoCompleteWithTabFilter
-                label="Inline Auto Suggestion With Data"
-                name="sample"
-                type="auto_suggestion"
-                async={true}
-                typeOnlyFetch={true}
-                desc="name"
-                isMultiple={true}
-                singleSelect={false}
-                descId="id"
-                getData={getData}
-                paginationEnabled={false}
-                initialLoad={false}
-                itemCount={3}
-                placeholder="Auto Suggestion"
-                selectedItems={selectedItems}
-                onChange={(e) => setSelectedItems(Array.isArray(e) ? e : e ? [e] : [])}
-                tabSelectedItems={selectedTabItems}
-                getTabData={getDataWithTab}
-                onToolTabChange={(value) => setSelectedTabItems(Array.isArray(value) ? value : value ? [value] : [])}
-                countOnly={true}
-                toolTabClearSwitch={false}
-                enableToolsTab={true}
-                toolTabs={[
-                  { id: 1, label: 'Tab 1' },
-                  { id: 2, label: 'Tab 2' },
-                ]}
-                tabName="sample"
-                tabDesc="name"
-                tabDescId="id"
-                enableSelectAll={true}
-                autoDropdown={true}
-                tabInlineSearch={false}
-                //autoTabSelectAll={false}
-              />
-            
+              label="Inline Auto Suggestion With Data"
+              name="sample"
+              type="auto_suggestion"
+              async={true}
+              typeOnlyFetch={true}
+              desc="name"
+              isMultiple={true}
+              singleSelect={false}
+              descId="id"
+              getData={getData}
+              paginationEnabled={false}
+              initialLoad={false}
+              itemCount={3}
+              placeholder="Auto Suggestion"
+              selectedItems={selectedItems}
+              onChange={(e) =>
+                setSelectedItems(Array.isArray(e) ? e : e ? [e] : [])
+              }
+              tabSelectedItems={selectedTabItems}
+              getTabData={getDataWithTab}
+              onToolTabChange={(value) =>
+                setSelectedTabItems(
+                  Array.isArray(value) ? value : value ? [value] : []
+                )
+              }
+              countOnly={true}
+              toolTabClearSwitch={false}
+              enableToolsTab={true}
+              toolTabs={[
+                { id: 1, label: "Tab 1" },
+                { id: 2, label: "Tab 2" },
+              ]}
+              tabName="sample"
+              tabDesc="name"
+              tabDescId="id"
+              enableSelectAll={true}
+              autoDropdown={true}
+              tabInlineSearch={false}
+              //autoTabSelectAll={false}
+            />
           </div>
 
           <div style={{ width: 300 }}>
@@ -182,12 +185,12 @@ export default function App() {
               name="sample"
               label="TextField Enable Search"
               id="id"
-              type="text" 
+              type="text"
               placeholder="TextField"
               required
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               enableSearch={true}
-              onSearchClick={(value) => console.log(value, 'onSearchClick')}
+              onSearchClick={(value) => console.log(value, "onSearchClick")}
             />
           </div>
 
@@ -201,7 +204,7 @@ export default function App() {
               placeholder="TextField"
               required
               getData={getDatas}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               shortCode="id"
               labelCode="userId"
             />
@@ -216,7 +219,7 @@ export default function App() {
               placeholder="TextField"
               required
               getData={getDatas}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
             />
           </div>
 
@@ -249,7 +252,7 @@ export default function App() {
               placeholder="Auto Suggestion"
               selectedItems={[]}
               getData={getData}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -271,7 +274,7 @@ export default function App() {
               singleSelect={true}
               expandable={true}
               isTreeDropdown={true}
-              filterCondition={{ filterKey: 'id', filterValue: 22 }}
+              filterCondition={{ filterKey: "id", filterValue: 22 }}
               descId="id"
               data={treeDropData}
               paginationEnabled={false}
@@ -310,11 +313,11 @@ export default function App() {
               placeholder="Auto Suggestion"
               selectedItems={[
                 {
-                  name: 'Port G - A small',
+                  name: "Port G - A small",
                   id: 2,
                 },
               ]}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               countOnly={true}
             />
           </div>
@@ -332,7 +335,7 @@ export default function App() {
               itemCount={3}
               placeholder="Auto Suggestion"
               selectedItems={[]}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               countOnly={true}
               enableSelectAll={true}
               autoDropdown={true}
@@ -353,14 +356,13 @@ export default function App() {
               itemCount={3}
               placeholder="Auto Suggestion"
               selectedItems={[]}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               countOnly={true}
               enableSelectAll={true}
               autoDropdown={true}
               tabInlineSearch={false}
             />
           </div>
-          
 
           <div style={{ width: 300 }}>
             <AutoCompleteWithSelectedList
@@ -376,17 +378,19 @@ export default function App() {
               itemCount={3}
               placeholder="Auto Suggestion"
               selectedItems={[]}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               countOnly={true}
               tab={[
-                { id: 1, label: 'Tab 1' },
-                { id: 2, label: 'Tab 2' },
+                { id: 1, label: "Tab 1" },
+                { id: 2, label: "Tab 2" },
               ]}
               clearTabSwitch={true}
               tabInlineSearch={false}
-             // autoDropdown={true}
-              searchValue='Hello'
-              onSearchValueChange={(value) => console.log(value, 'onSearchValueChange')}
+              // autoDropdown={true}
+              searchValue="Hello"
+              onSearchValueChange={(value) =>
+                console.log(value, "onSearchValueChange")
+              }
             />
           </div>
 
@@ -404,11 +408,11 @@ export default function App() {
               itemCount={3}
               placeholder="Auto Suggestion"
               selectedItems={[]}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               countOnly={true}
               tab={[
-                { id: 1, label: 'Tab 1' },
-                { id: 2, label: 'Tab 2' },
+                { id: 1, label: "Tab 1" },
+                { id: 2, label: "Tab 2" },
               ]}
               clearTabSwitch={true}
               tabInlineSearch={true}
@@ -430,18 +434,11 @@ export default function App() {
               desc="name"
               isMultiple={true}
               selectedItems={[]}
+              initialLoad={true}
               descId="id"
               type="custom_select"
-              data={[
-                { name: 'test', id: '1' },
-                { name: 'test1', id: '2' },
-
-                { name: 'test2', id: '3' },
-
-                { name: 'test3', id: '4' },
-              ]}
-              // getData={getData}
-              onChange={() => console.log('onchange')}
+              getData={getData}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -465,7 +462,7 @@ export default function App() {
               placeholder="Auto Complete"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div style={{ width: 300 }}>
@@ -479,7 +476,7 @@ export default function App() {
               placeholder="Auto Complete"
               // data={[{ name: 'test', id: '1' }]}
               getData={getDatas}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -501,18 +498,18 @@ export default function App() {
               descId="id"
               type="custom_search_select"
               data={[
-                { name: 'Apple', id: '1' },
-                { name: 'Banana', id: '2' },
-                { name: 'Cherry', id: '3' },
-                { name: 'Date', id: '4' },
-                { name: 'Fig', id: '5' },
-                { name: 'Grape', id: '6' },
-                { name: 'Honeydew', id: '7' },
-                { name: 'Kiwi', id: '8' },
-                { name: 'Lemon', id: '9' },
-                { name: 'Mango', id: '10' },
+                { name: "Apple", id: "1" },
+                { name: "Banana", id: "2" },
+                { name: "Cherry", id: "3" },
+                { name: "Date", id: "4" },
+                { name: "Fig", id: "5" },
+                { name: "Grape", id: "6" },
+                { name: "Honeydew", id: "7" },
+                { name: "Kiwi", id: "8" },
+                { name: "Lemon", id: "9" },
+                { name: "Mango", id: "10" },
               ]}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -535,7 +532,7 @@ export default function App() {
               placeholder="Auto Suggestion"
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={() => console.log('onchange')}
+              onChange={() => console.log("onchange")}
             />
           </div>
           <div style={{ width: 300 }}>
@@ -545,14 +542,15 @@ export default function App() {
               type="auto_suggestion"
               required
               desc="name"
+
               async
               isMultiple
               descId="id"
               placeholder="Auto Suggestion"
-              selectedItems={[{ name: 'test', id: '1' }]}
+              selectedItems={[{ name: "test", id: "1" }]}
               // data={[{ name: 'test', id: '1' }]}
               getData={getData}
-              onChange={(value) => console.log(value, 'onchange')}
+              onChange={(value) => console.log(value, "onchange")}
             />
           </div>
           <div style={{ width: 300 }}>
@@ -568,9 +566,9 @@ export default function App() {
               initialLoad={true}
               // nextBlock={nexBlock}
               placeholder="Auto Suggestion"
-              selectedItems={[{ name: 'test', id: '1' }]}
+              selectedItems={[{ name: "test", id: "1" }]}
               getData={getData}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
             />
           </div>
 
@@ -598,9 +596,9 @@ export default function App() {
               itemCount={5}
               // nextBlock={nexBlock}
               placeholder="Auto Suggestion"
-              selectedItems={[{ name: 'test', id: '1' }]}
+              selectedItems={[{ name: "test", id: "1" }]}
               getData={getData}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
             />
           </div>
           <div className="autocomplete-section">
@@ -621,7 +619,7 @@ export default function App() {
               adorementPosition="start"
               placeholder="TextField"
               required
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
             />
           </div>
           <div style={{ width: 300 }}>
@@ -641,15 +639,15 @@ export default function App() {
               itemCount={3}
               placeholder="Auto Suggestion"
               selectedItems={[
-                { id: 1, name: 'testssdfsdfsdfsd sdvsdf' },
-                { id: 2, name: 'test1 slkdflksmflksd' },
-                { id: 3, name: 'test2 lsdfkslkdfmlksdf' },
-                { id: 4, name: 'test3 lksdmflkmsflkms' },
-                { id: 5, name: 'test4lskdmflksldkf sdf' },
-                { id: 6, name: 'test5lksdlkf sdf' },
-                { id: 7, name: 'test6lksdlf sdf' },
+                { id: 1, name: "testssdfsdfsdfsd sdvsdf" },
+                { id: 2, name: "test1 slkdflksmflksd" },
+                { id: 3, name: "test2 lsdfkslkdfmlksdf" },
+                { id: 4, name: "test3 lksdmflkmsflkms" },
+                { id: 5, name: "test4lskdmflksldkf sdf" },
+                { id: 6, name: "test5lksdlkf sdf" },
+                { id: 7, name: "test6lksdlf sdf" },
               ]}
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
               countOnly={true}
             />
           </div>
@@ -660,7 +658,7 @@ export default function App() {
               placeholder="efsdf"
               label="sdfsdfsd"
               value=""
-              onChange={(e) => console.log(e, 'onchange')}
+              onChange={(e) => console.log(e, "onchange")}
             />
           </div>
         </div>
