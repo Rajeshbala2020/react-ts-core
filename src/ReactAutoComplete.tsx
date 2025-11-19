@@ -335,10 +335,13 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     setSelectedIndex(index);
   };
   const handleOpen = (e: any) => {
-    if (!suggestions || suggestions?.length === 0) handleDropData();
-    if (!isLoading && type !== "custom_select") {
+    if (!suggestions || suggestions?.length === 0) {
+      handleDropData();
+      return;
+    }
+    if (!isLoading) {
       setDropOpen(!dropOpen);
-      setInputValue("");
+      if (type !== "custom_select") setInputValue("");
     }
   };
 
