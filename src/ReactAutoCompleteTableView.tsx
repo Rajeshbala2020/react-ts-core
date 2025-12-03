@@ -680,7 +680,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                         : `${
                             index === selectedIndex ? 'is-selected' : ''
                           } hover:bg-table-hover`
-                    }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
+                    } cursor-pointer text-xxs qbs-autocomplete-suggections-items ${
+                      tableView 
+                        ? "border-b border-grey-light last:border-b-0" 
+                        : "p-1 ps-3.5 pl-[10px]"
+                    }`}
                     key={suggestion?.id}
                     data-testid={suggestion.name}
                     onClick={() => handleSuggestionClick(suggestion, index)}
@@ -704,14 +708,13 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                         
                         // Determine if first column needs a separator
                         const hasColumnsAfter = columnsAfter.length > 0;
-                        const hasColumnsBefore = columnsBefore.length > 0;
                         
                         return (
                           <>
                             {/* Columns before first column */}
                             {columnsBefore.map((column, colIndex) => {
                               const hasValue = suggestion?.[column.key];
-                              const isLastBefore = colIndex === columnsBefore.length - 1 && !hasColumnsAfter;
+                              const isLastBefore = false;
                               return hasValue ? (
                                 <li
                                   key={column.key}
