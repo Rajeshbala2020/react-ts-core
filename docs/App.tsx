@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { ValueProps } from "../src/commontypes";
-import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernTextField } from "../src/index";
+import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernTextField, ReactAutoCompleteTableView } from "../src/index";
 import ModernTextArea from "../src/ReactTextArea";
 import TextField from "../src/ReactTextField";
 import { treeDropData } from "./store";
@@ -94,6 +94,25 @@ export default function App() {
             overflowY: "scroll",
           }}
         >
+          <div style={{ width: 300 }}>
+            <ReactAutoCompleteTableView
+              name="sample"
+              label="TextField"
+              id="id"
+              isStaticList={false}
+              type="auto_complete"
+              placeholder="TextField"
+              required
+              getData={getDatas}
+              onChange={(e) => console.log(e, "onchange")}
+              tableView={true}
+              dropdownMinWidth={500}
+              additionalColumns={[
+                { key: "body", width: 300 },
+                { key: "userId", width: 50, order: -1 },
+              ]}
+            />
+          </div>
           <div style={{ width: 500 }}>
             <AutoCompleteWithTabFilter
               label="Auto Suggestion With Data"
