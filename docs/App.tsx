@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { ValueProps } from "../src/commontypes";
-import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernTextField, ReactAutoCompleteTableView } from "../src/index";
+import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernAutoCompleteTableView, ModernTextField } from "../src/index";
 import ModernTextArea from "../src/ReactTextArea";
 import TextField from "../src/ReactTextField";
 import { treeDropData } from "./store";
@@ -95,7 +95,7 @@ export default function App() {
           }}
         >
           <div style={{ width: 300 }}>
-            <ReactAutoCompleteTableView
+            <ModernAutoCompleteTableView
               name="sample"
               label="TextField"
               id="id"
