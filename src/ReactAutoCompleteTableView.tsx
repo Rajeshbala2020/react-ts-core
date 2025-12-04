@@ -548,6 +548,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   const getDropPosition = (): any => {
     if (!insideOpen && inputRef?.current) {
       const dropdownHeight = 200; // Assume the height of the dropdown is 200px, adjust as needed
+      const isMobile = window.innerWidth < 768; // Mobile breakpoint
 
       const inputRect = inputRef.current.getBoundingClientRect();
       const spaceBelow =
@@ -561,11 +562,44 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
       } else {
         top = inputRect.top + window.scrollY + inputRect.height + 2;
       }
+
+      let left = inputRect.left + window.scrollX;
+      let width = inputRect.width + dropdownMinWidth;
+
+      // Handle mobile view
+      if (isMobile) {
+        // On mobile, constrain width to viewport with some padding
+        const viewportWidth = window.innerWidth;
+        const mobilePadding = 16; // 8px padding on each side
+        const maxWidth = viewportWidth - mobilePadding;
+        
+        // Use the smaller of: calculated width or max mobile width
+        width = Math.min(width, maxWidth);
+        
+        // Adjust left position to prevent overflow
+        // If dropdown would overflow on the right, align it to the right edge
+        const rightEdge = left + width;
+        const viewportRight = window.scrollX + viewportWidth - mobilePadding / 2;
+        
+        if (rightEdge > viewportRight) {
+          // Align to right edge with padding
+          left = viewportRight - width;
+        }
+        
+        // Ensure dropdown doesn't go off the left edge
+        const viewportLeft = window.scrollX + mobilePadding / 2;
+        if (left < viewportLeft) {
+          left = viewportLeft;
+          // Adjust width if needed to fit
+          width = Math.min(width, viewportRight - left);
+        }
+      }
+
       setDropPosition({
-        left: inputRect.left + window.scrollX,
+        left,
         top,
         bottom,
-        width: inputRect.width + dropdownMinWidth,
+        width,
       });
     }
 
