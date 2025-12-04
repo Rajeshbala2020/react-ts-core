@@ -565,11 +565,33 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
 
       let left = inputRect.left + window.scrollX;
       let width = inputRect.width + dropdownMinWidth;
+      const viewportWidth = window.innerWidth;
+      const viewportRight = window.scrollX + viewportWidth;
+      const inputRight = inputRect.right + window.scrollX;
 
-      // Handle mobile view
+      // Check if dropdown would overflow on the right side
+      const dropdownRight = left + width;
+      const wouldOverflowRight = dropdownRight > viewportRight;
+
+      // If dropdown would overflow on the right (last column scenario), align from right to left
+      if (wouldOverflowRight) {
+        // Align right edge of dropdown with right edge of input
+        // Dropdown extends to the left from the input's right edge
+        const padding = isMobile ? 8 : 0;
+        left = inputRight - width;
+        
+        // Ensure dropdown doesn't go off the left edge
+        const viewportLeft = window.scrollX + (isMobile ? 8 : 0);
+        if (left < viewportLeft) {
+          left = viewportLeft;
+          // Adjust width to fit within viewport
+          width = Math.min(width, inputRight - left - padding);
+        }
+      }
+
+      // Handle mobile view - additional constraints
       if (isMobile) {
         // On mobile, constrain width to viewport with some padding
-        const viewportWidth = window.innerWidth;
         const mobilePadding = 16; // 8px padding on each side
         const maxWidth = viewportWidth - mobilePadding;
         
@@ -577,13 +599,12 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         width = Math.min(width, maxWidth);
         
         // Adjust left position to prevent overflow
-        // If dropdown would overflow on the right, align it to the right edge
         const rightEdge = left + width;
-        const viewportRight = window.scrollX + viewportWidth - mobilePadding / 2;
+        const mobileViewportRight = window.scrollX + viewportWidth - mobilePadding / 2;
         
-        if (rightEdge > viewportRight) {
+        if (rightEdge > mobileViewportRight) {
           // Align to right edge with padding
-          left = viewportRight - width;
+          left = mobileViewportRight - width;
         }
         
         // Ensure dropdown doesn't go off the left edge
@@ -591,7 +612,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         if (left < viewportLeft) {
           left = viewportLeft;
           // Adjust width if needed to fit
-          width = Math.min(width, viewportRight - left);
+          width = Math.min(width, mobileViewportRight - left);
         }
       }
 
