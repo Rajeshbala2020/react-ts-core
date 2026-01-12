@@ -144,6 +144,7 @@ const AutoCompleteWithTabFilter = forwardRef<
         // Track previous tabSelectedItems to detect new items
         const prevTabSelectedItemsRef = useRef<ValueProps[]>([]);
         const [applyTabFilter, setApplyTabFilter] = useState(false);
+        const [moreOptionResetKey, setMoreOptionResetKey] = useState(0);
 
         let originalOverflow = '';
         let hasScrollbar = false;
@@ -948,6 +949,8 @@ const AutoCompleteWithTabFilter = forwardRef<
                 // Clear tabSelectedItems after applying filter and data is loaded
                 onToolTabChange?.([]);
                 setShowToolsTab(false);
+                // Reset moreOptionTab component
+                setMoreOptionResetKey(prev => prev + 1);
                 // Open dropdown immediately when data is ready (tools tab was open so dropdown is closed)
                 if (!dropOpen) {
                     setVisibleDrop(false); // Full animation for closed dropdown
@@ -1430,6 +1433,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                             moreOptionTabLabel={moreOptionTabLabel}
                             moreOptionTabIcon={moreOptionTabIcon}
                             onMoreOptionChange={onMoreOptionChange}
+                            moreOptionResetKey={moreOptionResetKey}
                         />)
                     }
                 </div>
