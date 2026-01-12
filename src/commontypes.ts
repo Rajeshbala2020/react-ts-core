@@ -1,3 +1,4 @@
+import React from 'react';
 import { FieldErrors, UseFormRegister } from 'react-hook-form';
 
 export type ValueProps = {
@@ -99,6 +100,10 @@ export interface AutoSuggestionInputProps {
   autoRefreshMainDropdown?: boolean;
   singleSelectIcon?: any;
   autoTabSelectAll?: boolean; // auto select all when tab is selected
+  moreOptionTab?: React.ReactNode; // custom component to render in the last tab (checkbox, radio, icon, etc.)
+  moreOptionTabLabel?: string; // label for the more options tab (default: "More Options")
+  moreOptionTabIcon?: React.ReactNode; // icon to display in the more options tab
+  onMoreOptionChange?: (values?: any) => void; // separate callback for moreOptionValues
 }
 export interface IconsProps {
   name: any;

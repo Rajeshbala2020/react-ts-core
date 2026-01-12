@@ -24,9 +24,12 @@ const DropdownFilterTabs = forwardRef<
   AutoSuggestionInputProps & {
     dropdownRef?: React.RefObject<HTMLDivElement>;
     open?: boolean;
-    applyTabFilter?: () => void;
+    applyTabFilter?: (moreOptionValues?: any) => void;
     onToolClose?: () => void;
-
+    moreOptionTab?: React.ReactNode;
+    moreOptionTabLabel?: string;
+    moreOptionTabIcon?: React.ReactNode;
+    onMoreOptionChange?: (values?: any) => void;
   }
 >(
   (
@@ -85,7 +88,11 @@ const DropdownFilterTabs = forwardRef<
       dropdownRef,
       open = false,
       applyTabFilter,
-      onToolClose
+      onToolClose,
+      moreOptionTab,
+      moreOptionTabLabel = 'More Options',
+      moreOptionTabIcon,
+      onMoreOptionChange
     },
     ref
   ) => {
@@ -129,7 +136,7 @@ const DropdownFilterTabs = forwardRef<
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
 
     // Filter selected items based on current active tab
-    const currentTabId = tab.length > 0 ? tab[activeTab].id : undefined;
+    const currentTabId = tab.length > 0 && activeTab < tab.length ? tab[activeTab].id : undefined;
     const filteredSelectedItems = useMemo(() => {
       return selectedItems.filter(item => item.tabId === currentTabId);
     }, [selectedItems, currentTabId]);
@@ -138,6 +145,10 @@ const DropdownFilterTabs = forwardRef<
     useEffect(() => {
       setDropOpen(open);
     }, [open]);
+
+    useEffect(() => {
+      setActiveTab(currentTab);
+    }, [currentTab]);
 
     const adjustDropdownPosition = () => {
       if (dropdownRef?.current) {
@@ -731,13 +742,15 @@ const DropdownFilterTabs = forwardRef<
     }, [selectedItems, tab]);
 
     const getTabItems = useCallback(() => {
+      const allTabs = moreOptionTab ? [...tab, { id: 'more-options', label: moreOptionTabLabel }] : tab;
       return (
         <ul
           className="qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2"
           ref={tabRef}
         >
-          {tab.map((item: TabPops, idx: number) => {
-            const hasSelectedItems = hasSelectedItemsInTab(idx);
+          {allTabs.map((item: TabPops, idx: number) => {
+            const isMoreOptionsTab = item.id === 'more-options';
+            const hasSelectedItems = isMoreOptionsTab ? false : hasSelectedItemsInTab(idx);
             return (
               <li 
                 className={`qbs-flex-1 qbs-tab-items ${hasSelectedItems ? 'qbs-tab-has-selected-items' : ''}`} 
@@ -747,17 +760,28 @@ const DropdownFilterTabs = forwardRef<
                   className={`qbs-inline-block qbs-tab-item qbs-text-sm qbs-cursor-pointer qbs-w-full qbs-text-center qbs-p-1 qbs-border-b-2 ${activeTab === idx ? 'qbs-tab-active-item' : ''
                     }`}
                   onClick={() => {
-                    handleTabClick(idx);
+                    if (isMoreOptionsTab) {
+                      setActiveTab(idx);
+                    } else {
+                      handleTabClick(idx);
+                    }
                   }}
                 >
-                  {item.label}
+                  <span className="qbs-flex qbs-items-center qbs-justify-center qbs-gap-1">
+                    {isMoreOptionsTab && moreOptionTabIcon && (
+                      <span className="qbs-inline-flex qbs-items-center">
+                        {moreOptionTabIcon}
+                      </span>
+                    )}
+                    {item.label}
+                  </span>
                 </span>
               </li>
             );
           })}
         </ul>
       );
-    }, [tab, hasSelectedItemsInTab, activeTab, handleTabClick]);
+    }, [tab, hasSelectedItemsInTab, activeTab, handleTabClick, moreOptionTab, moreOptionTabLabel, moreOptionTabIcon]);
 
     const handleSelectAll = useCallback(() => {
       if (isMultiple) {
@@ -827,9 +851,9 @@ const DropdownFilterTabs = forwardRef<
       }
     };
 
-    const handleApplySelected = () => {
+    const handleApplySelected = (values?: any) => {
       setDropOpen(false);
-      applyTabFilter?.();
+      applyTabFilter?.(values);
     };
 
     useEffect(() => {
@@ -880,9 +904,25 @@ const DropdownFilterTabs = forwardRef<
               {!viewMode && (
                 <>
                   <>{tab.length > 0 && getTabItems()}</>
+                  {moreOptionTab && activeTab === tab.length && (
+                     <div
+                      style={{ position: 'relative' }}
+                      className={`qbs-autocomplete-moreoption-container`}
+                    >
+                      {React.isValidElement(moreOptionTab)
+                        ? React.cloneElement(moreOptionTab as React.ReactElement<any>, {
+                            onApply: (values?: any) => handleApplySelected(values),
+                            onValueChange: (values?: any) => {
+                              onMoreOptionChange?.(values);
+                            },
+                          } as any)
+                        : moreOptionTab}
+                    </div>
+                  )}
                   {type === 'auto_suggestion' &&
                     !expandable &&
-                    tabInlineSearch && (
+                    tabInlineSearch &&
+                    activeTab !== (moreOptionTab ? tab.length : tab.length - 1) && (
                       <div
                         style={{ position: 'relative' }}
                         className="react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer"
@@ -923,52 +963,54 @@ const DropdownFilterTabs = forwardRef<
                 </>
               )}
 
-              {filteredData?.length > 0 && enableSelectAll && isMultiple && (
-                <div
-                  id="select-all"
-                  className={`qbs-select-all-link qbs-cursor-pointer qbs-text-xs`}
-                  onClick={handleSelectAll}
-                >
-                  <div
-                    className={`qbs-autocomplete-listitem-container qbs-autocomplete-checkbox-container`}
-                  >
-                    <div className="qbs-autocomplete-checkbox">
-                      <input
-                        type="checkbox"
-                        checked={selectAll}
-                        id={`qbs-checkbox-all`}
-                      />
-                      <label htmlFor={`qbs-checkbox-all`}>
-                        <svg
-                          width="8"
-                          height="6"
-                          viewBox="0 0 8 6"
-                          fill="none"
-                          xmlns="http://www.w3.org/2000/svg"
-                        >
-                          <path
-                            d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
-                            fill="white"
+              {activeTab !== (moreOptionTab ? tab.length : tab.length - 1) && (
+                <>
+                  {filteredData?.length > 0 && enableSelectAll && isMultiple && (
+                    <div
+                      id="select-all"
+                      className={`qbs-select-all-link qbs-cursor-pointer qbs-text-xs`}
+                      onClick={handleSelectAll}
+                    >
+                      <div
+                        className={`qbs-autocomplete-listitem-container qbs-autocomplete-checkbox-container`}
+                      >
+                        <div className="qbs-autocomplete-checkbox">
+                          <input
+                            type="checkbox"
+                            checked={selectAll}
+                            id={`qbs-checkbox-all`}
                           />
-                        </svg>
-                      </label>
+                          <label htmlFor={`qbs-checkbox-all`}>
+                            <svg
+                              width="8"
+                              height="6"
+                              viewBox="0 0 8 6"
+                              fill="none"
+                              xmlns="http://www.w3.org/2000/svg"
+                            >
+                              <path
+                                d="M0 3.21739L2.89883 6L8 1.06994L6.89494 0L2.89883 3.86768L1.09728 2.14745L0 3.21739Z"
+                                fill="white"
+                              />
+                            </svg>
+                          </label>
+                        </div>
+                        <div className={`qbs-autocomplete-suggestions-item`}>
+                          Select All
+                        </div>
+                      </div>
                     </div>
-                    <div className={`qbs-autocomplete-suggestions-item`}>
-                      Select All
-                    </div>
-                  </div>
-                </div>
-              )}
+                  )}
 
-              <div
-                className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'hidden' : ''
-                  }`}
-                ref={itemsRef}
-                style={{
-                  maxHeight: `${selHeight}px`,
-                  minHeight: `${selHeight}px`,
-                }}
-              >
+                  <div
+                    className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'hidden' : ''
+                      }`}
+                    ref={itemsRef}
+                    style={{
+                      maxHeight: `${selHeight}px`,
+                      minHeight: `${selHeight}px`,
+                    }}
+                  >
                 {filteredData?.length > 0 ? (
                   filteredData.map((suggestion: ValueProps, idx: number) => (
                     <DropdownList
@@ -1023,7 +1065,9 @@ const DropdownFilterTabs = forwardRef<
                       <p style={{ margin: 2 }}>Load More</p>
                     </div>
                   )}
-              </div>
+                  </div>
+                </>
+              )}
               <>
                 {countOnly && filteredSelectedItems?.length > 0 && (
                   <>
