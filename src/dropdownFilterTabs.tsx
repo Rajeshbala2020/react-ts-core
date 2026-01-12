@@ -30,6 +30,7 @@ const DropdownFilterTabs = forwardRef<
     moreOptionTabLabel?: string;
     moreOptionTabIcon?: React.ReactNode;
     onMoreOptionChange?: (values?: any) => void;
+    moreOptionResetKey?: number;
   }
 >(
   (
@@ -92,7 +93,8 @@ const DropdownFilterTabs = forwardRef<
       moreOptionTab,
       moreOptionTabLabel = 'More Options',
       moreOptionTabIcon,
-      onMoreOptionChange
+      onMoreOptionChange,
+      moreOptionResetKey: externalResetKey
     },
     ref
   ) => {
@@ -134,6 +136,17 @@ const DropdownFilterTabs = forwardRef<
     const [refetchData, setRefetchData] = useState(false);
     const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+    const [hasMoreOptionValues, setHasMoreOptionValues] = useState(false);
+    
+    // Use external reset key if provided, otherwise default to 0
+    const currentResetKey = externalResetKey !== undefined ? externalResetKey : 0;
+
+    // Reset hasMoreOptionValues when reset key changes
+    useEffect(() => {
+      if (externalResetKey !== undefined && externalResetKey > 0) {
+        setHasMoreOptionValues(false);
+      }
+    }, [externalResetKey]);
 
     // Filter selected items based on current active tab
     const currentTabId = tab.length > 0 && activeTab < tab.length ? tab[activeTab].id : undefined;
@@ -750,7 +763,7 @@ const DropdownFilterTabs = forwardRef<
         >
           {allTabs.map((item: TabPops, idx: number) => {
             const isMoreOptionsTab = item.id === 'more-options';
-            const hasSelectedItems = isMoreOptionsTab ? false : hasSelectedItemsInTab(idx);
+            const hasSelectedItems = isMoreOptionsTab ? hasMoreOptionValues : hasSelectedItemsInTab(idx);
             return (
               <li 
                 className={`qbs-flex-1 qbs-tab-items ${hasSelectedItems ? 'qbs-tab-has-selected-items' : ''}`} 
@@ -908,11 +921,16 @@ const DropdownFilterTabs = forwardRef<
                      <div
                       style={{ position: 'relative' }}
                       className={`qbs-autocomplete-moreoption-container`}
+                      key={`more-option-${currentResetKey}`}
                     >
                       {React.isValidElement(moreOptionTab)
                         ? React.cloneElement(moreOptionTab as React.ReactElement<any>, {
                             onApply: (values?: any) => handleApplySelected(values),
                             onValueChange: (values?: any) => {
+                              // Check if values exist and update state
+                              const hasValues = values !== undefined && values !== null && 
+                                (typeof values === 'object' ? Object.keys(values).length > 0 : true);
+                              setHasMoreOptionValues(hasValues);
                               onMoreOptionChange?.(values);
                             },
                           } as any)
