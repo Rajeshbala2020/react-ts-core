@@ -89,7 +89,11 @@ const AutoCompleteWithTabFilter = forwardRef<
             toolTabClearSwitch = false,
             onToolTabChange,
             autoRefreshMainDropdown = true,
-            autoTabSelectAll = true
+            autoTabSelectAll = true,
+            moreOptionTab,
+            moreOptionTabLabel,
+            moreOptionTabIcon,
+            onMoreOptionChange
         },
         ref
     ) => {
@@ -961,10 +965,11 @@ const AutoCompleteWithTabFilter = forwardRef<
             setAllDataLoaded(false);
         }, [showToolsTab]);
 
-        const handleApplyTabFilter = useCallback(() => {
+        const handleApplyTabFilter = useCallback((moreOptionValues?: any) => {
             // Set flag to trigger effect when data loads
             setApplyTabFilter(true);
             handlePickSuggestions(searchValue ? searchValue : '*', 1);
+            // Note: onMoreOptionChange is called when values change in the component, not here
         }, [searchValue, handlePickSuggestions]);
 
         useEffect(() => {
@@ -1421,6 +1426,10 @@ const AutoCompleteWithTabFilter = forwardRef<
                             enableSelectAll={enableSelectAll}
                             applyTabFilter={handleApplyTabFilter}
                             onToolClose={() => setShowToolsTab(false)}
+                            moreOptionTab={moreOptionTab}
+                            moreOptionTabLabel={moreOptionTabLabel}
+                            moreOptionTabIcon={moreOptionTabIcon}
+                            onMoreOptionChange={onMoreOptionChange}
                         />)
                     }
                 </div>

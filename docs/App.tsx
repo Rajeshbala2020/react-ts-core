@@ -7,6 +7,7 @@ import TextField from "../src/ReactTextField";
 import { treeDropData } from "./store";
 
 import "../src/styles/global.css";
+import SettingsIcon from "../src/components/customIcons/Settings";
 
 export default function App() {
   const [dropData, setDropData] = useState();
@@ -196,6 +197,11 @@ export default function App() {
               autoDropdown={true}
               tabInlineSearch={false}
               //autoTabSelectAll={false}
+              moreOptionTab={
+                <MoreOptionsComponent />
+              }
+              moreOptionTabLabel="Settings"
+              onMoreOptionChange={(values) => console.log(values, "onMoreOptionChange")}
             />
           </div>
 
@@ -685,3 +691,39 @@ export default function App() {
     </React.Fragment>
   );
 }
+
+
+interface MoreOptionsComponentProps {
+  onApply?: (values?: any) => void;
+  onValueChange?: (values?: any) => void;
+}
+
+const MoreOptionsComponent = ({ onApply, onValueChange }: MoreOptionsComponentProps) => {
+  const [checked, setChecked] = useState(false);
+  
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = e.target.checked;
+    setChecked(newValue);
+    // Trigger onValueChange when value changes
+    onValueChange?.({ includeAll: newValue });
+  };
+  
+  const handleApply = () => {
+    // Pass values to onApply callback
+    onApply?.({ includeAll: checked });
+  };
+  
+  return (
+    <div className="qbs-gap-2 ms-2">
+      <input 
+        type="checkbox" 
+        checked={checked}
+        onChange={handleChange}
+      />
+      Include all items
+      <div className="qbs-flex qbs-items-center qbs-justify-end">
+        <button onClick={handleApply}>Apply</button>
+      </div>
+    </div>
+  );
+};
