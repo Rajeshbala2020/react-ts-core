@@ -847,12 +847,16 @@ const AutoCompleteWithSelectedList = forwardRef<
       
       if (!suggestions || suggestions?.length === 0 || refetchData) {
         if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
-          if (tabInlineSearch && tab.length > 0) {
-            const activeTabVal =
+          const activeTabVal =
               tab.length > 0 ? tab?.[activeTab].id : undefined;
-          handlePickSuggestions('*', 1, false, activeTabVal);
+          if (tabInlineSearch && tab.length > 0) {
+            handlePickSuggestions('*', 1, false, activeTabVal);
           } else {
-            handlePickSuggestions('*', 1);
+            if(tab.length > 0) {
+              handlePickSuggestions('*', 1, false, activeTabVal);
+            } else {
+              handlePickSuggestions('*', 1);
+            }
           }
           setRefetchData(false);
           setAllDataLoaded(true);
