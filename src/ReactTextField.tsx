@@ -49,6 +49,7 @@ const TextField: React.FC<TextFieldProps> = ({
   isModern = true,
   enableSearch = false,
   onSearchClick,
+  inputClassName = '',
   ///
 }) => {
   // const [editState, setEditState] = useState<boolean>(false)
@@ -117,7 +118,7 @@ const TextField: React.FC<TextFieldProps> = ({
 
     switch (from) {
       case "input":
-        className += `block ${
+        className += `block ${inputClassName} ${
           size === "xxs" ? " text-xxs" : "text-common"
         }  text-input-text font-normal ${
           step && adorement ? "px-2.5" : "px-3.5"
