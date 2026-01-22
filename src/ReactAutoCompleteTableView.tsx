@@ -58,6 +58,10 @@ interface AutoSuggestionInputProps {
     width?: number; // Optional width in pixels (if not set, uses flex-1 for equal width)
     order?: number; // Optional order/position (lower numbers appear first, default maintains array order)
   }>; // Additional columns to display
+  columnHeader?: Array<{
+    key: string; // Field name in the suggestion object
+    label: string; // Label for the column
+  }>; // Column header to display
 }
 
 const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
@@ -95,6 +99,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   dropdownMinWidth = 200,
   tableView = false,
   additionalColumns = [],
+  columnHeader = [],
 }) => {
   const [inputValue, setInputValue] = useState<any>(value?.name ?? "");
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -727,6 +732,79 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
           >
             {filteredData?.length > 0 ? (
               <>
+                {columnHeader && columnHeader.length > 0 && (
+                  <li className="sticky top-0 auto-suggections-tableview-header z-10 bg-gray-100 border-b border-grey-light">
+                    <ul className="flex items-stretch w-full list-none p-0 m-0">
+                      {(() => {
+                        // Sort columns by order if specified, otherwise maintain array order
+                        const sortedColumns = additionalColumns 
+                          ? [...additionalColumns].sort((a, b) => {
+                              const orderA = a.order !== undefined ? a.order : Infinity;
+                              const orderB = b.order !== undefined ? b.order : Infinity;
+                              return orderA - orderB;
+                            })
+                          : [];
+                        
+                        // Separate columns before first column (order < 0) and after (order >= 0 or undefined)
+                        const columnsBefore = sortedColumns.filter(col => col.order !== undefined && col.order < 0);
+                        const columnsAfter = sortedColumns.filter(col => col.order === undefined || col.order >= 0);
+                        
+                        // Determine if first column needs a separator
+                        const hasColumnsAfter = columnsAfter.length > 0;
+                        
+                        // Find header for first column (name/label)
+                        const nameHeader = columnHeader.find(h => h.key === 'name' || h.key === 'label');
+                        
+                        return (
+                          <>
+                            {/* Headers for columns before first column */}
+                            {columnsBefore.map((column, colIndex) => {
+                              const header = columnHeader.find(h => h.key === column.key);
+                              const isLastBefore = false;
+                              return header ? (
+                                <li
+                                  key={column.key}
+                                  className={`${column.width ? 'flex-shrink-0' : 'flex-1'} min-w-0 px-3 py-2 ${!isLastBefore ? 'border-r border-grey-light' : ''} break-words flex flex-col`}
+                                  style={column.width ? { width: `${column.width}px` } : undefined}
+                                >
+                                  <span className="block whitespace-normal text-xs font-semibold text-gray-700">
+                                    {header.label}
+                                  </span>
+                                </li>
+                              ) : null;
+                            })}
+                            
+                            {/* First column header (label/name) */}
+                            {nameHeader && (
+                              <li className={`flex-1 min-w-0 px-3 py-2 ${hasColumnsAfter ? 'border-r border-grey-light' : ''} break-words flex flex-col`}>
+                                <span className="block whitespace-normal text-xs font-semibold text-gray-700">
+                                  {nameHeader.label}
+                                </span>
+                              </li>
+                            )}
+                            
+                            {/* Headers for columns after first column */}
+                            {columnsAfter.map((column, colIndex) => {
+                              const header = columnHeader.find(h => h.key === column.key);
+                              const isLastColumn = colIndex === columnsAfter.length - 1;
+                              return header ? (
+                                <li
+                                  key={column.key}
+                                  className={`${column.width ? 'flex-shrink-0' : 'flex-1'} min-w-0 px-3 py-2 ${!isLastColumn ? 'border-r border-grey-light' : ''} break-words flex flex-col`}
+                                  style={column.width ? { width: `${column.width}px` } : undefined}
+                                >
+                                  <span className="block whitespace-normal text-xs font-semibold text-gray-700">
+                                    {header.label}
+                                  </span>
+                                </li>
+                              ) : null;
+                            })}
+                          </>
+                        );
+                      })()}
+                    </ul>
+                  </li>
+                )}
                 {filteredData.map((suggestion: any, index: number) => (
                   <li
                     className={`${

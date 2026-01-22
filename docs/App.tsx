@@ -110,7 +110,12 @@ export default function App() {
               dropdownMinWidth={500}
               additionalColumns={[
                 { key: "body", width: 300 },
-                { key: "userId", width: 50, order: -1 },
+                { key: "userId", width: 100, order: -1 },
+              ]}
+              columnHeader={[
+                { key: "body", label: "Body" }, 
+                { key: "userId", label: "User ID" }, 
+                { key: "name", label: "Name" }
               ]}
             />
           </div>
