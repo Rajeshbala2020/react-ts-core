@@ -940,7 +940,7 @@ const DropdownFilterTabs = forwardRef<
                   {type === 'auto_suggestion' &&
                     !expandable &&
                     tabInlineSearch &&
-                    activeTab !== (moreOptionTab ? tab.length : tab.length - 1) && (
+                    !(moreOptionTab && activeTab === tab.length) && (
                       <div
                         style={{ position: 'relative' }}
                         className="react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer"
@@ -981,7 +981,7 @@ const DropdownFilterTabs = forwardRef<
                 </>
               )}
 
-              {activeTab !== (moreOptionTab ? tab.length : tab.length - 1) && (
+              {!(moreOptionTab && activeTab === tab.length) && (
                 <>
                   {filteredData?.length > 0 && enableSelectAll && isMultiple && (
                     <div
