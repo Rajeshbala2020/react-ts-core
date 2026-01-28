@@ -104,6 +104,7 @@ export interface AutoSuggestionInputProps {
   moreOptionTabLabel?: string; // label for the more options tab (default: "More Options")
   moreOptionTabIcon?: React.ReactNode; // icon to display in the more options tab
   onMoreOptionChange?: (values?: any) => void; // separate callback for moreOptionValues
+  resetAllSearch?: boolean; // allow to reset if tabInlineSearch is false
 }
 export interface IconsProps {
   name: any;

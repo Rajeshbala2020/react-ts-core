@@ -1126,6 +1126,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                         <input
                           type="checkbox"
                           checked={selectAll}
+                          onChange={handleSelectAll}
                           id={`qbs-checkbox-all`}
                         />
                         <label htmlFor={`qbs-checkbox-all`}>

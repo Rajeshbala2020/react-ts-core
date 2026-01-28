@@ -93,7 +93,8 @@ const AutoCompleteWithTabFilter = forwardRef<
             moreOptionTab,
             moreOptionTabLabel,
             moreOptionTabIcon,
-            onMoreOptionChange
+            onMoreOptionChange,
+            resetAllSearch = true,
         },
         ref
     ) => {
@@ -295,12 +296,13 @@ const AutoCompleteWithTabFilter = forwardRef<
             setSelectedItems([]);
             setShowAllSelected(false);
             setShowToolsTab(false);
-            if (searchValue && type === 'auto_suggestion' && tabInlineSearch) {
+            if (searchValue && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) {
                 setSearchValue('');
             }
+            console.log('handleClearSelected', searchValue, type, tabInlineSearch);
             if (isMultiple) onChange([]);
             else onChange({ [descId]: '', [desc]: '' });
-            if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
+            if (async && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) resetSuggections?.();
         }, [searchValue, type, tabInlineSearch, isMultiple, onChange, descId, desc, async, resetSuggections]);
 
         const generateClassName = useCallback(() => {
@@ -902,7 +904,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     setVisible(true);
                 }
             }
-            if (!suggestions || suggestions?.length === 0 || refetchData) {
+            if (!suggestions || suggestions?.length === 0 || refetchData || resetAllSearch) {
                 if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
                     const activeTabVal =
                             tab.length > 0 ? tab?.[activeTab].id : undefined;
@@ -1260,6 +1262,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                                 <input
                                                     type="checkbox"
                                                     checked={selectAll}
+                                                    onChange={handleSelectAll}
                                                     id={`qbs-checkbox-all`}
                                                 />
                                                 <label htmlFor={`qbs-checkbox-all`}>
