@@ -141,9 +141,12 @@ const AutoCompleteWithSelectedList = forwardRef<
         const tabsNaturalWidth = tabRef.current
           ? measureTabListNaturalWidth(tabRef.current)
           : null;
+        const maxWidthCap = tab.length > 0
+          ? Math.max(MAX_DROPDOWN_WIDTH_WITH_TABS_PX, dropdownPosition.width)
+          : Number.POSITIVE_INFINITY;
         const widthBeforeClamp = Math.min(
           Math.max(dropdownPosition.width, tabsNaturalWidth ?? 0, MIN_DROPDOWN_WIDTH_PX),
-          tab.length > 0 ? MAX_DROPDOWN_WIDTH_WITH_TABS_PX : Number.POSITIVE_INFINITY
+          maxWidthCap
         );
         const { width: desiredWidth, left: desiredLeft } =
           clampDropdownToViewportPreferRightAlign({
