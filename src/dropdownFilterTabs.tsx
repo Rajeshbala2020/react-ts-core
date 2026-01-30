@@ -18,6 +18,12 @@ import { filterSuggestions } from './utilities/filterSuggestions';
 import { AllDropArrow, DropArrow, Search, Spinner } from './utilities/icons';
 import { default as Tooltip } from './utilities/NewTooltip';
 import { getKeyValue, safeToLowerString } from './utilities/getKeyValue';
+import {
+  clampDropdownToViewportPreferRightAlign,
+  MAX_DROPDOWN_WIDTH_WITH_TABS_PX,
+  MIN_DROPDOWN_WIDTH_PX,
+  measureTabListNaturalWidth,
+} from './utilities/measureTabListNaturalWidth';
 
 const DropdownFilterTabs = forwardRef<
   HTMLInputElement,
@@ -137,6 +143,7 @@ const DropdownFilterTabs = forwardRef<
     const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
     const [hasMoreOptionValues, setHasMoreOptionValues] = useState(false);
+    const [tabsScrollable, setTabsScrollable] = useState(false);
     
     // Use external reset key if provided, otherwise default to 0
     const currentResetKey = externalResetKey !== undefined ? externalResetKey : 0;
@@ -171,6 +178,23 @@ const DropdownFilterTabs = forwardRef<
           width: inputRect.width,
           top: 0,
         };
+        const hasTabs = tab.length > 0 || !!moreOptionTab;
+        const tabsNaturalWidth = tabRef.current
+          ? measureTabListNaturalWidth(tabRef.current)
+          : null;
+        const widthBeforeClamp = Math.min(
+          Math.max(dropdownPosition.width, tabsNaturalWidth ?? 0, MIN_DROPDOWN_WIDTH_PX),
+          hasTabs ? MAX_DROPDOWN_WIDTH_WITH_TABS_PX : Number.POSITIVE_INFINITY
+        );
+        const { width: desiredWidth, left: desiredLeft } = clampDropdownToViewportPreferRightAlign({
+          desiredWidth: widthBeforeClamp,
+          desiredLeft: dropdownPosition.left,
+          anchorRight: inputRect.right + window.scrollX,
+        });
+        setTabsScrollable((prev) => {
+          const next = hasTabs && (tabsNaturalWidth ?? 0) > desiredWidth;
+          return prev === next ? prev : next;
+        });
         // Check if there's enough space below the input for the dropdown
         const spaceBelow = window.innerHeight - inputRect.bottom;
         const spaceAbove = inputRect.top + window.scrollY;
@@ -224,8 +248,8 @@ const DropdownFilterTabs = forwardRef<
         setDropdownStyle((prevStyle) => ({
           ...prevStyle,
           transform: `translateY(${dropdownPosition.top}px)`,
-          left: inputRect.left + window.scrollX,
-          width: inputRect.width,
+          left: desiredLeft,
+          width: desiredWidth,
         }));
 
       }
@@ -386,6 +410,7 @@ const DropdownFilterTabs = forwardRef<
 
     const uniqueDropArrowId = `${name}-drop-arrow-selected-list-icon`;
     const isKeyboardOpenRef = useRef(false);
+    const closeOnScrollTimeoutRef = useRef<number | null>(null);
 
     // Keep ref in sync with state for use in event handlers
     useEffect(() => {
@@ -412,7 +437,13 @@ const DropdownFilterTabs = forwardRef<
 
     useEffect(() => {
       const handleScroll = (event: any) => {
-        // On mobile: Don't close dropdown on scroll when keyboard is open
+        // Don't close if the user is scrolling inside the dropdown itself.
+        const scrollTarget = event.target;
+        if (dropRef.current && scrollTarget instanceof Node && dropRef.current.contains(scrollTarget)) {
+          return;
+        }
+
+        // On mobile: Don't close dropdown on scroll when keyboard is open (typing scenario)
         // On desktop: Always allow closing on scroll
         if (isKeyboardOpenRef.current) {
           // Only prevent closing if keyboard is actually open (mobile scenario)
@@ -427,15 +458,12 @@ const DropdownFilterTabs = forwardRef<
           }
         }
 
-        // Check if scroll is happening within the dropdown itself - if so, don't close
-        const scrollTarget = event.target;
-        if (dropRef.current && scrollTarget instanceof Node && dropRef.current.contains(scrollTarget)) {
-          return;
-        }
-
-        // On desktop (keyboard not open), close on scroll
-        if (dropRef.current && dropOpen) {
-          setTimeout(() => {
+        // Close on any outside scroll (including scrolls on nested containers).
+        if (dropOpen) {
+          if (closeOnScrollTimeoutRef.current) {
+            window.clearTimeout(closeOnScrollTimeoutRef.current);
+          }
+          closeOnScrollTimeoutRef.current = window.setTimeout(() => {
             setDropOpen(false);
             onToolClose?.();
             if (!typeOnlyFetch) setSearchValue('');
@@ -485,6 +513,8 @@ const DropdownFilterTabs = forwardRef<
 
       document.addEventListener('mousedown', handleClickOutside as any);
       window.addEventListener('scroll', handleScroll as any);
+      // Capture-phase scroll catches scrolls from any scroll container (scroll doesn't bubble).
+      document.addEventListener('scroll', handleScroll as any, true);
 
       const scrollableDivs = document.querySelectorAll(
         'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
@@ -498,9 +528,14 @@ const DropdownFilterTabs = forwardRef<
       return () => {
         document.removeEventListener('mousedown', handleClickOutside as any);
         window.removeEventListener('scroll', handleScroll as any);
+        document.removeEventListener('scroll', handleScroll as any, true);
         scrollableDivs.forEach((div) =>
           div.removeEventListener('scroll', handleScroll as any)
         );
+        if (closeOnScrollTimeoutRef.current) {
+          window.clearTimeout(closeOnScrollTimeoutRef.current);
+          closeOnScrollTimeoutRef.current = null;
+        }
         if (scrollRef && scrollRef.current && scrollRef.current !== null) {
           scrollRef.current.removeEventListener(
             'scroll',
@@ -758,7 +793,7 @@ const DropdownFilterTabs = forwardRef<
       const allTabs = moreOptionTab ? [...tab, { id: 'more-options', label: moreOptionTabLabel }] : tab;
       return (
         <ul
-          className="qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2"
+          className={`qbs-flex qbs-flex-wrap qbs-w-full qbs-tab qbs-mb-2 -qbs-mt-2 ${tabsScrollable ? 'qbs-tab-scroll' : ''}`}
           ref={tabRef}
         >
           {allTabs.map((item: TabPops, idx: number) => {
@@ -794,7 +829,7 @@ const DropdownFilterTabs = forwardRef<
           })}
         </ul>
       );
-    }, [tab, hasSelectedItemsInTab, activeTab, handleTabClick, moreOptionTab, moreOptionTabLabel, moreOptionTabIcon]);
+    }, [tab, hasSelectedItemsInTab, activeTab, handleTabClick, moreOptionTab, moreOptionTabLabel, moreOptionTabIcon, tabsScrollable]);
 
     const handleSelectAll = useCallback(() => {
       if (isMultiple) {
@@ -866,6 +901,8 @@ const DropdownFilterTabs = forwardRef<
 
     const handleApplySelected = (values?: any) => {
       setDropOpen(false);
+      setSearchValue('');
+      resetSuggections?.();
       applyTabFilter?.(values);
     };
 

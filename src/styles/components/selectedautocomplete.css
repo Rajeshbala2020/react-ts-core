@@ -37,6 +37,15 @@
 .qbs-tab-item {
   color: #4b5563;
   border-color: #d1d5db;
+  /* Prevent mid-word breaking from any inherited/global rules */
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
+  /* Prevent breaking at spaces too (single-line label) */
+  white-space: nowrap;
+  /* In non-scroll layout, keep text tidy if it's forced into a narrow cell */
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 .qbs-tab-item:hover {
   color: #2563eb;
@@ -44,6 +53,36 @@
 .qbs-tab-active-item {
   color: #2563eb;
   border-color: #2563eb;
+}
+
+/* When tabs overflow, keep them in a single row and allow horizontal scroll */
+.qbs-tab.qbs-tab-scroll {
+  flex-wrap: nowrap !important; /* override .qbs-flex-wrap */
+  overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+}
+
+.qbs-tab.qbs-tab-scroll .qbs-tab-items {
+  flex: 0 0 auto !important; /* override .qbs-flex-1 */
+}
+
+.qbs-tab.qbs-tab-scroll .qbs-tab-item {
+  width: max-content !important; /* override .qbs-w-full */
+  white-space: nowrap;
+  word-break: normal;
+  overflow-wrap: normal;
+  hyphens: manual;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* If the tab label has nested spans (icons + text), ensure they inherit the non-breaking behavior */
+.qbs-tab-item * {
+  word-break: inherit;
+  overflow-wrap: inherit;
+  hyphens: inherit;
+  white-space: inherit;
 }
 .qbs-relative {
   position: relative;
