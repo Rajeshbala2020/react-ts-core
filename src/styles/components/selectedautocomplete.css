@@ -46,6 +46,9 @@
   /* In non-scroll layout, keep text tidy if it's forced into a narrow cell */
   overflow: hidden;
   text-overflow: ellipsis;
+  /* Minimum left/right padding inside each tab */
+  padding-left: 8px;
+  padding-right: 8px;
 }
 .qbs-tab-item:hover {
   color: #2563eb;
