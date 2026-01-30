@@ -182,9 +182,12 @@ const DropdownFilterTabs = forwardRef<
         const tabsNaturalWidth = tabRef.current
           ? measureTabListNaturalWidth(tabRef.current)
           : null;
+        const maxWidthCap = hasTabs
+          ? Math.max(MAX_DROPDOWN_WIDTH_WITH_TABS_PX, dropdownPosition.width)
+          : Number.POSITIVE_INFINITY;
         const widthBeforeClamp = Math.min(
           Math.max(dropdownPosition.width, tabsNaturalWidth ?? 0, MIN_DROPDOWN_WIDTH_PX),
-          hasTabs ? MAX_DROPDOWN_WIDTH_WITH_TABS_PX : Number.POSITIVE_INFINITY
+          maxWidthCap
         );
         const { width: desiredWidth, left: desiredLeft } = clampDropdownToViewportPreferRightAlign({
           desiredWidth: widthBeforeClamp,
