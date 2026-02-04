@@ -68,7 +68,8 @@ export default function App() {
           return {
             ...item,
             ["name"]: item?.title + " - " + tab?.toString(),
-            id: `${item?.id.toString()}-${tab?.toString()}`,
+            //id: `${item?.id.toString()}-${tab?.toString()}`,
+            id: item?.id.toString(),
           };
         });
         return result;
