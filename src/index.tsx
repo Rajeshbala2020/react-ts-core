@@ -10,6 +10,7 @@ export { default as AutoCompleteWithTreeStructure } from './AutoCompleteWithTree
 export type { AutoSuggestionInputProps } from './commontypes';
 export { default as ExpandableAutoComplete } from './ExpandableAutoComplete';
 export { default as ModernAutoComplete } from './ReactAutoComplete';
+export { default as ModernAutoCompleteSuggections } from './ReactAutoCompleteSuggections';
 export { default as ModernCheckBox } from './ReactCheckbox';
 export { default as ModernOtpInput } from './ReactOTPInput';
 export { default as ModernRadio } from './ReactRadioButton';

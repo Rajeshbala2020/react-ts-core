@@ -144,6 +144,7 @@ const DropdownFilterTabs = forwardRef<
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
     const [hasMoreOptionValues, setHasMoreOptionValues] = useState(false);
     const [tabsScrollable, setTabsScrollable] = useState(false);
+    const scrollableDivsRef = useRef<NodeListOf<Element> | null>(null);
     
     // Use external reset key if provided, otherwise default to 0
     const currentResetKey = externalResetKey !== undefined ? externalResetKey : 0;
@@ -170,9 +171,16 @@ const DropdownFilterTabs = forwardRef<
       setActiveTab(currentTab);
     }, [currentTab]);
 
+    // Reset focused index when active tab changes
+    useEffect(() => {
+      setFocusedIndex(0);
+    }, [activeTab]);
+
     const adjustDropdownPosition = () => {
-      if (dropdownRef?.current) {
-        const inputRect = dropdownRef?.current?.getBoundingClientRect();
+      // Use requestAnimationFrame to ensure DOM is ready
+      requestAnimationFrame(() => {
+        if (dropdownRef?.current) {
+          const inputRect = dropdownRef?.current?.getBoundingClientRect();
         const dropdownPosition = {
           left: inputRect.left + window.scrollX,
           width: inputRect.width,
@@ -248,14 +256,14 @@ const DropdownFilterTabs = forwardRef<
         // setDropdownStyle({
         //   ...dropdownPosition,
         // });
-        setDropdownStyle((prevStyle) => ({
-          ...prevStyle,
-          transform: `translateY(${dropdownPosition.top}px)`,
-          left: desiredLeft,
-          width: desiredWidth,
-        }));
-
-      }
+          setDropdownStyle((prevStyle) => ({
+            ...prevStyle,
+            transform: `translateY(${dropdownPosition.top}px)`,
+            left: desiredLeft,
+            width: desiredWidth,
+          }));
+        }
+      });
     };
 
     useEffect(() => {
@@ -552,22 +560,44 @@ const DropdownFilterTabs = forwardRef<
       // Capture-phase scroll catches scrolls from any scroll container (scroll doesn't bubble).
       document.addEventListener('scroll', handleScroll as any, true);
 
-      const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
-      );
-      scrollableDivs.forEach((div) =>
+      // Query scrollable divs and store in ref for cleanup
+      // Re-query when dropdown opens to catch dynamically added containers
+      const queryScrollableDivs = () => {
+        return document.querySelectorAll(
+          'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        );
+      };
+      
+      // Clean up previous listeners if any
+      if (scrollableDivsRef.current) {
+        scrollableDivsRef.current.forEach((div) =>
+          div.removeEventListener('scroll', handleScroll as any)
+        );
+      }
+      
+      // Query and attach listeners to scrollable divs
+      scrollableDivsRef.current = queryScrollableDivs();
+      scrollableDivsRef.current.forEach((div) =>
         div.addEventListener('scroll', handleScroll as any)
       );
+      
       if (scrollRef && scrollRef.current && scrollRef.current !== null) {
         scrollRef.current.addEventListener('scroll', handleScroll as any);
       }
+      
       return () => {
         document.removeEventListener('mousedown', handleClickOutside as any);
         window.removeEventListener('scroll', handleScroll as any);
         document.removeEventListener('scroll', handleScroll as any, true);
-        scrollableDivs.forEach((div) =>
-          div.removeEventListener('scroll', handleScroll as any)
-        );
+        
+        // Clean up scrollable divs listeners
+        if (scrollableDivsRef.current) {
+          scrollableDivsRef.current.forEach((div) =>
+            div.removeEventListener('scroll', handleScroll as any)
+          );
+          scrollableDivsRef.current = null;
+        }
+        
         if (closeOnScrollTimeoutRef.current) {
           window.clearTimeout(closeOnScrollTimeoutRef.current);
           closeOnScrollTimeoutRef.current = null;
@@ -582,7 +612,10 @@ const DropdownFilterTabs = forwardRef<
     }, [dropOpen, typeOnlyFetch, uniqueDropArrowId, onToolClose]);
 
     // Filtering suggestions based on type and search value
-    const selected: any = isMultiple ? selectedItems : inputValue;
+    // Use filteredSelectedItems when tabs are present, otherwise use selectedItems
+    const selected: any = isMultiple 
+      ? (tab.length > 0 ? filteredSelectedItems : selectedItems)
+      : inputValue;
     const filteredData: ValueProps[] = filterSuggestions(
       suggestions,
       searchValue,
@@ -607,18 +640,22 @@ const DropdownFilterTabs = forwardRef<
           prevSelectedItemsRef.current = selectedItems;
         }
       }
-      adjustDropdownPosition();
-      setTimeout(() => {
-        adjustDropdownPosition();
-      }, 200);
+      // Use double requestAnimationFrame to ensure DOM updates are complete
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          adjustDropdownPosition();
+        });
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedItems]);
 
     useEffect(() => {
-      adjustDropdownPosition();
-      setTimeout(() => {
-        adjustDropdownPosition();
-      }, 200);
+      // Use double requestAnimationFrame to ensure DOM updates are complete
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          adjustDropdownPosition();
+        });
+      });
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [filteredData]);
 
@@ -681,19 +718,19 @@ const DropdownFilterTabs = forwardRef<
       };
     }, [filteredData, dropOpen, isLoading, focusedIndex]);
 
-    const isSelected = (
+    const isSelected = useCallback((
       item: ValueProps,
       selectedItems: ValueProps[] | string
     ): boolean => {
       if (Array.isArray(selectedItems)) {
         return selectedItems.some((selectedItem) => {
-          // If tabId is present, ensure the selected item belongs to the current tab
-          if (
-            currentTabId !== undefined &&
-            selectedItem?.tabId !== undefined &&
-            selectedItem.tabId !== currentTabId
-          ) {
-            return false;
+          // When tabs are present, ensure the selected item belongs to the current tab
+          if (tab.length > 0 && currentTabId !== undefined) {
+            // Only match if the selectedItem's tabId matches the current tab
+            // If selectedItem doesn't have tabId, don't match it (it belongs to no tab or old data)
+            if (selectedItem?.tabId === undefined || selectedItem.tabId !== currentTabId) {
+              return false;
+            }
           }
 
           return (
@@ -709,7 +746,7 @@ const DropdownFilterTabs = forwardRef<
           getKeyValue(item, descId, 'id') === safeToLowerString(selectedItems)
         );
       }
-    };
+    }, [tab, currentTabId, desc, descId]);
 
     const handleLoadMore = () => {
       if (paginationEnabled) {
@@ -761,6 +798,7 @@ const DropdownFilterTabs = forwardRef<
           handlePickSuggestions(searchValue, 1, false, activeTabVal);
         }
         setActiveTab(index);
+        setFocusedIndex(0); // Reset focused index when switching tabs
       }
     }, [activeTab, clearTabSwitch, handleClearSelected, tabInlineSearch, tab, searchValue, handlePickSuggestions, resetSuggections]);
 
