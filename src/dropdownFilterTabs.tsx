@@ -291,18 +291,40 @@ const DropdownFilterTabs = forwardRef<
           setSelectedItems((prev) => {
             const isAdded =
               prev && prev.length > 0
-                ? prev.some(
-                    (item) =>
+                ? prev.some((item) => {
+                    const sameId =
                       getKeyValue(item, descId, 'id') ===
-                      getKeyValue(suggestion, descId, 'id')
-                  )
+                      getKeyValue(suggestion, descId, 'id');
+
+                    if (!sameId) return false;
+
+                    // If there is no tab context, treat any same-id item as already added
+                    if (
+                      currentTabId === undefined ||
+                      item?.tabId === undefined
+                    ) {
+                      return true;
+                    }
+
+                    // With tab context, only consider items from the current tab
+                    return item.tabId === currentTabId;
+                  })
                 : false;
             if (isAdded) {
-              return prev.filter(
-                (item) =>
-                  getKeyValue(item, descId, 'id') !==
-                  getKeyValue(suggestion, descId, 'id')
-              );
+              // Remove only the item for the current tab (if tabId is used)
+              return prev.filter((item) => {
+                const sameId =
+                  getKeyValue(item, descId, 'id') ===
+                  getKeyValue(suggestion, descId, 'id');
+
+                if (!sameId) return true;
+
+                if (currentTabId === undefined || item?.tabId === undefined) {
+                  return false;
+                }
+
+                return item.tabId !== currentTabId;
+              });
             } else {
               // Include tab ID when adding suggestion
               const suggestionWithTabId = {
@@ -350,12 +372,23 @@ const DropdownFilterTabs = forwardRef<
           };
           setSelectedItems((prev) => [...prev, suggestionWithTabId]);
         } else {
+          // When unchecking, only remove the item for the current tab (if tabId is used)
           setSelectedItems((prev) => {
-            return prev.filter(
-              (item, i) =>
-                getKeyValue(item, descId, 'id') !==
-                getKeyValue(suggestion, descId, 'id')
-            );
+            return prev.filter((item) => {
+              const sameId =
+                getKeyValue(item, descId, 'id') ===
+                getKeyValue(suggestion, descId, 'id');
+
+              if (!sameId) return true;
+
+              // If there is no tab context, behave as before (remove by id)
+              if (currentTabId === undefined || item?.tabId === undefined) {
+                return false;
+              }
+
+              // With tab context, only remove the item that belongs to the current tab
+              return item.tabId !== currentTabId;
+            });
           });
         }
       } else {
@@ -653,11 +686,23 @@ const DropdownFilterTabs = forwardRef<
       selectedItems: ValueProps[] | string
     ): boolean => {
       if (Array.isArray(selectedItems)) {
-        return selectedItems.some(
-          (selectedItem) =>
-            getKeyValue(selectedItem, desc, 'name') === getKeyValue(item, desc, 'name') ||
-            getKeyValue(selectedItem, descId, 'id') === getKeyValue(item, descId, 'id')
-        );
+        return selectedItems.some((selectedItem) => {
+          // If tabId is present, ensure the selected item belongs to the current tab
+          if (
+            currentTabId !== undefined &&
+            selectedItem?.tabId !== undefined &&
+            selectedItem.tabId !== currentTabId
+          ) {
+            return false;
+          }
+
+          return (
+            getKeyValue(selectedItem, desc, 'name') ===
+              getKeyValue(item, desc, 'name') ||
+            getKeyValue(selectedItem, descId, 'id') ===
+              getKeyValue(item, descId, 'id')
+          );
+        });
       } else {
         return (
           getKeyValue(item, desc, 'name') === safeToLowerString(selectedItems) ||
