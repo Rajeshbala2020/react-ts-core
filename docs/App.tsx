@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 import { ValueProps } from "../src/commontypes";
-import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernAutoCompleteTableView, ModernTextField } from "../src/index";
+import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernAutoCompleteTableView, ModernAutoCompleteSuggections, ModernTextField } from "../src/index";
 import ModernTextArea from "../src/ReactTextArea";
 import TextField from "../src/ReactTextField";
 import { treeDropData } from "./store";
@@ -15,6 +15,7 @@ export default function App() {
   const [prev, setPrev] = useState(1);
   const [selectedTabItems, setSelectedTabItems] = useState<ValueProps[]>([]);
   const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
+  const [nameCountValue, setNameCountValue] = useState<string>('a');
 
   const getData = (keyName?: string, next?: number) => {
     console.log(keyName, "keyName");
@@ -238,6 +239,20 @@ export default function App() {
               onChange={(e) => console.log(e, "onchange")}
               shortCode="id"
               labelCode="userId"
+            />
+          </div>
+
+          <div style={{ width: 300 }}>
+            <ModernAutoCompleteSuggections
+              name="sample-name-count"
+              label="TextField (Name, Count)"
+              id="name-count-id"
+              placeholder="TextField"
+              getData={getDatas}
+              value={nameCountValue}
+              onChange={setNameCountValue}
+              // use userId as the "count" field for demo purposes
+              countField="userId"
             />
           </div>
 
