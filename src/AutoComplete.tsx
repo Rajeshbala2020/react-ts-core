@@ -1,4 +1,11 @@
-import React, { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 
 import { AutoSuggestionInputProps } from './commontypes';
 import { useSuggestions } from './utilities/autosuggestions';
@@ -43,7 +50,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       notDataMessage,
       onFocus,
     },
-    ref
+    ref,
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     // State Hooks Section
@@ -94,16 +101,17 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       inputValue,
       isMultiple,
       setNextPage,
-      selectedItems
+      selectedItems,
       // nextBlock
     );
 
     // Handling the selection of a suggestion
     const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
+      isSelectingRef.current = true;
       if (isMultiple) {
         setSelectedItems((prev) => {
           const isAdded = prev.some(
-            (item) => item[descId] === suggestion[descId]
+            (item) => item[descId] === suggestion[descId],
           );
           if (isAdded) {
             return prev.filter((item) => item[descId] !== suggestion[descId]);
@@ -134,7 +142,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
         } else {
           setSelectedItems((prev) => {
             return prev.filter(
-              (item, i) => item[descId] !== suggestion[descId]
+              (item, i) => item[descId] !== suggestion[descId],
             );
           });
         }
@@ -156,7 +164,15 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       setInputValue(value ?? '');
     }, [value]);
 
+    const isSelectingRef = useRef(false);
+
     const selectExactMatchFromSuggestions = () => {
+      // If user is clicking on dropdown, don't execute exact match logic
+      if (isSelectingRef.current) {
+        isSelectingRef.current = false;
+        return;
+      }
+
       if (!inputValue) {
         return;
       }
@@ -260,15 +276,15 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       type,
       desc,
       selected,
-      async
+      async,
     );
     const isSelected = (
       item: ValueProps,
-      selectedItems: ValueProps[] | string
+      selectedItems: ValueProps[] | string,
     ): boolean => {
       if (Array.isArray(selectedItems)) {
         return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc]
+          (selectedItem) => selectedItem[desc] === item[desc],
         );
       } else {
         return item[desc] === selectedItems;
@@ -353,14 +369,26 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                 : searchValue || inputValue
             }
             onChange={handleChange}
-            onBlur={() => {
-              handleBlur();
-              selectExactMatchFromSuggestions();
+            onBlur={(e) => {
+              // Delay to allow click events on dropdown to process first
+              setTimeout(() => {
+                // Check if focus moved to dropdown or if user is selecting
+                const relatedTarget = e.relatedTarget as Node;
+                if (
+                  dropdownRef.current &&
+                  relatedTarget &&
+                  dropdownRef.current.contains(relatedTarget)
+                ) {
+                  return; // Focus moved to dropdown, don't execute exact match
+                }
+                handleBlur();
+                selectExactMatchFromSuggestions();
+              }, 200);
             }}
             onFocus={onFocus}
             onClick={() => handleOnClick()}
             className={generateClassName()}
-            placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
+            placeholder={selectedItems?.length > 0 ? '' : (placeholder ?? '')}
             readOnly={
               readOnly || type === 'custom_select' || type == 'auto_suggestion'
             }
@@ -469,6 +497,10 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                         className={`qbs-autocomplete-suggestions-item ${
                           isSelected(suggestion, selected) ? 'is-selected' : ''
                         }`}
+                        onMouseDown={(e) => {
+                          e.preventDefault(); // Prevent input blur before click
+                          isSelectingRef.current = true;
+                        }}
                         onClick={() => handleSuggestionClick(suggestion)}
                         data-testid={suggestion[desc]}
                       >
@@ -523,7 +555,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
         )}
       </div>
     );
-  }
+  },
 );
 
 export default React.memo(AutoComplete);

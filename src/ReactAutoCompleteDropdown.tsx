@@ -109,6 +109,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const [refetchData, setRefetchData] = useState(false);
+
+  const isSelectingRef = useRef(false);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -337,6 +339,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     setIsDisabled(disabled);
   }, [disabled]);
   const handleSuggestionClick = (suggestion: valueProps, index: number) => {
+    isSelectingRef.current = true;
     onChange({
       ...suggestion,
       id: suggestion?.id,
@@ -346,6 +349,10 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     if (type !== 'custom_select') setInputValue(suggestion.name);
     setDropOpen(false);
     setSelectedIndex(index);
+    // Reset flag after a short delay to allow blur handler to check it
+    setTimeout(() => {
+      isSelectingRef.current = false;
+    }, 100);
   };
   const handleOpen = (e: any) => {
     if (!suggestions || suggestions?.length === 0) handleDropData();
@@ -512,6 +519,12 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   //   return 'bottom'
   // }
   const selectExactMatchFromSuggestions = () => {
+    // If user is clicking on dropdown, don't execute exact match logic
+    if (isSelectingRef.current) {
+      isSelectingRef.current = false;
+      return;
+    }
+
     if (!inputValue) {
       return;
     }
@@ -537,6 +550,40 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       onChange({ id: undefined, name: inputValue, from: 4 });
       setInputValue('');
     }
+  };
+
+  // Handle Tab key on input - works even when dropdown is closed or loading
+  const handleTabKey = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key !== 'Tab') return;
+
+    // Check for exact match first, then select highlighted item if no exact match
+    if (inputValue && filteredData && filteredData.length > 0) {
+      const normalizedInput = inputValue.toString().trim().toLowerCase();
+      const exactMatchIndex = filteredData.findIndex((item: valueProps) => {
+        const name = item?.name?.toString().trim().toLowerCase();
+        const label = item?.label?.toString().trim().toLowerCase();
+        return name === normalizedInput || label === normalizedInput;
+      });
+
+      if (exactMatchIndex >= 0) {
+        // Exact match found - select it
+        isSelectingRef.current = true;
+        handleSuggestionClick(filteredData[exactMatchIndex], exactMatchIndex);
+      } else if (dropOpen && filteredData[selectedIndex]) {
+        // No exact match but dropdown is open and has highlighted item - select highlighted item
+        isSelectingRef.current = true;
+        handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
+      } else {
+        // No exact match and no highlighted item - trigger invalid value action
+        onChange({ id: undefined, name: inputValue, from: 4 });
+        setInputValue('');
+      }
+    } else if (inputValue && (!filteredData || filteredData.length === 0)) {
+      // No suggestions available - trigger invalid value action
+      onChange({ id: undefined, name: inputValue, from: 4 });
+      setInputValue('');
+    }
+    // Don't prevent default - allow Tab to move focus
   };
   const filteredData =
     inputValue !== '*' &&
@@ -649,10 +696,12 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             }
           });
           break;
-
+        case 'Tab':
         case 'Enter':
           e.preventDefault();
-          handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
+          if (filteredData[selectedIndex]) {
+            handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
+          }
           break;
 
         case 'Escape':
@@ -704,6 +753,10 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                     }  cursor-pointer p-1  text-xxs ps-3.5 pl-[10px] qbs-autocomplete-suggections-items`}
                     key={suggestion?.id}
                     data-testid={suggestion.name}
+                    onMouseDown={(e) => {
+                      e.preventDefault(); // Prevent input blur before click
+                      isSelectingRef.current = true;
+                    }}
                     onClick={() => handleSuggestionClick(suggestion, index)}
                     tabIndex={index}
                     ref={(el) => (itemRefs.current[index] = el)}
@@ -844,9 +897,26 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
               type="text"
               readOnly={readOnly ?? type === 'custom_select'}
               value={inputValue ? inputValue : ''}
-              onBlur={() => {
-                handleClearInputValue();
-                selectExactMatchFromSuggestions();
+              onKeyDown={handleTabKey}
+              onBlur={(e) => {
+                // Check immediately if user is selecting (Tab or click)
+                const wasSelecting = isSelectingRef.current;
+
+                // Delay to allow click events on dropdown to process first
+                setTimeout(() => {
+                  // Check if focus moved to dropdown or if user is selecting
+                  const relatedTarget = e.relatedTarget as Node;
+                  if (
+                    wasSelecting ||
+                    (dropdownref.current &&
+                      relatedTarget &&
+                      dropdownref.current.contains(relatedTarget))
+                  ) {
+                    return; // User selected an item or focus moved to dropdown, don't execute exact match
+                  }
+                  handleClearInputValue();
+                  selectExactMatchFromSuggestions();
+                }, 200);
               }}
               autoComplete="off"
               disabled={disabled}
