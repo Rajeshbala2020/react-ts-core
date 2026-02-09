@@ -88,7 +88,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   fromPrefix,
   labelTitle,
   isModern = true,
-  size = 'md'
+  size = 'md',
 }) => {
   const [inputValue, setInputValue] = useState<any>(value?.name ?? '');
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -121,11 +121,11 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     param1?: string | number,
     param2?: string | number,
     param3?: string | number,
-    param4?: string | number
+    param4?: string | number,
   ): boolean => {
     const checkIncludesIfExists = (
       mainString?: string | number,
-      substring?: string
+      substring?: string,
     ) => {
       return substring &&
         mainString &&
@@ -139,7 +139,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     };
     const checkArrayContains = (
       strArray: string[] | undefined,
-      param: string
+      param: string,
     ): boolean => strArray?.includes(param) ?? false;
 
     return (
@@ -196,9 +196,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
           timerRef.current = 1;
         }, 200);
       },
-      isStaticList ? 0 : 1000
+      isStaticList ? 0 : 1000,
     ),
-    []
+    [],
   );
   const handleDropData = (value?: string) => {
     if (type === 'auto_complete') {
@@ -212,8 +212,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                   value,
                   item.param1,
                   item.param2,
-                  item.param3
-                )
+                  item.param3,
+                ),
               )
             : data;
         setSuggestions(filteredData);
@@ -234,8 +234,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                 value,
                 item.param1,
                 item.param2,
-                item.param3
-              )
+                item.param3,
+              ),
             )
           : data;
       setSuggestions(filteredData);
@@ -382,7 +382,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       mainElement?.addEventListener('scroll', handleScroll);
 
       const gridElements = document.querySelectorAll(
-        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto',
       );
       gridElements.forEach((gridElement: any) => {
         gridElement.addEventListener('scroll', handleScroll);
@@ -433,7 +433,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     return errMsg;
   };
   const generateClassName = (
-    type: 'input' | 'label' | 'message' | 'adorement'
+    type: 'input' | 'label' | 'message' | 'adorement',
   ): string => {
     let className = propsClassName;
     switch (type) {
@@ -452,7 +452,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             ' text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0';
         }
 
-        className += getHeight()
+        className += getHeight();
 
         break;
       case 'label':
@@ -462,16 +462,16 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
               ? 'cursor-pointer'
               : 'cursor-text peer-focus:cursor-pointer'
           } ${
-          isDisabled && !checkIsEmptyField()
-            ? 'disabled-input-label-bg'
-            : !isDisabled || !checkIsEmptyField()
-            ? 'active-input-label-bg'
-            : ''
-        } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
-          isDisabled
-            ? 'cursor-pointer'
-            : 'cursor-text peer-focus:cursor-pointer'
-        }
+            isDisabled && !checkIsEmptyField()
+              ? 'disabled-input-label-bg'
+              : !isDisabled || !checkIsEmptyField()
+                ? 'active-input-label-bg'
+                : ''
+          } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
+            isDisabled
+              ? 'cursor-pointer'
+              : 'cursor-text peer-focus:cursor-pointer'
+          }
            ${
              checkIsEmptyField()
                ? 'modern-input-label-size'
@@ -511,6 +511,33 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   // const getPosition = () => {
   //   return 'bottom'
   // }
+  const selectExactMatchFromSuggestions = () => {
+    if (!inputValue) {
+      return;
+    }
+
+    if (!filteredData || filteredData.length === 0) {
+      // No suggestions to match against – notify parent with raw value
+      onChange({ id: undefined, name: inputValue, from: 4 });
+      return;
+    }
+
+    const normalizedInput = inputValue.toString().trim().toLowerCase();
+    const matchIndex = filteredData.findIndex((item: valueProps) => {
+      const name = item?.name?.toString().trim().toLowerCase();
+      const label = item?.label?.toString().trim().toLowerCase();
+      return name === normalizedInput || label === normalizedInput;
+    });
+
+    if (matchIndex >= 0) {
+      const match = filteredData[matchIndex];
+      handleSuggestionClick(match, matchIndex);
+    } else {
+      // No exact match – notify parent with typed value
+      onChange({ id: undefined, name: inputValue, from: 4 });
+      setInputValue('');
+    }
+  };
   const filteredData =
     inputValue !== '*' &&
     inputValue !== '' &&
@@ -523,8 +550,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             item.param1 ?? '',
             item.param2 ?? '',
             item.param3 ?? '',
-            item.param4 ?? ''
-          )
+            item.param4 ?? '',
+          ),
         )
       : suggestions;
 
@@ -586,34 +613,34 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     // Handle keyboard navigation
     const handleKeyDown = (e: KeyboardEvent) => {
       if (!dropOpen) return;
-    
+
       const nextIndex =
         e.key === 'ArrowDown'
           ? (selectedIndex + 1) % filteredData.length
           : e.key === 'ArrowUp'
-          ? (selectedIndex - 1 + filteredData.length) % filteredData.length
-          : selectedIndex;
-    
+            ? (selectedIndex - 1 + filteredData.length) % filteredData.length
+            : selectedIndex;
+
       switch (e.key) {
         case 'ArrowDown':
         case 'ArrowUp':
           e.preventDefault();
-    
+
           // Update index first
           setSelectedIndex(nextIndex);
-    
+
           // Wait for DOM update before scrolling
           requestAnimationFrame(() => {
             const el = itemRefs.current[nextIndex];
             const container = scrollContainerRef.current;
-    
+
             if (el && container) {
               const elTop = el.offsetTop;
               const elBottom = elTop + el.offsetHeight;
-    
+
               const containerTop = container.scrollTop;
               const containerBottom = containerTop + container.clientHeight;
-    
+
               if (elBottom > containerBottom) {
                 container.scrollTop = elBottom - container.clientHeight;
               } else if (elTop < containerTop) {
@@ -622,21 +649,21 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             }
           });
           break;
-    
+
         case 'Enter':
           e.preventDefault();
           handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
           break;
-    
+
         case 'Escape':
           e.preventDefault();
           setDropOpen(false);
           break;
-    
+
         default:
           break;
       }
-    };    
+    };
 
     if (filteredData?.length > 0 && !isLoading) {
       window.addEventListener('keydown', handleKeyDown);
@@ -817,7 +844,10 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
               type="text"
               readOnly={readOnly ?? type === 'custom_select'}
               value={inputValue ? inputValue : ''}
-              onBlur={handleClearInputValue}
+              onBlur={() => {
+                handleClearInputValue();
+                selectExactMatchFromSuggestions();
+              }}
               autoComplete="off"
               disabled={disabled}
               ref={inputRef}
@@ -846,7 +876,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                   ? placeholder && isCustomPlaceholder
                     ? placeholder
                     : 'Type to search'
-                  : placeholder ?? '--Select--'
+                  : (placeholder ?? '--Select--')
               }
               onFocus={onInputFocus}
               onClick={(e) => {
@@ -874,7 +904,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             <div
               ref={adorementRef}
               className={`${generateClassName(
-                'adorement'
+                'adorement',
               )} qbs-autocomplete-adorement auto-dorpdown-adorement mr-[1px] ${
                 isLoading ? 'bg-white' : ''
               }`}
@@ -931,7 +961,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
               {errors && errors[name] && (
                 <div
                   className={` text-error-label  relative cursor-pointer ${generateClassName(
-                    'message'
+                    'message',
                   )}`}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}

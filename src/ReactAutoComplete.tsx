@@ -489,6 +489,33 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   // const getPosition = () => {
   //   return 'bottom'
   // }
+  const selectExactMatchFromSuggestions = () => {
+    if (!inputValue) {
+      return;
+    }
+
+    if (!filteredData || filteredData.length === 0) {
+      // No suggestions to match against – notify parent with raw value
+      onChange({ id: undefined, name: inputValue, from: 4 });
+      return;
+    }
+
+    const normalizedInput = inputValue.toString().trim().toLowerCase();
+    const matchIndex = filteredData.findIndex((item: valueProps) => {
+      const name = item?.name?.toString().trim().toLowerCase();
+      const label = item?.label?.toString().trim().toLowerCase();
+      return name === normalizedInput || label === normalizedInput;
+    });
+
+    if (matchIndex >= 0) {
+      const match = filteredData[matchIndex];
+      handleSuggestionClick(match, matchIndex);
+    } else {
+      // No exact match – notify parent with typed value
+      onChange({ id: undefined, name: inputValue, from: 4 });
+      setInputValue('');
+    }
+  };
   const filteredData =
     inputValue !== '*' &&
     inputValue !== '' &&
@@ -794,7 +821,10 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               type="text"
               readOnly={readOnly ?? type === 'custom_select'}
               value={inputValue ? inputValue : ''}
-              onBlur={handleClearInputValue}
+              onBlur={() => {
+                handleClearInputValue();
+                selectExactMatchFromSuggestions();
+              }}
               autoComplete="off"
               disabled={disabled}
               ref={inputRef}

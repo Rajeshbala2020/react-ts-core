@@ -156,6 +156,32 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       setInputValue(value ?? '');
     }, [value]);
 
+    const selectExactMatchFromSuggestions = () => {
+      if (!inputValue) {
+        return;
+      }
+
+      if (!filteredData || filteredData.length === 0) {
+        // No suggestions to match against – notify parent with raw value
+        onChange({ [descId]: '', [desc]: inputValue });
+        return;
+      }
+
+      const normalizedInput = inputValue.toString().trim().toLowerCase();
+      const match = filteredData.find((item: ValueProps) => {
+        const descValue = item?.[desc]?.toString().trim().toLowerCase();
+        return descValue === normalizedInput;
+      });
+
+      if (match) {
+        handleSuggestionClick(match);
+      } else {
+        // No exact match – notify parent with typed value
+        onChange({ [descId]: '', [desc]: inputValue });
+        setInputValue('');
+      }
+    };
+
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
       const { value } = e.target;
       setDropOpen(true);
@@ -327,7 +353,10 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
                 : searchValue || inputValue
             }
             onChange={handleChange}
-            // onBlur={handleBlur}
+            onBlur={() => {
+              handleBlur();
+              selectExactMatchFromSuggestions();
+            }}
             onFocus={onFocus}
             onClick={() => handleOnClick()}
             className={generateClassName()}
