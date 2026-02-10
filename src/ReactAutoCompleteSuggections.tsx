@@ -59,6 +59,7 @@ type ModernAutoCompleteSuggectionsProps = {
   desc?: string;
   /** Field name that contains the unique identifier (default: 'id'). */
   descId?: string;
+  showWarningIcon?: boolean;
 };
 
 /**
@@ -115,8 +116,10 @@ const ModernAutoCompleteSuggections: React.FC<
   labelTitle,
   desc = 'name',
   descId = 'id',
+  showWarningIcon = true,
 }) => {
   const [inputValue, setInputValue] = useState(value ?? '');
+  const [debouncedInputValue, setDebouncedInputValue] = useState('');
   const [items, setItems] = useState<SuggestionItem[]>(data ?? []);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
@@ -152,13 +155,26 @@ const ModernAutoCompleteSuggections: React.FC<
     }
   }, [data]);
 
-  // Load from getData only when user types some text (no initial preload)
+  // Debounce inputValue so we don't call API on every keystroke
+  useEffect(() => {
+    if (!hasTyped) return;
+    const handle = window.setTimeout(() => {
+      setDebouncedInputValue(inputValue);
+    }, 500); // 500ms debounce
+
+    return () => {
+      window.clearTimeout(handle);
+    };
+  }, [inputValue, hasTyped]);
+
+  // Load from getData only when user types some text (no initial preload),
+  // and only after debounce delay.
   useEffect(() => {
     // Do not call API until the user has actually typed at least once
     if (!hasTyped) return;
 
     let cancelled = false;
-    const query = inputValue.trim();
+    const query = debouncedInputValue.trim();
     if (!getDataRef.current || query === '') {
       // Clear items when input is cleared so dropdown also clears
       if (!cancelled) {
@@ -189,7 +205,14 @@ const ModernAutoCompleteSuggections: React.FC<
     return () => {
       cancelled = true;
     };
-  }, [inputValue, hasTyped, data]);
+  }, [debouncedInputValue, data]);
+
+  // Notify parent via onChange when debounced value changes
+  useEffect(() => {
+    if (!hasTyped) return;
+    if (!onChange) return;
+    onChange(debouncedInputValue);
+  }, [debouncedInputValue, onChange]);
 
   // Group by desc field and compute counts
   const grouped = useMemo(() => {
@@ -232,7 +255,14 @@ const ModernAutoCompleteSuggections: React.FC<
     return grouped.filter((g) => g.name.toLowerCase().includes(term));
   }, [grouped, inputValue, hasTyped]);
 
-  // Update dropdown visibility based on visible items
+  const effectiveVisible = useMemo(() => {
+    if (!hasTyped && items.length > 0) {
+      return grouped;
+    }
+    return visible;
+  }, [hasTyped, items.length, grouped, visible]);
+
+  // Update dropdown visibility based on visible items from typing
   useEffect(() => {
     setShowDropdown(visible.length > 0);
   }, [visible.length]);
@@ -317,7 +347,7 @@ const ModernAutoCompleteSuggections: React.FC<
   };
 
   const generateClassName = (
-    type: 'input' | 'label' | 'message' | 'adorement'
+    type: 'input' | 'label' | 'message' | 'adorement' | 'warning'
   ): string => {
     let className = propsClassName || '';
     switch (type) {
@@ -370,6 +400,9 @@ const ModernAutoCompleteSuggections: React.FC<
       case 'message':
         className = ' text-error-icon ';
         break;
+      case 'warning':
+          className = ' text-warning-icon ';
+          break;
       case 'adorement':
         className += '  absolute right-0 adorement gap-1 flex items-center ';
         break;
@@ -464,11 +497,16 @@ const ModernAutoCompleteSuggections: React.FC<
             value={inputValue ? inputValue : ''}
             ref={inputRef}
             disabled={disabled}
+            onFocus={() => {
+              // show suggestions when the field gains focus.
+              if (!disabled && effectiveVisible.length > 0) {
+                setShowDropdown(true);
+              }
+            }}
             onChange={(e) => {
               const val = e.target.value;
               setInputValue(val);
               setHasTyped(true);
-              onChange?.(val);
             }}
             onBlur={() => {}}
             placeholder={placeholder}
@@ -510,16 +548,26 @@ const ModernAutoCompleteSuggections: React.FC<
                 <CustomIcons name="alert" type="medium" />
               </div>
             )}
+
+            {showWarningIcon && effectiveVisible.length > 0 && (
+              <div
+                className={`text-warning-label relative  mr-1 ${generateClassName(
+                  'warning'
+                )}`}
+              >
+                <CustomIcons name="alert" type="medium" />
+              </div>
+            )}
           </div>
         </div>
       </div>
       </div>
-      {showDropdown && visible.length > 0 && (
+      {showDropdown && effectiveVisible.length > 0 && (
         <>
           {insideOpen ? (
             <div className="suggection-list">
               <div className="bg-white border border-grey-light shadow-gray-300 shadow-md rounded-sm max-h-40 overflow-auto text-[11px] text-gray-700 px-3.5 py-1.5">
-                {visible.map((g) => (
+                {effectiveVisible.map((g) => (
                   <SuggestionItem 
                     key={g.name} 
                     name={g.name} 
@@ -536,12 +584,12 @@ const ModernAutoCompleteSuggections: React.FC<
                 style={dropPosition}
               >
                 <div className="h-auto max-h-40 overflow-auto w-full py-1.5">
-                  {visible.map((g) => (
+                  {effectiveVisible.map((g) => (
                     <div key={g.name} className="px-3.5 text-[11px] text-gray-700">
                       <SuggestionItem 
                         name={g.name} 
                         count={g.count} 
-                        showCount={g.count > -1}
+                        showCount={g.count > 0}
                       />
                     </div>
                   ))}

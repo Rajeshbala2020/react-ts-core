@@ -612,6 +612,39 @@ const AutoCompleteWithTabFilter = forwardRef<
             // eslint-disable-next-line react-hooks/exhaustive-deps
         }, [filteredData, adjustDropdownPosition]);
 
+        // Recalculate dropdown position when dropdown opens or becomes visible
+        useEffect(() => {
+            if (dropOpen) {
+                // Use requestAnimationFrame to ensure DOM is updated before calculating position
+                requestAnimationFrame(() => {
+                    adjustDropdownPosition();
+                    // Also recalculate after a small delay to account for any animations/transitions
+                    setTimeout(() => {
+                        adjustDropdownPosition();
+                    }, 150);
+                });
+            }
+        }, [dropOpen, visible, adjustDropdownPosition]);
+
+        // Recalculate position on scroll when dropdown is open
+        useEffect(() => {
+            if (!dropOpen) return;
+
+            const handleScrollRecalculate = () => {
+                requestAnimationFrame(() => {
+                    adjustDropdownPosition();
+                });
+            };
+
+            window.addEventListener('scroll', handleScrollRecalculate, true);
+            document.addEventListener('scroll', handleScrollRecalculate, true);
+
+            return () => {
+                window.removeEventListener('scroll', handleScrollRecalculate, true);
+                document.removeEventListener('scroll', handleScrollRecalculate, true);
+            };
+        }, [dropOpen, adjustDropdownPosition]);
+
         useEffect(() => {
             // Handle keyboard navigation
             const handleKeyDown = (e: any) => {
@@ -754,6 +787,10 @@ const AutoCompleteWithTabFilter = forwardRef<
             if (skipAnimation && dropOpen) {
                 setVisible(true);
                 setFocusedIndex(0);
+                // Recalculate position when making visible again
+                requestAnimationFrame(() => {
+                    adjustDropdownPosition();
+                });
                 return;
             }
 
@@ -767,6 +804,14 @@ const AutoCompleteWithTabFilter = forwardRef<
 
             setTimeout(() => {
                 setVisible(true);
+                // Recalculate position after dropdown becomes visible
+                requestAnimationFrame(() => {
+                    adjustDropdownPosition();
+                    // Double-check position after a short delay to account for any layout shifts
+                    setTimeout(() => {
+                        adjustDropdownPosition();
+                    }, 50);
+                });
 
                 if (!hasScrollbar) {
                     document.body.style.overflow = originalOverflow || '';
