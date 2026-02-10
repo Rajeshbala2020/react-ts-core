@@ -107,6 +107,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
   const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const isSelectingRef = useRef(false);
+  const hasUserChangedInputRef = useRef(false); // Track if user has actually typed/changed input
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -119,11 +120,11 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     param1?: string | number,
     param2?: string | number,
     param3?: string | number,
-    param4?: string | number
+    param4?: string | number,
   ): boolean => {
     const checkIncludesIfExists = (
       mainString?: string | number,
-      substring?: string
+      substring?: string,
     ) => {
       return substring &&
         mainString &&
@@ -137,7 +138,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     };
     const checkArrayContains = (
       strArray: string[] | undefined,
-      param: string
+      param: string,
     ): boolean => strArray?.includes(param) ?? false;
 
     return (
@@ -166,6 +167,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     timerRef.current = 0;
+    hasUserChangedInputRef.current = true; // Mark that user has changed the input
 
     setInputValue(value);
     handleValChange(value);
@@ -194,9 +196,9 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
           timerRef.current = 1;
         }, 200);
       },
-      isStaticList ? 0 : 1000
+      isStaticList ? 0 : 1000,
     ),
-    []
+    [],
   );
   const handleDropData = (value?: string) => {
     if (type === 'auto_complete') {
@@ -210,8 +212,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   value,
                   item.param1,
                   item.param2,
-                  item.param3
-                )
+                  item.param3,
+                ),
               )
             : data;
         setSuggestions(filteredData);
@@ -230,8 +232,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                 value,
                 item.param1,
                 item.param2,
-                item.param3
-              )
+                item.param3,
+              ),
             )
           : data;
       setSuggestions(filteredData);
@@ -331,6 +333,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   }, [disabled]);
   const handleSuggestionClick = (suggestion: valueProps, index: number) => {
     isSelectingRef.current = true;
+    hasUserChangedInputRef.current = false; // Reset flag when selecting from dropdown
     onChange({
       ...suggestion,
       id: suggestion?.id,
@@ -369,7 +372,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       mainElement?.addEventListener('scroll', handleScroll);
 
       const gridElements = document.querySelectorAll(
-        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto',
       );
       gridElements.forEach((gridElement: any) => {
         gridElement.addEventListener('scroll', handleScroll);
@@ -394,11 +397,13 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     setDropOpen(false);
     setInputValue('');
     onChange({ id: undefined, name: '', from: 3 });
+    hasUserChangedInputRef.current = false; // Reset flag when clearing
     onLabelClick();
   };
 
   useEffect(() => {
     setInputValue(value?.name ?? '');
+    hasUserChangedInputRef.current = false; // Reset flag when value prop changes (e.g., coming back to page)
   }, [value?.name]);
 
   useEffect(() => {
@@ -417,7 +422,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     return errMsg;
   };
   const generateClassName = (
-    type: 'input' | 'label' | 'message' | 'adorement'
+    type: 'input' | 'label' | 'message' | 'adorement',
   ): string => {
     let className = propsClassName;
     switch (type) {
@@ -446,16 +451,16 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               ? 'cursor-pointer'
               : 'cursor-text peer-focus:cursor-pointer'
           } ${
-          isDisabled && !checkIsEmptyField()
-            ? 'disabled-input-label-bg'
-            : !isDisabled || !checkIsEmptyField()
-            ? 'active-input-label-bg'
-            : ''
-        } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
-          isDisabled
-            ? 'cursor-pointer'
-            : 'cursor-text peer-focus:cursor-pointer'
-        }
+            isDisabled && !checkIsEmptyField()
+              ? 'disabled-input-label-bg'
+              : !isDisabled || !checkIsEmptyField()
+                ? 'active-input-label-bg'
+                : ''
+          } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
+            isDisabled
+              ? 'cursor-pointer'
+              : 'cursor-text peer-focus:cursor-pointer'
+          }
            ${
              checkIsEmptyField()
                ? 'modern-input-label-size'
@@ -499,16 +504,24 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     // If user is clicking on dropdown, don't execute exact match logic
     if (isSelectingRef.current) {
       isSelectingRef.current = false;
+      hasUserChangedInputRef.current = false; // Reset flag
+      return;
+    }
+
+    // Only proceed if user has actually changed the input value
+    if (!hasUserChangedInputRef.current) {
       return;
     }
 
     if (!inputValue) {
+      hasUserChangedInputRef.current = false; // Reset flag
       return;
     }
 
     if (!filteredData || filteredData.length === 0) {
       // No suggestions to match against – notify parent with raw value
       onChange({ id: undefined, name: inputValue, from: 4 });
+      hasUserChangedInputRef.current = false; // Reset flag
       return;
     }
 
@@ -527,6 +540,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       onChange({ id: undefined, name: inputValue, from: 4 });
       setInputValue('');
     }
+    hasUserChangedInputRef.current = false; // Reset flag after handling
   };
 
   // Handle Tab key on input - works even when dropdown is closed or loading
@@ -554,11 +568,13 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         // No exact match and no highlighted item - trigger invalid value action
         onChange({ id: undefined, name: inputValue, from: 4 });
         setInputValue('');
+        hasUserChangedInputRef.current = false; // Reset flag
       }
-    } else if (inputValue && (!filteredData || filteredData.length === 0)) {
+    } else if (inputValue && (!filteredData || filteredData.length === 0 ) && hasUserChangedInputRef.current) {
       // No suggestions available - trigger invalid value action
       onChange({ id: undefined, name: inputValue, from: 4 });
       setInputValue('');
+      hasUserChangedInputRef.current = false; // Reset flag
     }
     // Don't prevent default - allow Tab to move focus
   };
@@ -574,8 +590,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
             item.param1 ?? '',
             item.param2 ?? '',
             item.param3 ?? '',
-            item.param4 ?? ''
-          )
+            item.param4 ?? '',
+          ),
         )
       : suggestions;
 
@@ -642,8 +658,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         e.key === 'ArrowDown'
           ? (selectedIndex + 1) % filteredData.length
           : e.key === 'ArrowUp'
-          ? (selectedIndex - 1 + filteredData.length) % filteredData.length
-          : selectedIndex;
+            ? (selectedIndex - 1 + filteredData.length) % filteredData.length
+            : selectedIndex;
 
       switch (e.key) {
         case 'ArrowDown':
@@ -883,7 +899,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               onBlur={(e) => {
                 // Check immediately if user is selecting (Tab or click)
                 const wasSelecting = isSelectingRef.current;
-                
+
                 // Delay to allow click events on dropdown to process first
                 setTimeout(() => {
                   // Check if focus moved to dropdown or if user is selecting
@@ -928,7 +944,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                   ? placeholder && isCustomPlaceholder
                     ? placeholder
                     : 'Type to search'
-                  : placeholder ?? '--Select--'
+                  : (placeholder ?? '--Select--')
               }
               onFocus={onInputFocus}
               onClick={(e) => {
@@ -955,7 +971,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
             <div
               ref={adorementRef}
               className={`${generateClassName(
-                'adorement'
+                'adorement',
               )} qbs-autocomplete-adorement custom-dorpdown-adorement  mr-[1px] ${
                 isLoading ? 'bg-white' : ''
               }`}
@@ -996,7 +1012,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               {errors && errors[name] && (
                 <div
                   className={` text-error-label relative cursor-pointer ${generateClassName(
-                    'message'
+                    'message',
                   )}`}
                   onMouseEnter={() => setIsHovered(true)}
                   onMouseLeave={() => setIsHovered(false)}

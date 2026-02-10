@@ -111,6 +111,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   const [refetchData, setRefetchData] = useState(false);
 
   const isSelectingRef = useRef(false);
+  const hasUserChangedInputRef = useRef(false); // Track if user has actually typed/changed input
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -170,6 +171,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = event.target;
     timerRef.current = 0;
+    hasUserChangedInputRef.current = true; // Mark that user has changed the input
 
     setInputValue(value);
     handleValChange(value);
@@ -340,6 +342,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
   }, [disabled]);
   const handleSuggestionClick = (suggestion: valueProps, index: number) => {
     isSelectingRef.current = true;
+    hasUserChangedInputRef.current = false; // Reset flag when selecting from dropdown
     onChange({
       ...suggestion,
       id: suggestion?.id,
@@ -414,6 +417,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     setDropOpen(false);
     setInputValue('');
     onChange({ id: undefined, name: '', from: 3 });
+    hasUserChangedInputRef.current = false; // Reset flag when clearing
     onLabelClick();
     if (autoDropdown) {
       setRefetchData(true);
@@ -422,6 +426,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
 
   useEffect(() => {
     setInputValue(value?.name ?? '');
+    hasUserChangedInputRef.current = false; // Reset flag when value prop changes (e.g., coming back to page)
   }, [value?.name]);
 
   useEffect(() => {
@@ -522,16 +527,24 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     // If user is clicking on dropdown, don't execute exact match logic
     if (isSelectingRef.current) {
       isSelectingRef.current = false;
+      hasUserChangedInputRef.current = false; // Reset flag
+      return;
+    }
+
+    // Only proceed if user has actually changed the input value
+    if (!hasUserChangedInputRef.current) {
       return;
     }
 
     if (!inputValue) {
+      hasUserChangedInputRef.current = false; // Reset flag
       return;
     }
 
     if (!filteredData || filteredData.length === 0) {
       // No suggestions to match against – notify parent with raw value
       onChange({ id: undefined, name: inputValue, from: 4 });
+      hasUserChangedInputRef.current = false; // Reset flag
       return;
     }
 
@@ -550,6 +563,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       onChange({ id: undefined, name: inputValue, from: 4 });
       setInputValue('');
     }
+    hasUserChangedInputRef.current = false; // Reset flag after handling
   };
 
   // Handle Tab key on input - works even when dropdown is closed or loading
@@ -577,11 +591,13 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
         // No exact match and no highlighted item - trigger invalid value action
         onChange({ id: undefined, name: inputValue, from: 4 });
         setInputValue('');
+        hasUserChangedInputRef.current = false; // Reset flag
       }
     } else if (inputValue && (!filteredData || filteredData.length === 0)) {
       // No suggestions available - trigger invalid value action
       onChange({ id: undefined, name: inputValue, from: 4 });
       setInputValue('');
+      hasUserChangedInputRef.current = false; // Reset flag
     }
     // Don't prevent default - allow Tab to move focus
   };
