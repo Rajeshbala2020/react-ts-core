@@ -137,6 +137,7 @@ const ModernAutoCompleteSuggections: React.FC<
   const adorementRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const isExternalUpdateRef = useRef(false);
+  const previousDebouncedValueRef = useRef<string>('');
 
   // keep latest getData in a ref so we don't re-trigger effects on every render
   useEffect(() => {
@@ -236,9 +237,19 @@ const ModernAutoCompleteSuggections: React.FC<
     // Don't call onChange if the change came from external value prop update
     if (isExternalUpdateRef.current) {
       isExternalUpdateRef.current = false;
+      previousDebouncedValueRef.current = debouncedInputValue;
       return;
     }
-    onChange(debouncedInputValue);
+    
+    const currentValue = debouncedInputValue.trim();
+    const previousValue = previousDebouncedValueRef.current.trim();
+    
+    if (currentValue !== '' || previousValue !== '') {
+      onChange(debouncedInputValue);
+    }
+    
+    // Update previous value ref
+    previousDebouncedValueRef.current = debouncedInputValue;
   }, [debouncedInputValue, onChange, hasTyped]);
 
   // Group by desc field and compute counts
@@ -509,7 +520,7 @@ const ModernAutoCompleteSuggections: React.FC<
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-1 autocomplete-with-suggection ${propsClassName || ''}`}
+      className={`flex flex-col gap-1 autocomplete-with-suggection ${propsClassName || ''} ${effectiveVisible.length > 0 ? 'suggection-warning-container' : ''}`}
     >
       {label && !isModern && (
         <div className="mb-3">
