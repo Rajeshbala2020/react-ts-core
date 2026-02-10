@@ -123,6 +123,7 @@ const ModernAutoCompleteSuggections: React.FC<
   const [items, setItems] = useState<SuggestionItem[]>(data ?? []);
   const [isLoading, setIsLoading] = useState(false);
   const [showDropdown, setShowDropdown] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
@@ -135,16 +136,37 @@ const ModernAutoCompleteSuggections: React.FC<
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const isExternalUpdateRef = useRef(false);
 
   // keep latest getData in a ref so we don't re-trigger effects on every render
   useEffect(() => {
     getDataRef.current = getData;
   }, [getData]);
 
-  // Keep internal state in sync when used as a controlled component
   useEffect(() => {
     if (value !== undefined) {
-      setInputValue(value);
+      const valueStr = String(value ?? '');
+      const inputValueStr = String(inputValue ?? '');
+      
+      if (valueStr !== inputValueStr) {
+        if (hasTyped) {
+          
+          const isExternalUpdate = !inputValueStr || 
+                                   (!valueStr.startsWith(inputValueStr) && !inputValueStr.startsWith(valueStr));
+          
+          if (isExternalUpdate) {
+            isExternalUpdateRef.current = true;
+            setInputValue(valueStr);
+            setDebouncedInputValue(valueStr);
+            setHasTyped(false);
+          }
+        } else {
+          // User hasn't typed yet, safe to sync from prop
+          isExternalUpdateRef.current = true;
+          setInputValue(valueStr);
+          setDebouncedInputValue(valueStr);
+        }
+      }
     }
   }, [value]);
 
@@ -207,12 +229,17 @@ const ModernAutoCompleteSuggections: React.FC<
     };
   }, [debouncedInputValue, data]);
 
-  // Notify parent via onChange when debounced value changes
+  // Notify parent via onChange when debounced value changes (only from user input)
   useEffect(() => {
     if (!hasTyped) return;
     if (!onChange) return;
+    // Don't call onChange if the change came from external value prop update
+    if (isExternalUpdateRef.current) {
+      isExternalUpdateRef.current = false;
+      return;
+    }
     onChange(debouncedInputValue);
-  }, [debouncedInputValue, onChange]);
+  }, [debouncedInputValue, onChange, hasTyped]);
 
   // Group by desc field and compute counts
   const grouped = useMemo(() => {
@@ -263,9 +290,23 @@ const ModernAutoCompleteSuggections: React.FC<
   }, [hasTyped, items.length, grouped, visible]);
 
   // Update dropdown visibility based on visible items from typing
+  // Only auto-update when user has typed; otherwise let onFocus handle it
   useEffect(() => {
-    setShowDropdown(visible.length > 0);
-  }, [visible.length]);
+    if (hasTyped) {
+      setShowDropdown(visible.length > 0);
+    }
+  }, [visible.length, hasTyped]);
+
+  // Show dropdown when data loads and input is focused (prevents flicker)
+  useEffect(() => {
+    if (isFocused && !hasTyped && effectiveVisible.length > 0) {
+      // Calculate position before showing dropdown to prevent flicker
+      if (!insideOpen && inputRef?.current) {
+        getDropPosition();
+      }
+      setShowDropdown(true);
+    }
+  }, [isFocused, hasTyped, effectiveVisible.length, insideOpen]);
 
   // Handle click outside to close dropdown
   const handleClickOutside = (event: MouseEvent) => {
@@ -498,17 +539,25 @@ const ModernAutoCompleteSuggections: React.FC<
             ref={inputRef}
             disabled={disabled}
             onFocus={() => {
+              setIsFocused(true);
+              // Calculate position before showing dropdown to prevent flicker
+              if (!insideOpen && inputRef?.current) {
+                getDropPosition();
+              }
               // show suggestions when the field gains focus.
               if (!disabled && effectiveVisible.length > 0) {
                 setShowDropdown(true);
               }
             }}
+            onBlur={() => {
+              setIsFocused(false);
+            }}
             onChange={(e) => {
               const val = e.target.value;
+              isExternalUpdateRef.current = false;
               setInputValue(val);
               setHasTyped(true);
             }}
-            onBlur={() => {}}
             placeholder={placeholder}
             autoComplete="off"
             data-testid="custom-autocomplete-suggestions"
