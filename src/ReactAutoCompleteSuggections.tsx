@@ -75,7 +75,7 @@ const SuggestionItem: React.FC<{ name: string; count: number; showCount: boolean
 }) => {
   return (
     <div className="py-0.5 flex items-center justify-between gap-2 group relative">
-      <span className="flex-1 whitespace-normal break-words">
+      <span className="flex-1 whitespace-normal break-words suggection-label">
         {name}
       </span>
       {showCount && (
@@ -580,12 +580,12 @@ const ModernAutoCompleteSuggections: React.FC<
           ) : (
             <Portal>
               <div
-                className="autocomplete-suggections suggection-list bg-white shadow-gray-300 shadow-md border border-grey-light z-50"
+                className="autocomplete-suggections autosuggection-list suggection-list bg-white shadow-gray-300 shadow-md border border-grey-light z-50"
                 style={dropPosition}
               >
                 <div className="h-auto max-h-40 overflow-auto w-full py-1.5">
                   {effectiveVisible.map((g) => (
-                    <div key={g.name} className="px-3.5 text-[11px] text-gray-700">
+                    <div key={g.name} className="px-3.5 text-gray-700 suggection-item">
                       <SuggestionItem 
                         name={g.name} 
                         count={g.count} 
