@@ -649,7 +649,7 @@ const ExpandableAutoComplete = forwardRef<
           ref={expandableContainerRef}
           className={`${
             expandable ? 'qbs-expandable-container' : 'qbs-container'
-          }`}
+          } ${autoDropdown ? 'pr-8' : ''}`}
           style={{ position: 'relative' }}
         >
           {selectedItems?.length > 0 && (
