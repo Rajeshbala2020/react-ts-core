@@ -627,7 +627,7 @@ export default function App() {
               in user input while still offering assistance.
             </p>
           </div>
-          <div style={{ width: 300 }}>
+          <div style={{ width: 500 }}>
             <ExpandableAutoComplete
               label="Auto Suggestion"
               name="sample"
@@ -645,6 +645,7 @@ export default function App() {
               selectedItems={[{ name: "test", id: "1" }]}
               getData={getData}
               onChange={(e) => console.log(e, "onchange")}
+              autoDropdown={true}
             />
           </div>
           <div className="autocomplete-section">
