@@ -97,50 +97,12 @@ const ExpandableAutoComplete = forwardRef<
     const dropRef = useRef(null);
     const typeRef = useRef(0);
     useImperativeHandle(ref, () => inputRef.current);
-    const [dropdownStyle, setDropdownStyle] = useState({
-      top: 0,
-      left: 0,
-      width: 200,
-    });
-
-    const adjustDropdownPosition = () => {
-      if (dropdownRef.current) {
-        const inputRect = dropdownRef.current.getBoundingClientRect();
-        const dropdownPosition = {
-          left: inputRect.left + window.scrollX,
-          width: inputRect.width,
-          top: 0,
-        };
-        // Check if there's enough space below the input for the dropdown
-        const spaceBelow = window.innerHeight - inputRect.bottom;
-        const spaceAbove = inputRect.top + window.scrollY;
-
-        let dropdownHeight = 275; // Assume a fixed height or calculate based on content
-        if (spaceBelow >= dropdownHeight) {
-          dropdownPosition.top =
-            inputRect.top + window.scrollY + inputRect.height;
-        } else {
-          dropdownHeight =
-            dropdownHeight +
-            (filteredData?.length > 0 && enableSelectAll && isMultiple
-              ? 32
-              : 0);
-          dropdownPosition.top =
-            inputRect.top + window.scrollY - dropdownHeight + 73;
-        }
-
-        setDropdownStyle((prev) => {
-          if (
-            prev.top === dropdownPosition.top &&
-            prev.left === dropdownPosition.left &&
-            prev.width === dropdownPosition.width
-          ) {
-            return prev;
-          }
-          return dropdownPosition;
-        });
-      }
-    };
+    const [dropdownStyle, setDropdownStyle] = useState<{
+      top: number;
+      left: number;
+      width: number;
+    } | null>(null);
+    const isPositionCalculatedRef = useRef(false);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -359,23 +321,77 @@ const ExpandableAutoComplete = forwardRef<
       matchFromStart,
     ]);
 
-    useEffect(() => {
+    const adjustDropdownPosition = useCallback(() => {
+      if (dropdownRef.current) {
+        const inputRect = dropdownRef.current.getBoundingClientRect();
+        const dropdownPosition = {
+          left: inputRect.left + window.scrollX,
+          width: inputRect.width,
+          top: 0,
+        };
+        // Check if there's enough space below the input for the dropdown
+        const spaceBelow = window.innerHeight - inputRect.bottom;
+        const spaceAbove = inputRect.top + window.scrollY;
+
+        let dropdownHeight = 275; // Assume a fixed height or calculate based on content
+        if (spaceBelow >= dropdownHeight) {
+          dropdownPosition.top =
+            inputRect.top + window.scrollY + inputRect.height;
+        } else {
+          dropdownHeight =
+            dropdownHeight +
+            (filteredData?.length > 0 && enableSelectAll && isMultiple
+              ? 32
+              : 0);
+          dropdownPosition.top =
+            inputRect.top + window.scrollY - dropdownHeight + 73;
+        }
+
+        setDropdownStyle((prev) => {
+          if (
+            prev &&
+            prev.top === dropdownPosition.top &&
+            prev.left === dropdownPosition.left &&
+            prev.width === dropdownPosition.width
+          ) {
+            return prev;
+          }
+          isPositionCalculatedRef.current = true;
+          return dropdownPosition;
+        });
+      }
+    }, [filteredData?.length, enableSelectAll, isMultiple]);
+
+    // Use useLayoutEffect to calculate position synchronously before paint to prevent flicker
+    useLayoutEffect(() => {
       if (!dropOpen) {
+        isPositionCalculatedRef.current = false;
+        setDropdownStyle(null);
         return;
       }
-      window.addEventListener('resize', adjustDropdownPosition);
+      // Calculate position immediately when dropdown opens
+      isPositionCalculatedRef.current = false;
       adjustDropdownPosition();
-
-      return () => {
-        window.removeEventListener('resize', adjustDropdownPosition);
-      };
     }, [
       dropOpen,
       selectedItems?.length,
       filteredData?.length,
       enableSelectAll,
       isMultiple,
+      adjustDropdownPosition,
     ]);
+
+    // Separate effect for resize listener (only when dropdown is open)
+    useEffect(() => {
+      if (!dropOpen) {
+        return;
+      }
+      window.addEventListener('resize', adjustDropdownPosition);
+
+      return () => {
+        window.removeEventListener('resize', adjustDropdownPosition);
+      };
+    }, [dropOpen, adjustDropdownPosition]);
 
     useEffect(() => {
       // Handle keyboard navigation
@@ -595,7 +611,7 @@ const ExpandableAutoComplete = forwardRef<
         
         const singleLineThreshold = paddingTop + paddingBottom + borderTop + borderBottom + lineHeight + 20;
         const isSingle = el.scrollHeight <= singleLineThreshold;
-        
+
         // Only update if value changed
         if (isExpandableSingleLineRef.current !== isSingle) {
           isExpandableSingleLineRef.current = isSingle;
@@ -765,7 +781,7 @@ const ExpandableAutoComplete = forwardRef<
 
           {/* Suggestions Dropdown */}
 
-          {dropOpen &&
+          {dropOpen && dropdownStyle &&
             ReactDOM.createPortal(
               <ul
                 ref={dropRef}
