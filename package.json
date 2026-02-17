@@ -1,6 +1,6 @@
 {
   "name": "react-core-ts",
-  "version": "2.1.10",
+  "version": "2.1.11",
   "description": "React Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
