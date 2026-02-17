@@ -3,6 +3,8 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -73,6 +75,7 @@ const ExpandableAutoComplete = forwardRef<
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const expandableContainerRef = useRef<HTMLDivElement>(null);
+    const isExpandableSingleLineRef = useRef(true);
     const [isExpandableSingleLine, setIsExpandableSingleLine] = useState(true);
     // State Hooks Section
     const [isInitialRender, setIsInitialRender] = useState(true);
@@ -126,8 +129,15 @@ const ExpandableAutoComplete = forwardRef<
             inputRect.top + window.scrollY - dropdownHeight + 73;
         }
 
-        setDropdownStyle({
-          ...dropdownPosition,
+        setDropdownStyle((prev) => {
+          if (
+            prev.top === dropdownPosition.top &&
+            prev.left === dropdownPosition.left &&
+            prev.width === dropdownPosition.width
+          ) {
+            return prev;
+          }
+          return dropdownPosition;
         });
       }
     };
@@ -322,8 +332,23 @@ const ExpandableAutoComplete = forwardRef<
     }, []);
 
     // Filtering suggestions based on type and search value
-    const selected: any = isMultiple ? selectedItems : inputValue;
-    const filteredData: ValueProps[] = filterSuggestions(
+    const selected: any = useMemo(
+      () => (isMultiple ? selectedItems : inputValue),
+      [isMultiple, selectedItems, inputValue]
+    );
+    const filteredData: ValueProps[] = useMemo(() => {
+      return filterSuggestions(
+        suggestions,
+        searchValue,
+        type,
+        desc,
+        selected,
+        async,
+        isTreeDropdown,
+        true,
+        matchFromStart
+      );
+    }, [
       suggestions,
       searchValue,
       type,
@@ -331,18 +356,26 @@ const ExpandableAutoComplete = forwardRef<
       selected,
       async,
       isTreeDropdown,
-      true,
-      matchFromStart
-    );
+      matchFromStart,
+    ]);
 
     useEffect(() => {
+      if (!dropOpen) {
+        return;
+      }
       window.addEventListener('resize', adjustDropdownPosition);
       adjustDropdownPosition();
 
       return () => {
         window.removeEventListener('resize', adjustDropdownPosition);
       };
-    }, [dropOpen, selectedItems, filteredData]);
+    }, [
+      dropOpen,
+      selectedItems?.length,
+      filteredData?.length,
+      enableSelectAll,
+      isMultiple,
+    ]);
 
     useEffect(() => {
       // Handle keyboard navigation
@@ -517,30 +550,59 @@ const ExpandableAutoComplete = forwardRef<
       setSelectAll(allSelected);
     }, [filteredData, selectedItems, descId]);
 
-    const isExpandableSingleLineRef = useRef(true);
-    useEffect(() => {
+    // Track previous values to prevent unnecessary checks
+    const prevSelectedItemsLengthRef = useRef(selectedItems?.length ?? 0);
+    const prevSearchValueRef = useRef(searchValue);
+    const prevExpandableRef = useRef(expandable);
+    
+    // Check single line status only when content actually changes
+    useLayoutEffect(() => {
       const el = expandableContainerRef.current;
-      if (!el || !expandable) return;
+      const currentLength = selectedItems?.length ?? 0;
+      
+      // Only check if dependencies actually changed
+      const lengthChanged = prevSelectedItemsLengthRef.current !== currentLength;
+      const searchChanged = prevSearchValueRef.current !== searchValue;
+      const expandableChanged = prevExpandableRef.current !== expandable;
+      
+      if (!lengthChanged && !searchChanged && !expandableChanged) {
+        return; // Skip if nothing changed
+      }
+      
+      // Update refs
+      prevSelectedItemsLengthRef.current = currentLength;
+      prevSearchValueRef.current = searchValue;
+      prevExpandableRef.current = expandable;
+      
+      if (!el || !expandable) {
+        if (isExpandableSingleLineRef.current !== true) {
+          isExpandableSingleLineRef.current = true;
+          setIsExpandableSingleLine(true);
+        }
+        return;
+      }
 
-      const checkSingleLine = () => {
-        const lineHeight = parseInt(
-          getComputedStyle(el).lineHeight || '20',
-          10
-        ) || 20;
-        const padding = 5 * 2;
-        const singleLineMax = lineHeight + padding + 4;
-        const isSingle = el.scrollHeight <= singleLineMax;
+      // Use requestAnimationFrame to check after DOM updates
+      requestAnimationFrame(() => {
+        if (!el) return;
+        
+        const computedStyle = getComputedStyle(el);
+        const paddingTop = parseFloat(computedStyle.paddingTop) || 5;
+        const paddingBottom = parseFloat(computedStyle.paddingBottom) || 5;
+        const borderTop = parseFloat(computedStyle.borderTopWidth) || 0;
+        const borderBottom = parseFloat(computedStyle.borderBottomWidth) || 0;
+        const lineHeight = parseFloat(computedStyle.lineHeight) || 20;
+        
+        const singleLineThreshold = paddingTop + paddingBottom + borderTop + borderBottom + lineHeight + 10;
+        const isSingle = el.scrollHeight <= singleLineThreshold;
+        
+        // Only update if value changed
         if (isExpandableSingleLineRef.current !== isSingle) {
           isExpandableSingleLineRef.current = isSingle;
           setIsExpandableSingleLine(isSingle);
         }
-      };
-
-      checkSingleLine();
-      const observer = new ResizeObserver(checkSingleLine);
-      observer.observe(el);
-      return () => observer.disconnect();
-    }, [expandable, selectedItems, searchValue]);
+      });
+    }, [expandable, selectedItems?.length, searchValue]);
 
     return (
       <div
