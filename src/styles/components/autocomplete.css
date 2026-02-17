@@ -229,6 +229,11 @@ body * {
   color: #e76458;
 }
 
+.qbs-expandable-container .qbs-clear-with-auto-dropdown {
+  right: 2rem;
+  bottom: 10px;
+}
+
 .qbs-dropdown-selected-container .qbs-done-link,
 .qbs-expandable-container .qbs-done-link {
   color: #336cfc;

@@ -72,6 +72,8 @@ const ExpandableAutoComplete = forwardRef<
     ref
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const expandableContainerRef = useRef<HTMLDivElement>(null);
+    const [isExpandableSingleLine, setIsExpandableSingleLine] = useState(true);
     // State Hooks Section
     const [isInitialRender, setIsInitialRender] = useState(true);
 
@@ -515,6 +517,31 @@ const ExpandableAutoComplete = forwardRef<
       setSelectAll(allSelected);
     }, [filteredData, selectedItems, descId]);
 
+    const isExpandableSingleLineRef = useRef(true);
+    useEffect(() => {
+      const el = expandableContainerRef.current;
+      if (!el || !expandable) return;
+
+      const checkSingleLine = () => {
+        const lineHeight = parseInt(
+          getComputedStyle(el).lineHeight || '20',
+          10
+        ) || 20;
+        const padding = 5 * 2;
+        const singleLineMax = lineHeight + padding + 4;
+        const isSingle = el.scrollHeight <= singleLineMax;
+        if (isExpandableSingleLineRef.current !== isSingle) {
+          isExpandableSingleLineRef.current = isSingle;
+          setIsExpandableSingleLine(isSingle);
+        }
+      };
+
+      checkSingleLine();
+      const observer = new ResizeObserver(checkSingleLine);
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, [expandable, selectedItems, searchValue]);
+
     return (
       <div
         id={id ? `expandable-container-${id}` : `expandable-container-${name}`}
@@ -541,6 +568,7 @@ const ExpandableAutoComplete = forwardRef<
         {/* Displaying selected items for multi-select */}
 
         <div
+          ref={expandableContainerRef}
           className={`${
             expandable ? 'qbs-expandable-container' : 'qbs-container'
           }`}
@@ -649,7 +677,7 @@ const ExpandableAutoComplete = forwardRef<
           {selectedItems?.length > 1 && (
             <div
               id="expandable-clear-all"
-              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 qbs-bottom-0`}
+              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 qbs-bottom-0 ${autoDropdown && isExpandableSingleLine ? 'qbs-clear-with-auto-dropdown' : ''}`}
               onClick={handleClearSelected}
             >
               Clear all
