@@ -595,10 +595,7 @@ const ExpandableAutoComplete = forwardRef<
         
         const singleLineThreshold = paddingTop + paddingBottom + borderTop + borderBottom + lineHeight + 20;
         const isSingle = el.scrollHeight <= singleLineThreshold;
-
-        console.log(singleLineThreshold, 'singleLineThreshold')
-        console.log(el.scrollHeight, 'el.scrollHeight')
-        console.log(isSingle, 'isSingle')
+        
         // Only update if value changed
         if (isExpandableSingleLineRef.current !== isSingle) {
           isExpandableSingleLineRef.current = isSingle;
