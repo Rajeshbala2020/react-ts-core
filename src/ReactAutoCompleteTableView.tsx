@@ -125,6 +125,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     left: 0,
     bottom: 0,
     right: 0,
+    maxHeight: '60vh',
   });
   const checkIncludes = (
     mainString: string,
@@ -552,19 +553,25 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
 
   const getDropPosition = (): any => {
     if (!insideOpen && inputRef?.current) {
-      const dropdownHeight = 200; // Assume the height of the dropdown is 200px, adjust as needed
+      const minDropdownHeight = 200;
+      const padding = 24; // gap + margin so dropdown doesn't touch viewport edge
       const isMobile = window.innerWidth < 768; // Mobile breakpoint
 
       const inputRect = inputRef.current.getBoundingClientRect();
-      const spaceBelow =
-        window.innerHeight - (inputRect.bottom + window.scrollY);
-      const spaceAbove = inputRect.top + window.scrollY;
+      const maxHeightLimit = window.innerHeight * 0.6;
+      const spaceBelow = Math.max(0, window.innerHeight - inputRect.bottom - padding);
+      const spaceAbove = Math.max(0, inputRect.top - padding);
+      const availableSpace = Math.max(spaceAbove, spaceBelow);
+      const maxHeightPx = Math.min(Math.max(minDropdownHeight, availableSpace), maxHeightLimit);
 
-      let top;
-      let bottom;
-      if (spaceBelow < dropdownHeight && spaceAbove > dropdownHeight) {
-        bottom = spaceBelow + 43;
+      let top: number | undefined;
+      let bottom: number | undefined;
+      // Open above if there's more space above, or if there's not enough space below
+      if (spaceAbove > spaceBelow || (spaceBelow < minDropdownHeight && spaceAbove >= minDropdownHeight)) {
+        // Open above: position above input
+        bottom = window.innerHeight - inputRect.top + window.scrollY + 2;
       } else {
+        // Open below: position below input
         top = inputRect.top + window.scrollY + inputRect.height + 2;
       }
 
@@ -626,6 +633,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         top,
         bottom,
         width,
+        maxHeight: `${maxHeightPx}px`,
       });
     }
 
@@ -723,13 +731,13 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <div
-          style={{ ...dropPosition, maxHeight: '60vh' }}
+          style={{ ...dropPosition, overflow: 'hidden' }}
           className="autocomplete-suggections autocomplete-suggections-tableview absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9"
         >
           <ul
             className={`h-auto overflow-auto w-full ${tableView ? '' : 'py-1.5'}`}
             ref={scrollContainerRef}
-            style={{ maxHeight: 'calc(60vh - 2rem)' }}
+            style={{ maxHeight: dropPosition.maxHeight ? `calc(${dropPosition.maxHeight} - 2rem)` : undefined }}
           >
             {filteredData?.length > 0 ? (
               <>
