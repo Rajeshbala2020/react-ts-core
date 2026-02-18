@@ -8,7 +8,8 @@
     "start": "webpack serve --open --mode development",
     "build": "tsc && cp -R src/styles dist/styles",
     "test": "jest",
-    "prepublishOnly": "npm run build"
+    "prepublishOnly": "npm run build",
+    "prepare": "npm run build"
   },
   "repository": {
     "type": "git",

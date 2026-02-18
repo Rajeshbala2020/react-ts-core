@@ -1034,7 +1034,8 @@ const AutoCompleteWithTabFilter = forwardRef<
                     });
                 }
 
-                // Don't clear here - clearing happens in handleApplyTabFilter after data is sent
+                // Clear tabSelectedItems after applying filter and data is loaded
+                onToolTabChange?.([]);
                 setShowToolsTab(false);
                 // Reset moreOptionTab component
                 setMoreOptionResetKey(prev => prev + 1);
@@ -1055,21 +1056,12 @@ const AutoCompleteWithTabFilter = forwardRef<
             setAllDataLoaded(false);
         }, [showToolsTab]);
 
-        const handleApplyTabFilter = useCallback((data?: { selectedItems?: ValueProps[], moreOptionValues?: any }) => {
-            // Call onToolTabChange with selected items data when Apply is clicked
-            if (data?.selectedItems !== undefined) {
-                onToolTabChange?.(data.selectedItems);
-                // Clear tabSelectedItems after data is sent
-                // Use setTimeout to ensure the data is sent first
-                setTimeout(() => {
-                    onToolTabChange?.([]);
-                }, 0);
-            }
+        const handleApplyTabFilter = useCallback((moreOptionValues?: any) => {
             // Set flag to trigger effect when data loads
             setApplyTabFilter(true);
             handlePickSuggestions(searchValue ? searchValue : '*', 1);
             // Note: onMoreOptionChange is called when values change in the component, not here
-        }, [searchValue, handlePickSuggestions, onToolTabChange]);
+        }, [searchValue, handlePickSuggestions]);
 
         useEffect(() => {
             const allSelected =
