@@ -635,8 +635,11 @@ const DropdownFilterTabs = forwardRef<
         setIsInitialRender(false);
       } else {
         // Only call onChange if selectedItems actually changed
+        // Skip onChange if applyTabFilter is provided (onChange will be called on Apply button click)
         if (!deepEqual(selectedItems, prevSelectedItemsRef.current)) {
-          onChange(selectedItems);
+          if (!applyTabFilter) {
+            onChange(selectedItems);
+          }
           prevSelectedItemsRef.current = selectedItems;
         }
       }
@@ -647,7 +650,7 @@ const DropdownFilterTabs = forwardRef<
         });
       });
       // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [selectedItems]);
+    }, [selectedItems, applyTabFilter]);
 
     useEffect(() => {
       // Use double requestAnimationFrame to ensure DOM updates are complete
@@ -989,7 +992,19 @@ const DropdownFilterTabs = forwardRef<
       setDropOpen(false);
       setSearchValue('');
       resetSuggections?.();
-      applyTabFilter?.(values);
+      // Extract selectedItems if it's included in values (from moreOptionTab), otherwise use state
+      const itemsToPass = values?.selectedItems || selectedItems;
+      // Extract moreOptionValues (exclude selectedItems from values if present)
+      const { selectedItems: _, ...moreOptionValues } = values || {};
+      const moreOpts = Object.keys(moreOptionValues).length > 0 ? moreOptionValues : values;
+      // When Apply button is used (moreOptionTab), notify parent of moreOption values
+      if (moreOpts !== undefined && moreOpts !== null) {
+        onMoreOptionChange?.(moreOpts);
+      }
+      // Pass all selected items from all tabs to applyTabFilter
+      applyTabFilter?.({ selectedItems: itemsToPass, moreOptionValues: moreOpts });
+      // Clear all selected items after applying
+      setSelectedItems([]);
     };
 
     useEffect(() => {
@@ -1048,13 +1063,19 @@ const DropdownFilterTabs = forwardRef<
                     >
                       {React.isValidElement(moreOptionTab)
                         ? React.cloneElement(moreOptionTab as React.ReactElement<any>, {
-                            onApply: (values?: any) => handleApplySelected(values),
+                            onApply: (values?: any) => {
+                              // Include selected tab values along with moreOption values
+                              handleApplySelected({
+                                ...values,
+                                selectedItems: selectedItems
+                              });
+                            },
                             onValueChange: (values?: any) => {
-                              // Check if values exist and update state
+                              // Only update local state for UI (e.g. Apply button visibility)
+                              // onMoreOptionChange is called only when Apply button is clicked
                               const hasValues = values !== undefined && values !== null && 
                                 (typeof values === 'object' ? Object.keys(values).length > 0 : true);
                               setHasMoreOptionValues(hasValues);
-                              onMoreOptionChange?.(values);
                             },
                           } as any)
                         : moreOptionTab}
