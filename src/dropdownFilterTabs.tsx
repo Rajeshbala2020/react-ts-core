@@ -143,18 +143,16 @@ const DropdownFilterTabs = forwardRef<
     const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
     const [hasMoreOptionValues, setHasMoreOptionValues] = useState(false);
-    const [moreOptionValues, setMoreOptionValues] = useState<any>(undefined);
     const [tabsScrollable, setTabsScrollable] = useState(false);
     const scrollableDivsRef = useRef<NodeListOf<Element> | null>(null);
     
     // Use external reset key if provided, otherwise default to 0
     const currentResetKey = externalResetKey !== undefined ? externalResetKey : 0;
 
-    // Reset hasMoreOptionValues and moreOptionValues when reset key changes
+    // Reset hasMoreOptionValues when reset key changes
     useEffect(() => {
       if (externalResetKey !== undefined && externalResetKey > 0) {
         setHasMoreOptionValues(false);
-        setMoreOptionValues(undefined);
       }
     }, [externalResetKey]);
 
@@ -996,23 +994,17 @@ const DropdownFilterTabs = forwardRef<
       resetSuggections?.();
       // Extract selectedItems if it's included in values (from moreOptionTab), otherwise use state
       const itemsToPass = values?.selectedItems || selectedItems;
-      // Prioritize stored moreOptionValues - use them if they exist, otherwise extract from values
-      let moreOpts = moreOptionValues;
-      if (!moreOpts && values && Object.keys(values).length > 0) {
-        // Extract moreOptionValues (exclude selectedItems from values if present)
-        const { selectedItems: _, ...extractedMoreOptionValues } = values || {};
-        moreOpts = Object.keys(extractedMoreOptionValues).length > 0 ? extractedMoreOptionValues : values;
-      }
+      // Extract moreOptionValues (exclude selectedItems from values if present)
+      const { selectedItems: _, ...moreOptionValues } = values || {};
+      const moreOpts = Object.keys(moreOptionValues).length > 0 ? moreOptionValues : values;
       // When Apply button is used (moreOptionTab), notify parent of moreOption values
       if (moreOpts !== undefined && moreOpts !== null) {
         onMoreOptionChange?.(moreOpts);
       }
       // Pass all selected items from all tabs to applyTabFilter
       applyTabFilter?.({ selectedItems: itemsToPass, moreOptionValues: moreOpts });
-      // Clear all selected items and moreOptionValues after applying
+      // Clear all selected items after applying
       setSelectedItems([]);
-      setMoreOptionValues(undefined);
-      setHasMoreOptionValues(false);
     };
 
     useEffect(() => {
@@ -1079,15 +1071,12 @@ const DropdownFilterTabs = forwardRef<
                               });
                             },
                             onValueChange: (values?: any) => {
-                              // Store moreOptionValues in state to keep until applyTabFilter is triggered
-                              setMoreOptionValues(values);
-                              // Update local state for UI (e.g. Apply button visibility)
+                              // Only update local state for UI (e.g. Apply button visibility)
                               // onMoreOptionChange is called only when Apply button is clicked
+                              
                               const hasValues = values !== undefined && values !== null && 
                                 (typeof values === 'object' ? Object.keys(values).length > 0 : true);
                               setHasMoreOptionValues(hasValues);
-
-                              console.log(values)
                             },
                           } as any)
                         : moreOptionTab}
