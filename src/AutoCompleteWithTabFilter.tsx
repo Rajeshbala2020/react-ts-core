@@ -1063,11 +1063,14 @@ const AutoCompleteWithTabFilter = forwardRef<
                 // Use setTimeout to ensure the data is sent first
                 setTimeout(() => {
                     onToolTabChange?.([]);
-                }, 100);
+                }, 300);
             }
-            // Call onMoreOptionChange with moreOptionValues when Apply button is clicked
-            if (data?.moreOptionValues !== undefined) {
-                onMoreOptionChange?.(data.moreOptionValues);
+
+            if(data?.moreOptionValues !== undefined) {
+                onMoreOptionChange?.(data?.moreOptionValues);
+                setTimeout(() => {
+                    onMoreOptionChange?.(undefined);
+                }, 300);
             }
             // Set flag to trigger effect when data loads
             setApplyTabFilter(true);
