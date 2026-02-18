@@ -1062,7 +1062,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                 // Clear tabSelectedItems after data is sent
                 // Use setTimeout to ensure the data is sent first
                 setTimeout(() => {
-                    onToolTabChange?.([]);
+                    //onToolTabChange?.([]);
                 }, 300);
             }
 
