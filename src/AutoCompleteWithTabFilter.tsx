@@ -1063,13 +1063,16 @@ const AutoCompleteWithTabFilter = forwardRef<
                 // Use setTimeout to ensure the data is sent first
                 setTimeout(() => {
                     onToolTabChange?.([]);
-                }, 0);
+                }, 100);
+            }
+            // Call onMoreOptionChange with moreOptionValues when Apply button is clicked
+            if (data?.moreOptionValues !== undefined) {
+                onMoreOptionChange?.(data.moreOptionValues);
             }
             // Set flag to trigger effect when data loads
             setApplyTabFilter(true);
             handlePickSuggestions(searchValue ? searchValue : '*', 1);
-            // Note: onMoreOptionChange is called when values change in the component, not here
-        }, [searchValue, handlePickSuggestions, onToolTabChange]);
+        }, [searchValue, handlePickSuggestions, onToolTabChange, onMoreOptionChange]);
 
         useEffect(() => {
             const allSelected =
