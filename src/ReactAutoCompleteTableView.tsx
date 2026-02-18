@@ -723,12 +723,13 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <div
-          style={dropPosition}
+          style={{ ...dropPosition, maxHeight: '60vh' }}
           className="autocomplete-suggections autocomplete-suggections-tableview absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9"
         >
           <ul
-            className={`h-auto max-h-40 overflow-auto w-full ${tableView ? '' : 'py-1.5'}`}
+            className={`h-auto overflow-auto w-full ${tableView ? '' : 'py-1.5'}`}
             ref={scrollContainerRef}
+            style={{ maxHeight: 'calc(60vh - 2rem)' }}
           >
             {filteredData?.length > 0 ? (
               <>
