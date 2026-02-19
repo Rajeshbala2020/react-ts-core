@@ -8,7 +8,8 @@ type UseSuggestionsType = (
   getData: (
     key?: string,
     next?: number,
-    tabValue?: number | string
+    tabValue?: number | string,
+    toolApply?: boolean
   ) => Promise<ValueProps[]>,
   initialData?: ValueProps[],
   dropOpen?: boolean,
@@ -28,7 +29,8 @@ type UseSuggestionsType = (
     value?: string,
     next?: number,
     append?: boolean,
-    tabValue?: string | number
+    tabValue?: string | number,
+    toolApply?: boolean
   ) => Promise<void>;
   resetSuggections?: () => void
 };
@@ -57,14 +59,15 @@ export const useSuggestions: UseSuggestionsType = (
     value?: string,
     nextPage?: number,
     appendData?: boolean,
-    tabValue?: string | number
+    tabValue?: string | number,
+    toolApply?: boolean
   ) => {
     setIsLoading(true);
     try {
       const data = await (asyncFetch || initialLoad
         ? typeOnlyFetch && value === ""
           ? Promise.resolve([])
-          : getData(value, nextPage, tabValue)
+          : getData(value, nextPage, tabValue, toolApply)
         : Promise.resolve(initialData));
       if (!data || data?.length === 0) {
         setNextPage(undefined);
