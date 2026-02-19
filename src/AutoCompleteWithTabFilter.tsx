@@ -1059,7 +1059,7 @@ const AutoCompleteWithTabFilter = forwardRef<
         const handleApplyTabFilter = useCallback((moreOptionValues?: any) => {
             // Set flag to trigger effect when data loads
             setApplyTabFilter(true);
-            handlePickSuggestions(searchValue ? searchValue : '*', 1);
+            handlePickSuggestions(searchValue ? searchValue : '*', 1, false, undefined, true);
             // Note: onMoreOptionChange is called when values change in the component, not here
         }, [searchValue, handlePickSuggestions]);
 
