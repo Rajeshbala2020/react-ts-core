@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type ValueProps = {
   [key: string]: string;
@@ -50,7 +50,6 @@ export const useSuggestions: UseSuggestionsType = (
 ) => {
   const [suggestions, setSuggestions] = useState<ValueProps[]>(initialData);
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const initialFetchAttemptedRef = useRef(false);
 
   const resetSuggections = () => {
     setSuggestions([]);
@@ -83,24 +82,18 @@ export const useSuggestions: UseSuggestionsType = (
   };
 
   useEffect(() => {
-    if (!dropOpen) {
-      initialFetchAttemptedRef.current = false;
-      return;
-    }
-    if (initialFetchAttemptedRef.current) return;
-    if (!isMultiple && (!inputValue || suggestions.length === 0)) {
-      initialFetchAttemptedRef.current = true;
-      setNextPage(1);
-      handlePickSuggestions("", paginationEnabled ? 1 : undefined);
-    } else if (
-      isMultiple &&
-      (suggestions.length === 0 ||
-        !selectedItems ||
-        selectedItems?.length === 0)
-    ) {
-      if (!typeOnlyFetch && !inputValue) {
-        initialFetchAttemptedRef.current = true;
+    if (dropOpen) {
+      if (!isMultiple && (!inputValue || suggestions.length === 0)) {
+        setNextPage(1);
         handlePickSuggestions("", paginationEnabled ? 1 : undefined);
+      } else if (
+        isMultiple &&
+        (suggestions.length === 0 ||
+          !selectedItems ||
+          selectedItems?.length === 0)
+      ) {
+        if (!typeOnlyFetch && !inputValue)
+          handlePickSuggestions("", paginationEnabled ? 1 : undefined);
       }
     }
   }, [dropOpen]);

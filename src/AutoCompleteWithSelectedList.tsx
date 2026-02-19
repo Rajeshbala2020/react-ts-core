@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -523,18 +524,30 @@ const AutoCompleteWithSelectedList = forwardRef<
       };
     }, [dropOpen, typeOnlyFetch, uniqueDropArrowId]);
 
-    // Filtering suggestions based on type and search value
+    // Filtering suggestions based on type and search value (memoized to avoid infinite effect loop)
     const selected: any = isMultiple ? selectedItems : inputValue;
-    const filteredData: ValueProps[] = filterSuggestions(
-      suggestions,
-      searchValue,
-      type,
-      desc,
-      selected,
-      async,
-      false,
-      true,
-      matchFromStart
+    const filteredData: ValueProps[] = useMemo(
+      () =>
+        filterSuggestions(
+          suggestions,
+          searchValue,
+          type,
+          desc,
+          selected,
+          async,
+          false,
+          true,
+          matchFromStart
+        ),
+      [
+        suggestions,
+        searchValue,
+        type,
+        desc,
+        selected,
+        async,
+        matchFromStart,
+      ]
     );
 
     useEffect(() => {
