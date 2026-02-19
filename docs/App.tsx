@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { ValueProps } from "../src/commontypes";
 import { AutoComplete, AutoCompleteWithSelectedList, AutoCompleteWithTabFilter, AutoCompleteWithTreeStructure, ExpandableAutoComplete, ModernAutoComplete, ModernAutoCompleteDropdown, ModernAutoCompleteTableView, ModernAutoCompleteSuggections, ModernTextField } from "../src/index";
@@ -718,10 +718,20 @@ export default function App() {
 interface MoreOptionsComponentProps {
   onApply?: (values?: any) => void;
   onValueChange?: (values?: any) => void;
+  resetKey?: number;
 }
 
-const MoreOptionsComponent = ({ onApply, onValueChange }: MoreOptionsComponentProps) => {
+const MoreOptionsComponent = ({ onApply, onValueChange, resetKey }: MoreOptionsComponentProps) => {
   const [checked, setChecked] = useState(false);
+  
+  // Reset component state when resetKey changes
+  useEffect(() => {
+    if (resetKey !== undefined && resetKey > 0) {
+      setChecked(false);
+      // Notify parent that values have been reset
+      onValueChange?.(undefined);
+    }
+  }, [resetKey, onValueChange]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.checked;

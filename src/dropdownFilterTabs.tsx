@@ -145,14 +145,17 @@ const DropdownFilterTabs = forwardRef<
     const [hasMoreOptionValues, setHasMoreOptionValues] = useState(false);
     const [tabsScrollable, setTabsScrollable] = useState(false);
     const scrollableDivsRef = useRef<NodeListOf<Element> | null>(null);
+    const [localResetKey, setLocalResetKey] = useState(0);
     
-    // Use external reset key if provided, otherwise default to 0
-    const currentResetKey = externalResetKey !== undefined ? externalResetKey : 0;
+    // Use external reset key if provided, otherwise use local reset key
+    const currentResetKey = externalResetKey !== undefined ? externalResetKey : localResetKey;
 
     // Reset hasMoreOptionValues when reset key changes
     useEffect(() => {
       if (externalResetKey !== undefined && externalResetKey > 0) {
         setHasMoreOptionValues(false);
+        // Reset local reset key when external reset happens
+        setLocalResetKey(0);
       }
     }, [externalResetKey]);
 
@@ -989,6 +992,11 @@ const DropdownFilterTabs = forwardRef<
       setDropOpen(false);
       setSearchValue('');
       resetSuggections?.();
+      // Reset moreOption data
+      setHasMoreOptionValues(false);
+      onMoreOptionChange?.(undefined);
+      // Trigger reset on moreOption component by incrementing reset key
+      setLocalResetKey(prev => prev + 1);
       applyTabFilter?.(values);
     };
 
@@ -1056,6 +1064,7 @@ const DropdownFilterTabs = forwardRef<
                               setHasMoreOptionValues(hasValues);
                               onMoreOptionChange?.(values);
                             },
+                            resetKey: currentResetKey,
                           } as any)
                         : moreOptionTab}
                     </div>
