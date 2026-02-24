@@ -5,6 +5,7 @@ import { FieldErrors } from 'react-hook-form';
 import Spinner from './components/loader/Spinner';
 import Portal from './components/portal';
 import CustomIcons from './components/customIcons';
+import { applyPositionClass } from './utilities/getPosition';
 
 type SuggestionItem = {
   name: string;
@@ -516,6 +517,11 @@ const ModernAutoCompleteSuggections: React.FC<
       };
     }
   }, [showDropdown, insideOpen]);
+
+  useEffect(() => {
+    applyPositionClass(containerRef, isHovered);
+    setShowDropdown(false); 
+  }, [isHovered]);
 
   return (
     <div
