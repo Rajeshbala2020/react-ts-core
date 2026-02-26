@@ -573,7 +573,16 @@ const ModernAutoCompleteSuggections: React.FC<
               const val = e.target.value;
               isExternalUpdateRef.current = false;
               setInputValue(val);
-              setHasTyped(true);
+              const isEmpty = val.trim() === '';
+              setHasTyped(!isEmpty);
+
+              if (isEmpty) {
+                // Handle "select all + backspace" consistently as a reset state.
+                setDebouncedInputValue('');
+                previousDebouncedValueRef.current = '';
+                setItems(data ?? []);
+                onChange?.('');
+              }
             }}
             placeholder={placeholder}
             autoComplete="off"
