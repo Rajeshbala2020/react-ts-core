@@ -199,8 +199,10 @@ const ModernAutoCompleteSuggections: React.FC<
 
     let cancelled = false;
     const query = debouncedInputValue.trim();
-    if (!getDataRef.current || query === '') {
-      // Clear items when input is cleared so dropdown also clears
+    // Only call API when there is a source function AND the user has typed at least 2 chars.
+    // For shorter queries or no API, just fall back to local/static data.
+    if (!getDataRef.current || query === '' || query.length < 2) {
+      // Clear items when input is cleared or below threshold so dropdown also clears
       if (!cancelled) {
         setItems(data ?? []);
         setIsLoading(false);
