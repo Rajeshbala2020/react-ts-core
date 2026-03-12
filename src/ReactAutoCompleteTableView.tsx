@@ -114,6 +114,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
   const dropdownref = useRef<HTMLDivElement>(null);
+  const dropdownContentRef = useRef<HTMLDivElement | null>(null);
   const dropBtnRef = useRef<HTMLButtonElement>(null);
   const timerRef = useRef<number>(0); // To fix the no results found issue on second type
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -381,39 +382,59 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     }
   };
 
-  const handleScroll = () => {
-    setDropOpen(false);
+  const handleScroll = (event: any) => {
+    const scrollTarget = event.target as Node | null;
+
+    // Ignore scrolls that originate from inside the autocomplete container
+    // or inside the dropdown content itself.
+    if (
+      scrollTarget &&
+      ((dropdownref.current && dropdownref.current.contains(scrollTarget)) ||
+        (dropdownContentRef.current &&
+          dropdownContentRef.current.contains(scrollTarget)))
+    ) {
+      return;
+    }
+
+    if (dropOpen) {
+      setDropOpen(false);
+    }
   };
 
   useEffect(() => {
-    if (!insideOpen) {
-      setSelectedIndex(0);
-      window.addEventListener('scroll', handleScroll);
+    // Only attach scroll listeners when dropdown is open and rendered in portal
+    if (insideOpen || !dropOpen) {
+      return;
+    }
 
-      const mainElement = document.querySelector('main');
-      mainElement?.addEventListener('scroll', handleScroll);
+    setSelectedIndex(0);
 
-      const gridElements = document.querySelectorAll(
-        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto'
-      );
-      gridElements.forEach((gridElement: any) => {
-        gridElement.addEventListener('scroll', handleScroll);
+    const scrollableDivs = document.querySelectorAll(
+      'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+    );
+
+    // Listen to window/document scrolls, plus any scrollable divs
+    window.addEventListener('scroll', handleScroll);
+    document.addEventListener('scroll', handleScroll, true);
+
+    scrollableDivs.forEach((div) => {
+      div.addEventListener('scroll', handleScroll as any);
+    });
+
+    window.addEventListener('resize', getDropPosition);
+    getDropPosition();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll, true);
+
+      scrollableDivs.forEach((div) => {
+        div.removeEventListener('scroll', handleScroll as any);
       });
 
-      window.addEventListener('resize', getDropPosition);
-      getDropPosition();
-      return () => {
-        window.removeEventListener('scroll', handleScroll);
-        const mainElement = document.querySelector('main');
-        mainElement?.removeEventListener('scroll', handleScroll);
-        window.addEventListener('resize', getDropPosition);
-        const gridElements = document.querySelectorAll('.k-grid-content');
-        gridElements.forEach((gridElement: any) => {
-          gridElement.removeEventListener('scroll', handleScroll);
-        });
-      };
-    }
-  }, [dropOpen]);
+      window.removeEventListener('resize', getDropPosition);
+    };
+  }, [dropOpen, insideOpen]);
 
   const handleClear = () => {
     setDropOpen(false);
@@ -731,6 +752,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     return (
       (filteredData?.length > 0 || showNoResults) && (
         <div
+          ref={dropdownContentRef}
           style={{ ...dropPosition, overflow: 'hidden' }}
           className="autocomplete-suggections autocomplete-suggections-tableview absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9"
         >
