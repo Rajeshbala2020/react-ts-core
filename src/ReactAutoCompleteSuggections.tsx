@@ -137,6 +137,7 @@ const ModernAutoCompleteSuggections: React.FC<
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const dropdownContentRef = useRef<HTMLDivElement | null>(null);
   const isExternalUpdateRef = useRef(false);
   const previousDebouncedValueRef = useRef<string>('');
 
@@ -332,36 +333,52 @@ const ModernAutoCompleteSuggections: React.FC<
     }
   };
 
-  // Handle scroll to close dropdown
-  const handleScroll = () => {
+  // Handle scroll to close dropdown (only for scrolls outside the component/dropdown)
+  const handleScroll = (event: any) => {
+    const scrollTarget = event.target as Node | null;
+
+    if (
+      scrollTarget &&
+      ((containerRef.current &&
+        containerRef.current.contains(scrollTarget)) ||
+        (dropdownContentRef.current &&
+          dropdownContentRef.current.contains(scrollTarget)))
+    ) {
+      // Ignore scrolls inside the autocomplete container or the dropdown content
+      return;
+    }
+
     setShowDropdown(false);
   };
 
   // Attach event listeners for click outside and scroll
   useEffect(() => {
-    if (showDropdown) {
-      document.addEventListener('click', handleClickOutside);
-      window.addEventListener('scroll', handleScroll);
-
-      const mainElement = document.querySelector('main');
-      mainElement?.addEventListener('scroll', handleScroll);
-
-      const gridElements = document.querySelectorAll(
-        '.k-grid-content, .overflow-auto, .overflow-y-auto, .overflow-x-auto'
-      );
-      gridElements.forEach((gridElement: any) => {
-        gridElement.addEventListener('scroll', handleScroll);
-      });
-
-      return () => {
-        document.removeEventListener('click', handleClickOutside);
-        window.removeEventListener('scroll', handleScroll);
-        mainElement?.removeEventListener('scroll', handleScroll);
-        gridElements.forEach((gridElement: any) => {
-          gridElement.removeEventListener('scroll', handleScroll);
-        });
-      };
+    if (!showDropdown) {
+      return;
     }
+
+    document.addEventListener('click', handleClickOutside);
+
+    const scrollableDivs = document.querySelectorAll(
+      'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+    );
+
+    window.addEventListener('scroll', handleScroll);
+    document.addEventListener('scroll', handleScroll, true);
+
+    scrollableDivs.forEach((div) => {
+      div.addEventListener('scroll', handleScroll as any);
+    });
+
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll, true);
+
+      scrollableDivs.forEach((div) => {
+        div.removeEventListener('scroll', handleScroll as any);
+      });
+    };
   }, [showDropdown]);
 
   const checkIsEmptyField = (): boolean => {
@@ -643,7 +660,10 @@ const ModernAutoCompleteSuggections: React.FC<
         <>
           {insideOpen ? (
             <div className="suggection-list">
-              <div className="bg-white border border-grey-light shadow-gray-300 shadow-md rounded-sm max-h-40 overflow-auto text-[11px] text-gray-700 px-3.5 py-1.5">
+              <div
+                ref={dropdownContentRef}
+                className="bg-white border border-grey-light shadow-gray-300 shadow-md rounded-sm max-h-40 overflow-auto text-[11px] text-gray-700 px-3.5 py-1.5"
+              >
                 {effectiveVisible.map((g) => (
                   <SuggestionItem 
                     key={g.name} 
@@ -657,6 +677,7 @@ const ModernAutoCompleteSuggections: React.FC<
           ) : (
             <Portal>
               <div
+                ref={dropdownContentRef}
                 className="autocomplete-suggections autosuggection-list suggection-list bg-white shadow-gray-300 shadow-md border border-grey-light z-50"
                 style={dropPosition}
               >
