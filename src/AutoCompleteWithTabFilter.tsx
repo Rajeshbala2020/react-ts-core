@@ -306,7 +306,6 @@ const AutoCompleteWithTabFilter = forwardRef<
             if (searchValue && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) {
                 setSearchValue('');
             }
-            console.log('handleClearSelected', searchValue, type, tabInlineSearch);
             if (isMultiple) onChange([]);
             else onChange({ [descId]: '', [desc]: '' });
             if (async && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) resetSuggections?.();
