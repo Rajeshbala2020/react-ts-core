@@ -115,6 +115,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     bottom: 0,
     right: 0,
   });
+  const [isPositionReady, setIsPositionReady] = useState(false);
   const checkIncludes = (
     mainString: string,
     subString: string,
@@ -381,6 +382,10 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   useEffect(() => {
     // Only attach scroll listeners when dropdown is open and rendered in portal
     if (insideOpen || !dropOpen) {
+      // Reset positioning flag when dropdown is closed
+      if (!dropOpen && isPositionReady) {
+        setIsPositionReady(false);
+      }
       return;
     }
 
@@ -647,6 +652,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         bottom,
         width: inputRect.width,
       });
+      setIsPositionReady(true);
     }
 
     return undefined;
@@ -1042,9 +1048,13 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               )}
             </div>
           </div>
-          {dropOpen && (!isLoading || filteredData?.length > 0) && (
-            <>{insideOpen ? setDropDown() : <Portal>{setDropDown()}</Portal>}</>
-          )}
+          {dropOpen &&
+            (!insideOpen ? isPositionReady : true) &&
+            (!isLoading || filteredData?.length > 0) && (
+              <>
+                {insideOpen ? setDropDown() : <Portal>{setDropDown()}</Portal>}
+              </>
+            )}
         </div>
       </div>
     </div>
