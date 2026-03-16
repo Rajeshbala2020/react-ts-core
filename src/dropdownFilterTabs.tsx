@@ -514,7 +514,7 @@ const DropdownFilterTabs = forwardRef<
             setDropOpen(false);
             onToolClose?.();
             if (!typeOnlyFetch) setSearchValue('');
-          }, 200);
+          }, 0);
         }
       };
 
@@ -538,7 +538,7 @@ const DropdownFilterTabs = forwardRef<
               setDropOpen(false);
               onToolClose?.();
               if (!typeOnlyFetch) setSearchValue('');
-            }, 200);
+            }, 0);
           }
           return;
         }
@@ -554,7 +554,7 @@ const DropdownFilterTabs = forwardRef<
             setDropOpen(false);
             onToolClose?.();
             if (!typeOnlyFetch) setSearchValue('');
-          }, 200);
+          }, 0);
         }
       };
 

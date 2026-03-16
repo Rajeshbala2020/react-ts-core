@@ -440,6 +440,10 @@ ul {
   right: 30px;
 }
 
+.selected-item-inline-counter-disabled {
+  right: 8px;
+}
+
 .selected-item-tool-direct-counter {
   right: 60px;
 }
