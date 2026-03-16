@@ -363,7 +363,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                         setShowToolsTab(false);
                         setAllDataLoaded(false);
                         if (!typeOnlyFetch) setSearchValue('');
-                    }, 200);
+                    }, 0);
                 }
             };
 
@@ -397,7 +397,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                             setShowToolsTab(false);
                             setAllDataLoaded(false);
                             if (!typeOnlyFetch) setSearchValue('');
-                        }, 200);
+                        }, 0);
                     }
                     return;
                 }
@@ -414,7 +414,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                         setShowToolsTab(false);
                         setAllDataLoaded(false);
                         if (!typeOnlyFetch) setSearchValue('');
-                    }, 200);
+                    }, 0);
                 }
             };
 
@@ -1145,7 +1145,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                             {!countOnly ? (
                                 getSelectedItems(false)
                             ) : !tabInlineSearch ? (
-                                <div className={`selected-items-counter-container selected-item-inline-counter qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown ? 'selected-item-tool-direct-counter' : ''}`}>
+                                <div className={`selected-items-counter-container selected-item-inline-counter ${disabled ? 'selected-item-inline-counter-disabled' : ''} qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown && !disabled ? 'selected-item-tool-direct-counter' : ''}`}>
                                     <Tooltip title={allSelectedTooltipContent} enabled={selectedItems?.length > 0 ? true : false}>
                                         <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                                             {selectedItems?.length}
@@ -1249,7 +1249,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                         />
                     </div>
 
-                    {enableToolsTab && (
+                    {enableToolsTab && !disabled && (
                         <button
                             disabled={disabled ?? readOnly}
                             onClick={(e) => handleOpenToolsTab(e)}
