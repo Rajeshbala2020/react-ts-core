@@ -290,6 +290,16 @@ const ModernAutoCompleteSuggections: React.FC<
     return Array.from(map.values());
   }, [items, countField, desc, countProvided]);
 
+  const hasExactMatch = useMemo(() => {
+    const term = inputValue.trim().toLowerCase();
+    if (!term) return false;
+    return grouped.some((g) => g.name.trim().toLowerCase() === term);
+  }, [grouped, inputValue]);
+
+  const showTick = useMemo(() => {
+    return hasTyped && !isFocused && inputValue.trim() !== '' && !hasExactMatch;
+  }, [hasTyped, isFocused, inputValue, hasExactMatch]);
+
   // Filter based on what user typed
   const visible = useMemo(() => {
     const term = inputValue.trim().toLowerCase();
@@ -643,13 +653,23 @@ const ModernAutoCompleteSuggections: React.FC<
               </div>
             )}
 
-            {showWarningIcon && effectiveVisible.length > 0 && (
+            {showWarningIcon && effectiveVisible.length > 0 && !showTick && !isLoading && (
               <div
                 className={`text-warning-label relative  mr-1 ${generateClassName(
                   'warning'
                 )}`}
               >
                 <CustomIcons name="alert" type="medium" />
+              </div>
+            )}
+
+            {showTick && !isLoading && (
+              <div className="text-tick-label relative mr-1">
+                <CustomIcons
+                  name="check_mark"
+                  type="medium"
+                  className="text-green-500"
+                />
               </div>
             )}
           </div>
