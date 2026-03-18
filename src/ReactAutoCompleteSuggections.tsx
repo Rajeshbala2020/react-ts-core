@@ -555,7 +555,7 @@ const ModernAutoCompleteSuggections: React.FC<
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-1 autocomplete-with-suggection ${propsClassName || ''} ${effectiveVisible.length > 0 ? 'suggection-warning-container' : ''}`}
+      className={`flex flex-col gap-1 autocomplete-with-suggection ${propsClassName || ''} ${effectiveVisible.length > 0 ? 'suggection-warning-container' : ''} ${showTick && !isLoading ? 'suggection-okey-container' : ''}`}
     >
       {label && !isModern && (
         <div className="mb-3">
