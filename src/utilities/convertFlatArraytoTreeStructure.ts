@@ -1,26 +1,31 @@
 export function buildTree(data: any[], idField: string, parentField: string) {
   const nodeMap = new Map();
 
-  // Initialize all nodes
   data.forEach((node) => {
-    node.children = [];
-    nodeMap.set(node[idField], node);
+    nodeMap.set(node[idField], {
+      ...node,
+      checked: false,
+      children: [],
+    });
   });
 
-  // Build the tree structure
   const tree: any[] = [];
 
   data.forEach((node) => {
-    if (node[parentField]) {
-      // Find the parent and add the node as a child
-      const parent = nodeMap.get(node[parentField]);
-      if (parent) {
-        parent.children.push({ ...node, checked: false });
+    const currentNode = nodeMap.get(node[idField]);
+    const parentId = node[parentField];
+    const hasParent = parentId !== null && parentId !== undefined && parentId !== '';
+
+    if (hasParent) {
+      const parentNode = nodeMap.get(parentId);
+
+      if (parentNode) {
+        parentNode.children.push(currentNode);
+        return;
       }
-    } else {
-      // No parentId means it's a root node
-      tree.push({ ...node, checked: false });
     }
+
+    tree.push(currentNode);
   });
 
   return tree;

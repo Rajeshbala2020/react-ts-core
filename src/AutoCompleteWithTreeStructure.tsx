@@ -81,18 +81,21 @@ const AutoCompleteWithTreeStructure = forwardRef<
     const [selectedItems, setSelectedItems] = useState<ValueProps[]>([]);
     // API call for suggestions through a custom hook
     const [dropDownData, setDropDownData] = useState<ValueProps[]>(data);
+    const [filteredData, setFilteredData] = useState([]);
     const inputRef = useRef(null);
     const dropRef = useRef(null);
     const dropLevelRef = useRef<string>('bottom');
+
+    const getDropdownData = useCallback(() => {
+      return flatArray ? buildTree(data, descId, parentField) : data;
+    }, [data, flatArray, descId, parentField]);
+
     useEffect(() => {
       if (data) {
-        if (flatArray) {
-          setDropDownData(buildTree(data, descId, parentField));
-        } else {
-          setDropDownData(data);
-        }
+        setDropDownData(getDropdownData());
+        setFilteredData([]);
       }
-    }, [data, dropOpen]);
+    }, [data, getDropdownData]);
     useImperativeHandle(ref, () => inputRef.current);
 
     const [dropdownStyle, setDropdownStyle] = useState({
@@ -190,6 +193,12 @@ const AutoCompleteWithTreeStructure = forwardRef<
       const { value } = e.target;
       setDropOpen(true);
       setSearchValue(value);
+
+      if (!value.trim()) {
+        setFilteredData([]);
+        return;
+      }
+
       searchPortsFlat(value);
     };
 
@@ -200,6 +209,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
     };
 
     const handleClear = () => {
+      setFilteredData([]);
+
       if (searchValue) {
         setSearchValue('');
         setDropOpen(false);
@@ -243,6 +254,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
           setTimeout(() => {
             setDropOpen(false);
             setSearchValue('');
+            setFilteredData([]);
           }, 200);
         }
       };
@@ -321,18 +333,19 @@ const AutoCompleteWithTreeStructure = forwardRef<
       return handleCheck(node);
     };
 
-    const treeData = () => {
-      const processNode = (node: any) => ({
-        ...node,
-        expanded: handleNodeExpandCheck(node),
-        children: node.children ? node.children.map(processNode) : [],
-      });
-
-      return dropDownData.map(processNode);
-    };
     useEffect(() => {
-      setDropDownData(treeData());
-    }, [dropOpen]);
+      if (!dropOpen || searchValue.trim()) return;
+
+      setDropDownData((prev) => {
+        const processNode = (node: any): any => ({
+          ...node,
+          expanded: handleNodeExpandCheck(node),
+          children: node.children ? node.children.map(processNode) : [],
+        });
+
+        return prev.map(processNode);
+      });
+    }, [dropOpen, searchValue, selectedItems, inputValue]);
 
     const clearAllNodes = (nodes: any[]): any[] => {
       return nodes.map((node) => ({
@@ -459,8 +472,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
         </div>
       );
     };
-    const [filteredData, setFilteredData] = useState([]);
-
     const searchPortsFlat = (query: string) => {
       const lowerQuery = query.toLowerCase();
       const result: any[] = [];
@@ -492,6 +503,12 @@ const AutoCompleteWithTreeStructure = forwardRef<
           : result
       );
     };
+
+    useEffect(() => {
+      if (!searchValue.trim()) {
+        setFilteredData([]);
+      }
+    }, [searchValue]);
 
     const handleSuggestionClick = useCallback((suggestion: ValueProps) => {
       if (isMultiple) {
