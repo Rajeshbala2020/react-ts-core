@@ -10,7 +10,6 @@ import { buildTree } from './utilities/convertFlatArraytoTreeStructure';
 import { deepEqual } from './utilities/deepEqual';
 import { default as Tooltip } from './utilities/expandableTootltip';
 import { Search, Spinner } from './utilities/icons';
-import useDynamicHeight from './utilities/useDynamicHeight';
 
 type ValueProps = {
   [key: string]: string;
@@ -103,33 +102,62 @@ const AutoCompleteWithTreeStructure = forwardRef<
       left: 0,
       width: 200,
     });
+    const [dropdownMaxHeight, setDropdownMaxHeight] = useState(275);
+    const [dropdownContentMaxHeight, setDropdownContentMaxHeight] =
+      useState(184);
 
     const adjustDropdownPosition = () => {
       if (dropdownRef.current) {
+        const MIN_CONTENT_HEIGHT = 184;
+        const MIN_CONTENT_FALLBACK = 120;
+        const VIEWPORT_GAP = 8;
+        const SEARCH_BOX_HEIGHT = isSeachable ? 52 : 0;
+        const DROPDOWN_CHROME_HEIGHT = 16 + SEARCH_BOX_HEIGHT;
+
         const inputRect = dropdownRef.current.getBoundingClientRect();
         const dropdownPosition = {
           left: inputRect.left + window.scrollX,
           width: inputRect.width,
           top: 0,
         };
-        // Check if there's enough space below the input for the dropdown
-        const spaceBelow = window.innerHeight - inputRect.bottom;
-        const spaceAbove = inputRect.top + window.scrollY;
+        const spaceBelow = window.innerHeight - inputRect.bottom - VIEWPORT_GAP;
+        const spaceAbove = inputRect.top - VIEWPORT_GAP;
+        const minimumDropdownHeight =
+          DROPDOWN_CHROME_HEIGHT + MIN_CONTENT_HEIGHT;
+        const openBottom =
+          spaceBelow >= minimumDropdownHeight || spaceBelow >= spaceAbove;
+        const availableSpace = Math.max(
+          openBottom ? spaceBelow : spaceAbove,
+          DROPDOWN_CHROME_HEIGHT + MIN_CONTENT_FALLBACK
+        );
+        const nextContentMaxHeight = Math.max(
+          availableSpace - DROPDOWN_CHROME_HEIGHT,
+          MIN_CONTENT_FALLBACK
+        );
+        const nextDropdownHeight =
+          DROPDOWN_CHROME_HEIGHT + nextContentMaxHeight;
+        const renderedDropdownHeight =
+          dropRef.current?.getBoundingClientRect().height ?? nextDropdownHeight;
+        const anchoredDropdownHeight = Math.min(
+          renderedDropdownHeight,
+          nextDropdownHeight
+        );
 
-        const dropdownHeight = 275; // Assume a fixed height or calculate based on content
-        if (spaceBelow >= dropdownHeight) {
+        if (openBottom) {
           dropdownPosition.top =
             inputRect.top + window.scrollY + inputRect.height;
           dropLevelRef.current = 'bottom';
         } else {
           dropdownPosition.top =
-            inputRect.top + window.scrollY - dropdownHeight + 73;
+            inputRect.top + window.scrollY - anchoredDropdownHeight;
           dropLevelRef.current = 'top';
         }
 
         setDropdownStyle({
           ...dropdownPosition,
         });
+        setDropdownMaxHeight(nextDropdownHeight);
+        setDropdownContentMaxHeight(nextContentMaxHeight);
       }
     };
 
@@ -140,7 +168,14 @@ const AutoCompleteWithTreeStructure = forwardRef<
       return () => {
         window.removeEventListener('resize', adjustDropdownPosition);
       };
-    }, [dropOpen, selectedItems]);
+    }, [
+      dropOpen,
+      selectedItems,
+      dropDownData,
+      filteredData.length,
+      searchValue,
+      isSeachable,
+    ]);
 
     const { suggestions, isLoading, handlePickSuggestions } = useSuggestions(
       getData,
@@ -550,11 +585,6 @@ const AutoCompleteWithTreeStructure = forwardRef<
         }
       }
     };
-    useDynamicHeight(
-      '.qbs-autocomplete-suggestions-sub',
-      customDropOffset ?? 200,
-      dropOpen
-    );
     return (
       <div
         id={id ? `tree-container-${id}` : `tree-container-${name}`}
@@ -721,7 +751,10 @@ const AutoCompleteWithTreeStructure = forwardRef<
             ReactDOM.createPortal(
               <ul
                 ref={dropRef}
-                style={{ ...dropdownStyle, minHeight: 192 }}
+                style={{
+                  ...dropdownStyle,
+                  maxHeight: dropdownMaxHeight,
+                }}
                 className={`qbs-autocomplete-suggestions `}
               >
                 {isSeachable && (
@@ -746,6 +779,8 @@ const AutoCompleteWithTreeStructure = forwardRef<
                   style={{
                     gap: isTreeDropdown ? '8px' : '0',
                     minHeight: isTreeDropdown ? '184px' : '0',
+                    maxHeight: dropdownContentMaxHeight,
+                    overflowY: 'auto',
                   }}
                   className={`qbs-autocomplete-suggestions-sub padding-class `}
                 >
