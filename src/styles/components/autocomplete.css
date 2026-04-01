@@ -698,13 +698,22 @@ span.dropdown-search-icon {
 .autocomplete-suggections .qbs-autocomplete-suggections-items {
   display: flex;
   /* justify-content: space-between; */
-  align-items: center;
+  align-items: flex-start;
   cursor: pointer;
   outline: none;
   box-shadow: none;
   word-break: break-all;
   word-wrap: break-word;
   width: auto;
+  gap: 6px;
+}
+
+.autocomplete-suggections .qbs-autocomplete-suggections-items .suggestion-text {
+  flex: 1 1 auto;
+  min-width: 0;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 .qbs-autocomplete-suggections-items.is-selected {
@@ -721,6 +730,7 @@ span.dropdown-search-icon {
   border-radius: 4px;
   white-space: nowrap;
   margin-left: auto;
+  flex: 0 0 auto;
 }
 
 .autocomplete-suggections .qbs-autocomplete-suggections-items .label-code,
@@ -730,8 +740,12 @@ span.dropdown-search-icon {
   padding: 4px 8px;
   border: 1px solid #ccc;
   border-radius: 4px;
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  max-width: 140px;
   margin: 0px 5px;
+  flex: 0 1 auto;
 }
 
 /* TextField Inner Search Button */

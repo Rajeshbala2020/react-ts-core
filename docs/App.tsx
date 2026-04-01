@@ -229,7 +229,7 @@ export default function App() {
           <div style={{ width: 300 }}>
             <ModernAutoComplete
               name="sample"
-              label="TextField"
+              label="TextField Short code / Label code"
               id="id"
               isStaticList={false}
               type="auto_complete"
