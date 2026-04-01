@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useMemo,
   useRef,
   useState,
 } from 'react';
@@ -119,6 +120,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       top: 0,
       left: 0,
       width: 200,
+      transform: '',
     });
 
     const [selectAll, setSelectAll] = useState(false);
@@ -126,6 +128,10 @@ const AutoCompleteWithSelectedList = forwardRef<
     const [allDataLoaded, setAllDataLoaded] = useState(false);
     const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
     const [tabsScrollable, setTabsScrollable] = useState(false);
+    const lastReportedDropStateRef = useRef<{
+      open: boolean;
+      level: string;
+    } | null>(null);
 
     let originalOverflow = '';
     let hasScrollbar = false;
@@ -208,12 +214,22 @@ const AutoCompleteWithSelectedList = forwardRef<
         // setDropdownStyle({
         //   ...dropdownPosition,
         // });
-        setDropdownStyle((prevStyle) => ({
-          ...prevStyle,
-          transform: `translateY(${dropdownPosition.top}px)`,
-          left: desiredLeft,
-          width: desiredWidth,
-        }));
+        setDropdownStyle((prevStyle) => {
+          const nextTransform = `translateY(${dropdownPosition.top}px)`;
+          if (
+            prevStyle.transform === nextTransform &&
+            prevStyle.left === desiredLeft &&
+            prevStyle.width === desiredWidth
+          ) {
+            return prevStyle;
+          }
+          return {
+            ...prevStyle,
+            transform: nextTransform,
+            left: desiredLeft,
+            width: desiredWidth,
+          };
+        });
       }
     };
 
@@ -369,8 +385,10 @@ const AutoCompleteWithSelectedList = forwardRef<
       const { value } = e.target;
       //setVisibleDrop();
       const trimStart = value.trimStart();
-      setSearchValue(trimStart);
-      handleChangeWithDebounce(trimStart);
+      if (trimStart !== searchValue) {
+        setSearchValue(trimStart);
+        handleChangeWithDebounce(trimStart);
+      }
       setAllDataLoaded(false);
     };
 
@@ -389,12 +407,12 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleClearSelected = () => {
       setSelectedItems([]);
       setShowAllSelected(false);
-      if (searchValue && type === 'auto_suggestion' && tabInlineSearch) {
+      if (searchValue && type === 'auto_suggestion') {
         setSearchValue('');
       }
       if (isMultiple) onChange([]);
       else onChange({ [descId]: '', [desc]: '' });
-      if (async && type === 'auto_suggestion' && tabInlineSearch) resetSuggections?.();
+      if (async && type === 'auto_suggestion') resetSuggections?.();
     };
 
     const generateClassName = useCallback(() => {
@@ -447,7 +465,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           }
           closeOnScrollTimeoutRef.current = window.setTimeout(() => {
             setDropOpen(false);
-            if (!typeOnlyFetch) setSearchValue('');
+            //if (!typeOnlyFetch) setSearchValue('');
           }, 0);
         }
       };
@@ -469,7 +487,7 @@ const AutoCompleteWithSelectedList = forwardRef<
           ) {
             setTimeout(() => {
               setDropOpen(false);
-              if (!typeOnlyFetch) setSearchValue('');
+              // if (!typeOnlyFetch) setSearchValue('');
             }, 0);
           }
           return;
@@ -484,7 +502,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         ) {
           setTimeout(() => {
             setDropOpen(false);
-            if (!typeOnlyFetch) setSearchValue('');
+            //if (!typeOnlyFetch) setSearchValue('');
           }, 0);
         }
       };
@@ -525,16 +543,20 @@ const AutoCompleteWithSelectedList = forwardRef<
 
     // Filtering suggestions based on type and search value
     const selected: any = isMultiple ? selectedItems : inputValue;
-    const filteredData: ValueProps[] = filterSuggestions(
-      suggestions,
-      searchValue,
-      type,
-      desc,
-      selected,
-      async,
-      false,
-      true,
-      matchFromStart
+    const filteredData: ValueProps[] = useMemo(
+      () =>
+        filterSuggestions(
+          suggestions,
+          searchValue,
+          type,
+          desc,
+          selected,
+          async,
+          false,
+          true,
+          matchFromStart
+        ),
+      [suggestions, searchValue, type, desc, selected, async, matchFromStart]
     );
 
     useEffect(() => {
@@ -926,8 +948,17 @@ const AutoCompleteWithSelectedList = forwardRef<
     }, [filteredData, selectedItems, descId]);
 
     useEffect(() => {
-      handleUpdateParent?.(dropOpen, dropLevelRef.current);
-    }, [dropOpen, dropLevelRef.current]);
+      if (!handleUpdateParent) return;
+      const current = {
+        open: dropOpen,
+        level: dropLevelRef.current,
+      };
+      const last = lastReportedDropStateRef.current;
+      if (!last || last.open !== current.open || last.level !== current.level) {
+        handleUpdateParent(current.open, current.level);
+        lastReportedDropStateRef.current = current;
+      }
+    }, [dropOpen, handleUpdateParent]);
     return (
       <div
         id={id ? `selected-list-${id}` : `selected-list-${name}`}

@@ -495,3 +495,64 @@
   background: #deefff;
   transform: translate(-20%, 10px);
 }
+
+/* Portal tooltip version used outside .tooltip-container */
+.tooltip-info-portal {
+  transform: translateX(0%);
+  padding: 0.3em 0.6em;
+  opacity: 1;
+  width: max-content;
+  max-width: 100%;
+  font-size: 12px;
+  color: #fff !important;
+  pointer-events: auto;
+  transition: all 0.3s;
+  border: 1px solid #475467;
+  background-color: #475467;
+  border-radius: 6px;
+  visibility: visible;
+}
+
+.tooltip-info-portal::before {
+  position: absolute;
+  content: "";
+  height: 0.6em;
+  width: 0.6em;
+  right: 20px;
+  top: -4px;
+  border: 1px solid #475467;
+  border-right: none;
+  border-bottom: none;
+  transform: translate(50%) rotate(45deg);
+  background-color: #475467;
+}
+
+.tooltip-portal-error {
+  transform: translateX(0%);
+  padding: 0.3em 0.6em;
+  opacity: 1;
+  width: max-content;
+  max-width: 320px;
+  font-size: 12px;
+  color: #fff !important;
+  pointer-events: auto;
+  transition: all 0.3s;
+  border: 1px solid #e55353;
+  background-color: #e55353;
+  border-radius: 6px;
+  visibility: visible;
+}
+
+.tooltip-portal-error::before {
+  position: absolute;
+  content: "";
+  height: 0.6em;
+  width: 0.6em;
+  right: 8px;
+  top: -4px;
+  border: 1px solid #e55353;
+  border-right: none;
+  border-bottom: none;
+  transform: translate(50%) rotate(45deg);
+  background-color: #e55353;
+}
