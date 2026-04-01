@@ -1023,6 +1023,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         width: rect.width,
       };
       if (
+        prev &&
         prev.top === next.top &&
         prev.left === next.left &&
         prev.width === next.width
@@ -1054,7 +1055,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         top: rect.bottom + 6,
         left: rect.right,
       };
-      if (prev.top === next.top && prev.left === next.left) {
+      if (prev && prev.top === next.top && prev.left === next.left) {
         return prev;
       }
       return next;
