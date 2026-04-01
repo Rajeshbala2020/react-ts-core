@@ -110,12 +110,22 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   const [showClose, setShowClose] = useState(false);
   const [showToolTip, setShowTooltip] = useState(false);
   const [tooltipIsHovered, setTooltipIsHovered] = useState(false);
+  const [tooltipPosition, setTooltipPosition] = useState({
+    top: 0,
+    left: 0,
+    width: 0,
+  });
+  const [errorTooltipPosition, setErrorTooltipPosition] = useState({
+    top: 0,
+    left: 0,
+  });
   const [suggestions, setSuggestions] = useState<any>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
   const dropdownref = useRef<HTMLDivElement>(null);
   const dropdownContentRef = useRef<HTMLDivElement | null>(null);
   const dropBtnRef = useRef<HTMLButtonElement>(null);
+  const errorIconRef = useRef<HTMLDivElement>(null);
   const timerRef = useRef<number>(0); // To fix the no results found issue on second type
   const [selectedIndex, setSelectedIndex] = useState(0);
   const itemRefs = useRef<(HTMLLIElement | null)[]>([]);
@@ -1003,6 +1013,65 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     setTooltipIsHovered(false);
   };
 
+  const updateTooltipPosition = useCallback(() => {
+    if (!inputRef.current) return;
+    const rect = inputRef.current.getBoundingClientRect();
+    setTooltipPosition((prev) => {
+      const next = {
+        top: rect.bottom + 6,
+        left: rect.right,
+        width: rect.width,
+      };
+      if (
+        prev.top === next.top &&
+        prev.left === next.left &&
+        prev.width === next.width
+      ) {
+        return prev;
+      }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!(tooltipIsHovered && showToolTip && !dropOpen && inputValue)) return;
+
+    updateTooltipPosition();
+    window.addEventListener('scroll', updateTooltipPosition, true);
+    window.addEventListener('resize', updateTooltipPosition);
+
+    return () => {
+      window.removeEventListener('scroll', updateTooltipPosition, true);
+      window.removeEventListener('resize', updateTooltipPosition);
+    };
+  }, [tooltipIsHovered, showToolTip, dropOpen, inputValue, updateTooltipPosition]);
+
+  const updateErrorTooltipPosition = useCallback(() => {
+    if (!errorIconRef.current) return;
+    const rect = errorIconRef.current.getBoundingClientRect();
+    setErrorTooltipPosition((prev) => {
+      const next = {
+        top: rect.bottom + 6,
+        left: rect.right,
+      };
+      if (prev.top === next.top && prev.left === next.left) {
+        return prev;
+      }
+      return next;
+    });
+  }, []);
+
+  useEffect(() => {
+    if (!(isHovered && errors && errors[name])) return;
+    updateErrorTooltipPosition();
+    window.addEventListener('scroll', updateErrorTooltipPosition, true);
+    window.addEventListener('resize', updateErrorTooltipPosition);
+    return () => {
+      window.removeEventListener('scroll', updateErrorTooltipPosition, true);
+      window.removeEventListener('resize', updateErrorTooltipPosition);
+    };
+  }, [isHovered, errors, name, updateErrorTooltipPosition]);
+
   return (
     <div
       id={
@@ -1021,11 +1090,42 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
       )}
       <div className="tooltip-container">
         {isHovered && errors && errors[name] && (
-          <span className="tooltip">{handleError(errors)} </span>
+          <Portal>
+            <span
+              className="tooltip tooltip-portal-error"
+              style={{
+                position: 'fixed',
+                top: errorTooltipPosition.top,
+                left: errorTooltipPosition.left,
+                transform: 'translateX(-100%)',
+                zIndex: 9999,
+              }}
+            >
+              {handleError(errors)}
+            </span>
+          </Portal>
         )}
-        {tooltipIsHovered && showToolTip && !dropOpen && inputValue && (
-          <div className={`tooltip-info`}>{inputValue}</div>
-        )}
+        {tooltipIsHovered &&
+          showToolTip &&
+          !dropOpen &&
+          inputValue &&
+          (
+            <Portal>
+              <div
+                className="tooltip-info tooltip-info-portal"
+                style={{
+                  position: 'fixed',
+                  top: tooltipPosition.top,
+                  left: tooltipPosition.left,
+                  maxWidth: tooltipPosition.width,
+                  transform: 'translateX(-100%)',
+                  zIndex: 9999,
+                }}
+              >
+                {inputValue}
+              </div>
+            </Portal>
+          )}
 
         <div
           className={`flex relative ${fullWidth ? 'w-full' : 'w-auto'}`}
@@ -1153,6 +1253,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                 )}
               {errors && errors[name] && (
                 <div
+                  ref={errorIconRef}
                   className={` text-error-label  relative cursor-pointer ${generateClassName(
                     'message'
                   )}`}
