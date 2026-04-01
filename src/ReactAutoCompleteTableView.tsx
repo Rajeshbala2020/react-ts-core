@@ -1,4 +1,10 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from 'react';
 import { FieldErrors } from 'react-hook-form';
 
 import CustomIcons from './components/customIcons';
@@ -1034,8 +1040,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     });
   }, []);
 
-  useEffect(() => {
-    if (!(tooltipIsHovered && showToolTip && !dropOpen && inputValue)) return;
+  useLayoutEffect(() => {
+    if (!(tooltipIsHovered && showToolTip && !dropOpen && inputValue)) {
+      setTooltipPosition(null);
+      return;
+    }
 
     updateTooltipPosition();
     window.addEventListener('scroll', updateTooltipPosition, true);
@@ -1062,8 +1071,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     });
   }, []);
 
-  useEffect(() => {
-    if (!(isHovered && errors && errors[name])) return;
+  useLayoutEffect(() => {
+    if (!(isHovered && errors && errors[name])) {
+      setErrorTooltipPosition(null);
+      return;
+    }
     updateErrorTooltipPosition();
     window.addEventListener('scroll', updateErrorTooltipPosition, true);
     window.addEventListener('resize', updateErrorTooltipPosition);
@@ -1090,17 +1102,16 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         </div>
       )}
       <div className="tooltip-container">
-        {isHovered && errors && errors[name] && (
+        {isHovered && errors && errors[name] && errorTooltipPosition && (
           <Portal>
             <span
               className="tooltip tooltip-portal-error"
               style={{
                 position: 'fixed',
-                top: errorTooltipPosition?.top ?? -9999,
-                left: errorTooltipPosition?.left ?? -9999,
+                top: errorTooltipPosition.top,
+                left: errorTooltipPosition.left,
                 transform: 'translateX(-100%)',
                 zIndex: 9999,
-                visibility: errorTooltipPosition ? 'visible' : 'hidden',
               }}
             >
               {handleError(errors)}
@@ -1111,18 +1122,17 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
           showToolTip &&
           !dropOpen &&
           inputValue &&
-          (
+          tooltipPosition && (
             <Portal>
               <div
                 className="tooltip-info tooltip-info-portal"
                 style={{
                   position: 'fixed',
-                  top: tooltipPosition?.top ?? -9999,
-                  left: tooltipPosition?.left ?? -9999,
-                  maxWidth: tooltipPosition?.width ?? undefined,
+                  top: tooltipPosition.top,
+                  left: tooltipPosition.left,
+                  maxWidth: tooltipPosition.width,
                   transform: 'translateX(-100%)',
                   zIndex: 9999,
-                  visibility: tooltipPosition ? 'visible' : 'hidden',
                 }}
               >
                 {inputValue}
