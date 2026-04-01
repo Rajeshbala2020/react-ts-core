@@ -110,15 +110,15 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   const [showClose, setShowClose] = useState(false);
   const [showToolTip, setShowTooltip] = useState(false);
   const [tooltipIsHovered, setTooltipIsHovered] = useState(false);
-  const [tooltipPosition, setTooltipPosition] = useState({
-    top: 0,
-    left: 0,
-    width: 0,
-  });
-  const [errorTooltipPosition, setErrorTooltipPosition] = useState({
-    top: 0,
-    left: 0,
-  });
+  const [tooltipPosition, setTooltipPosition] = useState<{
+    top: number;
+    left: number;
+    width: number;
+  } | null>(null);
+  const [errorTooltipPosition, setErrorTooltipPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const [suggestions, setSuggestions] = useState<any>([]);
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
@@ -1095,10 +1095,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
               className="tooltip tooltip-portal-error"
               style={{
                 position: 'fixed',
-                top: errorTooltipPosition.top,
-                left: errorTooltipPosition.left,
+                top: errorTooltipPosition?.top ?? -9999,
+                left: errorTooltipPosition?.left ?? -9999,
                 transform: 'translateX(-100%)',
                 zIndex: 9999,
+                visibility: errorTooltipPosition ? 'visible' : 'hidden',
               }}
             >
               {handleError(errors)}
@@ -1115,11 +1116,12 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                 className="tooltip-info tooltip-info-portal"
                 style={{
                   position: 'fixed',
-                  top: tooltipPosition.top,
-                  left: tooltipPosition.left,
-                  maxWidth: tooltipPosition.width,
+                  top: tooltipPosition?.top ?? -9999,
+                  left: tooltipPosition?.left ?? -9999,
+                  maxWidth: tooltipPosition?.width ?? undefined,
                   transform: 'translateX(-100%)',
                   zIndex: 9999,
+                  visibility: tooltipPosition ? 'visible' : 'hidden',
                 }}
               >
                 {inputValue}
