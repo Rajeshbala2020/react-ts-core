@@ -409,6 +409,9 @@ const AutoCompleteWithSelectedList = forwardRef<
       setShowAllSelected(false);
       if (searchValue && type === 'auto_suggestion') {
         setSearchValue('');
+        if(!tabInlineSearch) {
+          onSearchValueChange?.('');
+        }
       }
       if (isMultiple) onChange([]);
       else onChange({ [descId]: '', [desc]: '' });
@@ -887,6 +890,12 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const handleOpenDropdown = (e: any) => {
+      const normalizedSearchValue = searchValue?.trim();
+      const effectiveSearchValue = tabInlineSearch
+        ? normalizedSearchValue
+        : inputValue?.trim();
+      const shouldRefetchForInlineSearch =
+        tabInlineSearch && Boolean(normalizedSearchValue);
 
       if (!tabInlineSearch) {
         // Toggle the main dropdown when not using inline search
@@ -905,8 +914,13 @@ const AutoCompleteWithSelectedList = forwardRef<
         }
       }
       
-      if (!suggestions || suggestions?.length === 0 || refetchData) {
-        if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
+      if (
+        !suggestions ||
+        suggestions?.length === 0 ||
+        refetchData ||
+        shouldRefetchForInlineSearch
+      ) {
+        if (autoDropdown && !effectiveSearchValue) {
           const activeTabVal =
               tab.length > 0 ? tab?.[activeTab].id : undefined;
           if (tabInlineSearch && tab.length > 0) {
@@ -920,13 +934,13 @@ const AutoCompleteWithSelectedList = forwardRef<
           }
           setRefetchData(false);
           setAllDataLoaded(true);
-        } else if (!refetchData && inputValue !== '') {
+        } else if (effectiveSearchValue) {
           if (tabInlineSearch && tab.length > 0) {
             const activeTabVal =
               tab.length > 0 ? tab?.[activeTab].id : undefined;
-            handlePickSuggestions(inputValue, 1, false, activeTabVal);
+            handlePickSuggestions(effectiveSearchValue, 1, false, activeTabVal);
           } else {
-            handlePickSuggestions(inputValue, 1);
+            handlePickSuggestions(effectiveSearchValue, 1);
           }
           setRefetchData(true);
           setAllDataLoaded(false);
