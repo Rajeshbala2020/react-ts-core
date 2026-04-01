@@ -498,7 +498,7 @@
 
 /* Portal tooltip version used outside .tooltip-container */
 .tooltip-info-portal {
-  transform: translateX(0%);
+  /* position/transform set inline in React (portal) */
   padding: 0.3em 0.6em;
   opacity: 1;
   width: max-content;
@@ -506,11 +506,10 @@
   font-size: 12px;
   color: #fff !important;
   pointer-events: auto;
-  transition: all 0.3s;
+  transition: opacity 0.2s, visibility 0.2s;
   border: 1px solid #475467;
   background-color: #475467;
   border-radius: 6px;
-  visibility: visible;
 }
 
 .tooltip-info-portal::before {
@@ -528,7 +527,7 @@
 }
 
 .tooltip-portal-error {
-  transform: translateX(0%);
+  /* position/transform set inline in React (portal); avoid CSS overriding anchor */
   padding: 0.3em 0.6em;
   opacity: 1;
   width: max-content;
@@ -536,11 +535,10 @@
   font-size: 12px;
   color: #fff !important;
   pointer-events: auto;
-  transition: all 0.3s;
+  transition: opacity 0.2s, visibility 0.2s;
   border: 1px solid #e55353;
   background-color: #e55353;
   border-radius: 6px;
-  visibility: visible;
 }
 
 .tooltip-portal-error::before {
