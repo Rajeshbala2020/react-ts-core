@@ -9,6 +9,23 @@ import { treeDropData } from "./store";
 import "../src/styles/global.css";
 import SettingsIcon from "../src/components/customIcons/Settings";
 
+const bankSplitDetailDemo = [
+  {
+    id: "1",
+    name: "HSBC Bank",
+    address:
+      "No 52/60, Mahatma Gandhi Road, Mantralaya, Fort, Mumbai, Maharashtra 400001",
+    accountNo: "HSBC001234",
+  },
+  {
+    id: "2",
+    name: "ICICI Bank",
+    address:
+      "ICICI Bank Tower, Bandra Kurla Complex, Mumbai, Maharashtra 400051",
+    accountNo: "ICICI009876",
+  },
+];
+
 export default function App() {
   const [dropData, setDropData] = useState();
   const [nexBlock, setNexBlock] = useState(1);
@@ -119,6 +136,50 @@ export default function App() {
                 { key: "userId", label: "User ID" }, 
                 { key: "name", label: "Name" }
               ]}
+            />
+          </div>
+          <div style={{ width: 360 }}>
+            <ModernAutoCompleteTableView
+              name="sampleSearchButton"
+              label="Search on button (no fetch while typing)"
+              id="id-search-btn"
+              isStaticList={false}
+              type="auto_complete"
+              placeholder="Type query, then search"
+              getData={getDatas}
+              onChange={(e) => console.log(e, "search-on-button")}
+              tableView
+              dropdownMinWidth={400}
+              autoDropdown={false}
+              searchOnButtonOnly={true}
+              dropdownTheme="splitDetail"
+              dropdownThemeConfig={{
+                splitDetail: {
+                  subtitleKey: "body",
+                  badgeKey: "id"
+                },
+              }}
+            />
+          </div>
+          <div style={{ width: 480 }}>
+            <ModernAutoCompleteTableView
+              name="bankSplitDetail"
+              label="Bank (split detail theme)"
+              id="bank-split-detail"
+              type="custom_search_select"
+              placeholder="Select bank"
+              data={bankSplitDetailDemo}
+              tableView
+              dropdownMinWidth={480}
+              dropdownTheme="splitDetail"
+              dropdownThemeConfig={{
+                splitDetail: {
+                  subtitleKey: "address",
+                  badgeKey: "accountNo",
+                  badgePrefix: "Acc. No.: ",
+                },
+              }}
+              onChange={(e) => console.log(e, "bank split detail")}
             />
           </div>
           <div style={{ width: 500 }}>
