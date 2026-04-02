@@ -1286,7 +1286,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
       id={
         id ? `autocomplete-container-${id}` : `autocomplete-container-${name}`
       }
-      className={` flex-grow  ${fullWidth ? 'w-full' : 'w-auto'}`}
+      className={`autocomplete-container-table-view flex-grow  ${fullWidth ? 'w-full' : 'w-auto'}`}
       ref={dropdownref}
     >
       {label && !isModern && (
@@ -1433,7 +1433,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                   data-testid="autocomplete-search-button"
                   onClick={handleSearchButtonClick}
                   disabled={isLoading}
-                  className="text-table-bodyColor text-[#667085] focus-visible:outline-slate-100 p-0.5 inline-flex items-center justify-center min-w-[28px] min-h-[28px] disabled:opacity-70"
+                  className="btn-search-on text-table-bodyColor text-[#667085] focus-visible:outline-slate-100 p-0.5 inline-flex items-center justify-center min-w-[28px] min-h-[28px] disabled:opacity-70"
                 >
                   {isLoading ? (
                     <span className="inline-flex items-center justify-center [&_svg]:mr-0 [&_svg]:h-5 [&_svg]:w-5">
