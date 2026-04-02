@@ -24,6 +24,26 @@ type valueProps = {
   param4?: string | number | null;
   from?: number;
 };
+
+/** Add new theme ids here when introducing layouts */
+export type DropdownThemeId = 'default' | 'splitDetail';
+
+/** Options for `dropdownTheme: 'splitDetail'` (title + subtitle + optional badge pill) */
+export type SplitDetailThemeConfig = {
+  subtitleKey?: string;
+  badgeKey?: string;
+  /** Shown before badge value, e.g. "Acc. No.: " */
+  badgePrefix?: string;
+};
+
+/**
+ * Per-theme configuration. Extend this type with new keys when adding themes
+ * (e.g. `compact?: CompactThemeConfig`).
+ */
+export type DropdownThemeConfig = {
+  splitDetail?: SplitDetailThemeConfig;
+};
+
 interface AutoSuggestionInputProps {
   id?: string;
   label?: string;
@@ -68,6 +88,13 @@ interface AutoSuggestionInputProps {
     key: string; // Field name in the suggestion object
     label: string; // Label for the column
   }>; // Column header to display
+  dropdownTheme?: DropdownThemeId;
+  /** Theme-specific field mapping and options; see `DropdownThemeConfig` */
+  dropdownThemeConfig?: DropdownThemeConfig;
+  /**
+   * When true, typing updates the input only; fetching/opening the list runs from the search control (and Enter), not while typing.
+   */
+  searchOnButtonOnly?: boolean;
 }
 
 const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
@@ -106,7 +133,16 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   tableView = false,
   additionalColumns = [],
   columnHeader = [],
+  dropdownTheme = 'default',
+  dropdownThemeConfig,
+  searchOnButtonOnly = false,
 }) => {
+  const splitDetailOptions = dropdownThemeConfig?.splitDetail;
+  const showSearchOnButtonChrome =
+    searchOnButtonOnly &&
+    (type === 'auto_complete' || type === 'custom_search_select') &&
+    !disabled &&
+    !readOnly;
   const [inputValue, setInputValue] = useState<any>(value?.name ?? "");
   const [isHovered, setIsHovered] = useState<boolean>(false);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -199,10 +235,49 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     timerRef.current = 0;
 
     setInputValue(value);
-    handleValChange(value);
+    if (!searchOnButtonOnly) {
+      handleValChange(value);
+    }
     if (!value) {
       setInputValue('');
       onChange({ id: undefined, name: '', from: 2 });
+    }
+  };
+
+  const runSearchFromInput = (value: string) => {
+    setDropOpen(true);
+    onChange({ id: undefined, name: '', from: 1 });
+    if (value.trim() === '' && type === 'auto_complete') {
+      setSuggestions([]);
+      if (autoFilter) {
+        handleDropData('*');
+      } else {
+        setDropOpen(false);
+      }
+    } else {
+      handleDropData(value);
+    }
+    setTimeout(() => {
+      timerRef.current = 1;
+    }, 200);
+  };
+
+  const handleSearchButtonClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (disabled || readOnly) return;
+    timerRef.current = 0;
+    const q = inputRef.current?.value ?? inputValue ?? '';
+    runSearchFromInput(q);
+  };
+
+  const handleSearchInputKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (!searchOnButtonOnly || disabled || readOnly) return;
+    if (e.key === 'Enter') {
+      e.preventDefault();
+      timerRef.current = 0;
+      const q = inputRef.current?.value ?? inputValue ?? '';
+      runSearchFromInput(q);
     }
   };
 
@@ -289,6 +364,9 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   const onLabelClick = () => {
     if (!isDisabled) {
       inputRef?.current?.focus();
+      if (searchOnButtonOnly) {
+        return;
+      }
       if (autoFilter && inputValue === '') {
         handleValChange('*');
       } else if (
@@ -350,6 +428,9 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   }, [autoFocus]);
   const onInputFocus = () => {
     if (!isDisabled) {
+      if (searchOnButtonOnly) {
+        return;
+      }
       if (autoFilter && inputValue === '') {
         handleValChange('*');
       } else if (
@@ -385,6 +466,12 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   };
 
   const handleOpenDropdown = (e: any) => {
+    if (searchOnButtonOnly) {
+      if (suggestions && suggestions.length > 0 && !isLoading) {
+        setDropOpen((open) => !open);
+      }
+      return;
+    }
     if (!suggestions || suggestions?.length === 0 || refetchData) {
       if (autoDropdown && (inputValue === '' || inputValue.trim() === '')) {
         setSuggestions([]);
@@ -560,21 +647,50 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   // const getPosition = () => {
   //   return 'bottom'
   // }
+  const itemMatchesLocalFilter = (item: any): boolean => {
+    const baseMatch = checkIncludes(
+      item.name,
+      inputValue,
+      item.param1 ?? '',
+      item.param2 ?? '',
+      item.param3 ?? '',
+      item.param4 ?? ''
+    );
+    if (
+      dropdownTheme !== 'splitDetail' ||
+      !splitDetailOptions ||
+      !inputValue
+    ) {
+      return baseMatch;
+    }
+    const q = inputValue.trim().toLowerCase();
+    if (!q) return baseMatch;
+
+    const hay = (v: unknown) =>
+      v != null && String(v).toLowerCase().includes(q);
+
+    if (item.label != null && hay(item.label)) return true;
+    if (
+      splitDetailOptions.subtitleKey &&
+      hay(item[splitDetailOptions.subtitleKey])
+    ) {
+      return true;
+    }
+    if (
+      splitDetailOptions.badgeKey &&
+      hay(item[splitDetailOptions.badgeKey])
+    ) {
+      return true;
+    }
+    return baseMatch;
+  };
+
   const filteredData =
     inputValue !== '*' &&
     inputValue !== '' &&
     type !== 'custom_select' &&
     !noLocalFilter
-      ? suggestions?.filter((item: valueProps) =>
-          checkIncludes(
-            item.name,
-            inputValue,
-            item.param1 ?? '',
-            item.param2 ?? '',
-            item.param3 ?? '',
-            item.param4 ?? ''
-          )
-        )
+      ? suggestions?.filter((item: valueProps) => itemMatchesLocalFilter(item))
       : suggestions;
 
   const handleError = (data: any) => {
@@ -770,7 +886,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         <div
           ref={dropdownContentRef}
           style={{ ...dropPosition, overflow: 'hidden' }}
-          className="autocomplete-suggections autocomplete-suggections-tableview absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9"
+          className={`autocomplete-suggections autocomplete-suggections-tableview absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9${
+            dropdownTheme === 'splitDetail'
+              ? ' autocomplete-suggections--split-detail'
+              : ''
+          }`}
         >
           <ul
             className={`h-auto overflow-auto w-full ${tableView ? '' : 'py-1.5'}`}
@@ -779,7 +899,9 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
           >
             {filteredData?.length > 0 ? (
               <>
-                {columnHeader && columnHeader.length > 0 && (
+                {dropdownTheme === 'default' &&
+                  columnHeader &&
+                  columnHeader.length > 0 && (
                   <li className="sticky top-0 auto-suggections-tableview-header z-10 bg-gray-100 border-b border-grey-light">
                     <ul className="flex items-stretch w-full list-none p-0 m-0">
                       {(() => {
@@ -861,9 +983,9 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                             index === selectedIndex ? 'is-selected' : ''
                           } hover:bg-table-hover`
                     } cursor-pointer text-xxs qbs-autocomplete-suggections-items ${
-                      tableView 
-                        ? "border-b border-grey-light last:border-b-0" 
-                        : "p-1 ps-3.5 pl-[10px]"
+                      dropdownTheme === 'splitDetail' || tableView
+                        ? 'border-b border-grey-light last:border-b-0'
+                        : 'p-1 ps-3.5 pl-[10px]'
                     }`}
                     key={suggestion?.id}
                     data-testid={suggestion.name}
@@ -871,70 +993,144 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                     tabIndex={index}
                     ref={(el) => (itemRefs.current[index] = el)}
                   >
-                    <ul className="flex items-stretch w-full list-none p-0 m-0">
-                      {(() => {
-                        // Sort columns by order if specified, otherwise maintain array order
-                        const sortedColumns = additionalColumns 
-                          ? [...additionalColumns].sort((a, b) => {
-                              const orderA = a.order !== undefined ? a.order : Infinity;
-                              const orderB = b.order !== undefined ? b.order : Infinity;
-                              return orderA - orderB;
-                            })
-                          : [];
-                        
-                        // Separate columns before first column (order < 0) and after (order >= 0 or undefined)
-                        const columnsBefore = sortedColumns.filter(col => col.order !== undefined && col.order < 0);
-                        const columnsAfter = sortedColumns.filter(col => col.order === undefined || col.order >= 0);
-                        
-                        // Determine if first column needs a separator
-                        const hasColumnsAfter = columnsAfter.length > 0;
-                        
-                        return (
-                          <>
-                            {/* Columns before first column */}
-                            {columnsBefore.map((column, colIndex) => {
-                              const hasValue = suggestion?.[column.key];
-                              const isLastBefore = false;
-                              return hasValue ? (
-                                <li
-                                  key={column.key}
-                                  className={`${column.width ? 'flex-shrink-0' : 'flex-1'} min-w-0 px-3 ${tableView ? 'py-2' : ''} ${!isLastBefore ? 'border-r border-grey-light' : ''} break-words flex flex-col`}
-                                  style={column.width ? { width: `${column.width}px` } : undefined}
-                                >
-                                  <span className="block whitespace-normal">
-                                    {suggestion?.[column.key]}
-                                  </span>
-                                </li>
-                              ) : null;
-                            })}
-                            
-                            {/* First column (label/name) */}
-                            <li className={`flex-1 min-w-0 px-3 ${tableView ? 'py-2' : ''} ${hasColumnsAfter ? 'border-r border-grey-light' : ''} break-words flex flex-col`}>
-                              <span className="block whitespace-normal">
-                                {suggestion?.label ? suggestion?.label : suggestion.name}
+                    {dropdownTheme === 'splitDetail' ? (
+                      <div className="qbs-split-detail-row">
+                        <div className="qbs-split-detail-main">
+                          <div className="qbs-split-detail-title">
+                            {suggestion?.label ? suggestion?.label : suggestion.name}
+                          </div>
+                          {splitDetailOptions?.subtitleKey &&
+                            suggestion?.[splitDetailOptions.subtitleKey] != null &&
+                            String(
+                              suggestion[splitDetailOptions.subtitleKey]
+                            ).trim() !== '' && (
+                              <div className="qbs-split-detail-subtitle">
+                                {String(
+                                  suggestion[splitDetailOptions.subtitleKey]
+                                )}
+                              </div>
+                            )}
+                        </div>
+                        {splitDetailOptions?.badgeKey &&
+                          suggestion?.[splitDetailOptions.badgeKey] != null &&
+                          String(suggestion[splitDetailOptions.badgeKey]).trim() !==
+                            '' && (
+                            <div className="qbs-split-detail-badge-wrap">
+                              <span className="qbs-split-detail-badge">
+                                {splitDetailOptions.badgePrefix ?? ''}
+                                {String(suggestion[splitDetailOptions.badgeKey])}
                               </span>
-                            </li>
-                            
-                            {/* Columns after first column */}
-                            {columnsAfter.map((column, colIndex) => {
-                              const hasValue = suggestion?.[column.key];
-                              const isLastColumn = colIndex === columnsAfter.length - 1;
-                              return hasValue ? (
-                                <li
-                                  key={column.key}
-                                  className={`${column.width ? 'flex-shrink-0' : 'flex-1'} min-w-0 px-3 ${tableView ? 'py-2' : ''} ${!isLastColumn ? 'border-r border-grey-light' : ''} break-words flex flex-col`}
-                                  style={column.width ? { width: `${column.width}px` } : undefined}
-                                >
-                                  <span className="block whitespace-normal">
-                                    {suggestion?.[column.key]}
-                                  </span>
-                                </li>
-                              ) : null;
-                            })}
-                          </>
-                        );
-                      })()}
-                    </ul>
+                            </div>
+                          )}
+                      </div>
+                    ) : (
+                      <ul className="flex items-stretch w-full list-none p-0 m-0">
+                        {(() => {
+                          // Sort columns by order if specified, otherwise maintain array order
+                          const sortedColumns = additionalColumns
+                            ? [...additionalColumns].sort((a, b) => {
+                                const orderA =
+                                  a.order !== undefined ? a.order : Infinity;
+                                const orderB =
+                                  b.order !== undefined ? b.order : Infinity;
+                                return orderA - orderB;
+                              })
+                            : [];
+
+                          // Separate columns before first column (order < 0) and after (order >= 0 or undefined)
+                          const columnsBefore = sortedColumns.filter(
+                            (col) => col.order !== undefined && col.order < 0
+                          );
+                          const columnsAfter = sortedColumns.filter(
+                            (col) =>
+                              col.order === undefined || col.order >= 0
+                          );
+
+                          // Determine if first column needs a separator
+                          const hasColumnsAfter = columnsAfter.length > 0;
+
+                          return (
+                            <>
+                              {/* Columns before first column */}
+                              {columnsBefore.map((column, colIndex) => {
+                                const hasValue = suggestion?.[column.key];
+                                const isLastBefore = false;
+                                return hasValue ? (
+                                  <li
+                                    key={column.key}
+                                    className={`${
+                                      column.width ? 'flex-shrink-0' : 'flex-1'
+                                    } min-w-0 px-3 ${
+                                      tableView ? 'py-2' : ''
+                                    } ${
+                                      !isLastBefore
+                                        ? 'border-r border-grey-light'
+                                        : ''
+                                    } break-words flex flex-col`}
+                                    style={
+                                      column.width
+                                        ? { width: `${column.width}px` }
+                                        : undefined
+                                    }
+                                  >
+                                    <span className="block whitespace-normal">
+                                      {suggestion?.[column.key]}
+                                    </span>
+                                  </li>
+                                ) : null;
+                              })}
+
+                              {/* First column (label/name) */}
+                              <li
+                                className={`flex-1 min-w-0 px-3 ${
+                                  tableView ? 'py-2' : ''
+                                } ${
+                                  hasColumnsAfter
+                                    ? 'border-r border-grey-light'
+                                    : ''
+                                } break-words flex flex-col`}
+                              >
+                                <span className="block whitespace-normal">
+                                  {suggestion?.label
+                                    ? suggestion?.label
+                                    : suggestion.name}
+                                </span>
+                              </li>
+
+                              {/* Columns after first column */}
+                              {columnsAfter.map((column, colIndex) => {
+                                const hasValue = suggestion?.[column.key];
+                                const isLastColumn =
+                                  colIndex === columnsAfter.length - 1;
+                                return hasValue ? (
+                                  <li
+                                    key={column.key}
+                                    className={`${
+                                      column.width ? 'flex-shrink-0' : 'flex-1'
+                                    } min-w-0 px-3 ${
+                                      tableView ? 'py-2' : ''
+                                    } ${
+                                      !isLastColumn
+                                        ? 'border-r border-grey-light'
+                                        : ''
+                                    } break-words flex flex-col`}
+                                    style={
+                                      column.width
+                                        ? { width: `${column.width}px` }
+                                        : undefined
+                                    }
+                                  >
+                                    <span className="block whitespace-normal">
+                                      {suggestion?.[column.key]}
+                                    </span>
+                                  </li>
+                                ) : null;
+                              })}
+                            </>
+                          );
+                        })()}
+                      </ul>
+                    )}
                   </li>
                 ))}
               </>
@@ -1185,10 +1381,13 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                   : placeholder ?? '--Select--'
               }
               onFocus={onInputFocus}
+              onKeyDown={handleSearchInputKeyDown}
               onClick={(e) => {
                 if (type === 'custom_select') {
                   setDropOpen(!dropOpen);
                   handleOpen(e);
+                } else if (searchOnButtonOnly) {
+                  return;
                 } else {
                   if (dropOpen || filteredData?.length > 0)
                     setDropOpen(!dropOpen);
@@ -1226,7 +1425,26 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                   <CustomIcons name="close" type="large-m" />
                 </button>
               )}
-              {isLoading && <Spinner />}
+              {showSearchOnButtonChrome && (
+                <button
+                  type="button"
+                  aria-label={isLoading ? 'Loading' : 'Search'}
+                  aria-busy={isLoading}
+                  data-testid="autocomplete-search-button"
+                  onClick={handleSearchButtonClick}
+                  disabled={isLoading}
+                  className="text-table-bodyColor text-[#667085] focus-visible:outline-slate-100 p-0.5 inline-flex items-center justify-center min-w-[28px] min-h-[28px] disabled:opacity-70"
+                >
+                  {isLoading ? (
+                    <span className="inline-flex items-center justify-center [&_svg]:mr-0 [&_svg]:h-5 [&_svg]:w-5">
+                      <Spinner />
+                    </span>
+                  ) : (
+                    <CustomIcons name="search" type="medium" />
+                  )}
+                </button>
+              )}
+              {isLoading && !showSearchOnButtonChrome && <Spinner />}
               {(type !== 'auto_complete' || autoDropdown) &&
                 !disabled &&
                 !readOnly && (

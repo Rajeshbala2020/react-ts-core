@@ -21,3 +21,8 @@ export { default as ExpandableToolTip } from './utilities/expandableTootltip';
 export { default as ToolTip } from './utilities/tooltip';
 export { default as ModernAutoCompleteDropdown } from './ReactAutoCompleteDropdown';
 export { default as ModernAutoCompleteTableView } from './ReactAutoCompleteTableView';
+export type {
+  DropdownThemeConfig,
+  DropdownThemeId,
+  SplitDetailThemeConfig,
+} from './ReactAutoCompleteTableView';

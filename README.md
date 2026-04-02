@@ -8,6 +8,7 @@ The `AutoComplete` component offers a user-friendly input experience by presenti
   - [Table of Contents](#table-of-contents)
   - [Features](#features)
   - [Installation](#installation)
+  - [ModernAutoCompleteTableView](#modernautocompletetableview)
   - [Props](#props)
   - [Contribution](#contribution)
 
@@ -110,6 +111,64 @@ function ExampleSelectedListWithTabComponent() {
 
 
 ```
+
+## ModernAutoCompleteTableView
+
+`ModernAutoCompleteTableView` is exported from `react-core-ts` for table-style dropdown rows (multiple columns or a **split-detail** layout). Import it like other components:
+
+```jsx
+import {
+  ModernAutoCompleteTableView,
+  type DropdownThemeConfig,
+  type DropdownThemeId,
+  type SplitDetailThemeConfig,
+} from 'react-core-ts';
+```
+
+### Split-detail dropdown theme
+
+Use `dropdownTheme="splitDetail"` with `dropdownThemeConfig.splitDetail` to show a primary title (`name` / `label`), an optional subtitle line, and an optional right-hand badge (e.g. account number).
+
+| Config field | Description |
+|--------------|-------------|
+| `subtitleKey` | Suggestion object key for the gray subtitle under the title (e.g. address). |
+| `badgeKey` | Suggestion object key for the pill on the right. |
+| `badgePrefix` | Optional text before the badge value (e.g. `"Acc. No.: "`). |
+
+With **split detail**, local filtering matches the query against **title** (`name` / existing param rules), **`label`**, **`subtitleKey`**, and **`badgeKey`** (case-insensitive substring), not only the main title field.
+
+```jsx
+<ModernAutoCompleteTableView
+  name="bank"
+  type="custom_search_select"
+  data={banks}
+  tableView
+  dropdownTheme="splitDetail"
+  dropdownThemeConfig={{
+    splitDetail: {
+      subtitleKey: 'address',
+      badgeKey: 'accountNo',
+      badgePrefix: 'Acc. No.: ',
+    },
+  }}
+  onChange={handleChange}
+/>
+```
+
+### Search on button only
+
+Set **`searchOnButtonOnly={true}`** (default `false`) so typing only updates the input; suggestions load when the user clicks the **search** icon or presses **Enter**. Intended for `auto_complete` and `custom_search_select`. While loading, the spinner appears in the search control. The dropdown chevron only toggles visibility when suggestions already exist.
+
+```jsx
+<ModernAutoCompleteTableView
+  name="search"
+  type="auto_complete"
+  getData={fetchSuggestions}
+  searchOnButtonOnly
+  onChange={handleChange}
+/>
+```
+
 ## Props
 
 You can pass the following props to the `AutoComplete` component:
