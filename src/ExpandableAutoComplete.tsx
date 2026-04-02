@@ -111,7 +111,7 @@ const ExpandableAutoComplete = forwardRef<
       async,
       paginationEnabled,
       initialLoad,
-      inputValue,
+      String(searchValue || inputValue || ''),
       isMultiple,
       setNextPage,
       selectedItems,

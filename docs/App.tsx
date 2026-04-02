@@ -436,7 +436,7 @@ export default function App() {
               async={true}
               desc="name"
               isMultiple={true}
-              typeOnlyFetch={true}
+              typeOnlyFetch={false}
               descId="id"
               getData={getData}
               itemCount={3}
