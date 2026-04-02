@@ -98,7 +98,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       async,
       paginationEnabled,
       initialLoad,
-      inputValue,
+      String(searchValue || inputValue || ''),
       isMultiple,
       setNextPage,
       selectedItems,

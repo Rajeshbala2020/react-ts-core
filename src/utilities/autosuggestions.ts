@@ -15,12 +15,13 @@ type UseSuggestionsType = (
   dropOpen?: boolean,
   asyncFetch?: boolean,
   paginationEnabled?: boolean,
-  typeOnlyFetch?: boolean,
-  inputValue?: string,
+  initialLoad?: boolean,
+  /** Current search text (main field and/or inline search); used when opening the dropdown */
+  searchQuery?: string,
   isMultiple?: boolean,
   setNextPage?: (value: number) => void,
   selectedItems?: any[],
-  initialLoad?: boolean
+  typeOnlyFetch?: boolean
 ) => {
   suggestions: ValueProps[];
   isLoading: boolean;
@@ -42,7 +43,7 @@ export const useSuggestions: UseSuggestionsType = (
   asyncFetch = false,
   paginationEnabled = false,
   initialLoad = false,
-  inputValue = "",
+  searchQuery = "",
   isMultiple,
   setNextPage,
   selectedItems = [],
@@ -82,18 +83,23 @@ export const useSuggestions: UseSuggestionsType = (
   };
 
   useEffect(() => {
-    if (dropOpen) {
-      if (!isMultiple && (!inputValue || suggestions.length === 0)) {
-        setNextPage(1);
-        handlePickSuggestions("", paginationEnabled ? 1 : undefined);
-      } else if (
-        isMultiple &&
-        (suggestions.length === 0 ||
-          !selectedItems ||
-          selectedItems?.length === 0)
-      ) {
-        if (!typeOnlyFetch && !inputValue)
-          handlePickSuggestions("", paginationEnabled ? 1 : undefined);
+    if (!dropOpen) return;
+
+    const q = searchQuery ?? '';
+
+    if (!isMultiple) {
+      if (!q || suggestions.length === 0) {
+        setNextPage?.(1);
+        handlePickSuggestions(q, paginationEnabled ? 1 : undefined);
+      }
+    } else if (
+      suggestions.length === 0 ||
+      !selectedItems ||
+      selectedItems.length === 0
+    ) {
+      if (!typeOnlyFetch) {
+        setNextPage?.(1);
+        handlePickSuggestions(q, paginationEnabled ? 1 : undefined);
       }
     }
   }, [dropOpen]);
