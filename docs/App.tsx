@@ -493,7 +493,7 @@ export default function App() {
               ]}
               clearTabSwitch={true}
               tabInlineSearch={false}
-              // autoDropdown={true}
+              autoDropdown={true}
               searchValue="Hello"
               onSearchValueChange={(value) =>
                 console.log(value, "onSearchValueChange")

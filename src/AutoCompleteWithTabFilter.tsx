@@ -828,21 +828,31 @@ const AutoCompleteWithTabFilter = forwardRef<
                         setSearchValue('');
                         setInputValue('');
                         handlePickSuggestions('', 1);
+                        setAllDataLoaded(false);
                     } else {
                         resetSuggections?.();
                         const activeTabVal =
                             tab.length > 0 ? tab?.[index].id : undefined;
-                        handlePickSuggestions(searchValue, 1, false, activeTabVal);
+                        const normalizedSearchValue = searchValue?.trim();
+                        const tabSearchValue =
+                            !tabInlineSearch && allDataLoaded && !normalizedSearchValue
+                                ? '*'
+                                : searchValue;
+                        handlePickSuggestions(tabSearchValue, 1, false, activeTabVal);
                     }
-                    setAllDataLoaded(false);
                 } else if (!tabInlineSearch) {
                     resetSuggections?.();
                     const activeTabVal = tab.length > 0 ? tab?.[index].id : undefined;
-                    handlePickSuggestions(searchValue, 1, false, activeTabVal);
+                    const normalizedSearchValue = searchValue?.trim();
+                    const tabSearchValue =
+                        !tabInlineSearch && allDataLoaded && !normalizedSearchValue
+                            ? '*'
+                            : searchValue;
+                    handlePickSuggestions(tabSearchValue, 1, false, activeTabVal);
                 }
                 setActiveTab(index);
             }
-        }, [activeTab, clearTabSwitch, handleClearSelected, tabInlineSearch, tab, searchValue, handlePickSuggestions, resetSuggections]);
+        }, [activeTab, clearTabSwitch, handleClearSelected, tabInlineSearch, tab, searchValue, handlePickSuggestions, resetSuggections, allDataLoaded]);
 
         const getSelectedRowLimit = useCallback(() => {
             let maxHeight = 36;
