@@ -404,10 +404,11 @@ const AutoCompleteWithSelectedList = forwardRef<
       }
     };
 
-    const handleClearSelected = () => {
+    const handleClearSelected = (preserveSearchOrEvent?: boolean | React.MouseEvent<HTMLElement>) => {
+      const preserveSearch = typeof preserveSearchOrEvent === 'boolean' ? preserveSearchOrEvent : false;
       setSelectedItems([]);
       setShowAllSelected(false);
-      if (searchValue && type === 'auto_suggestion') {
+      if (!preserveSearch && searchValue && type === 'auto_suggestion') {
         setSearchValue('');
         if(!tabInlineSearch) {
           onSearchValueChange?.('');
@@ -745,7 +746,7 @@ const AutoCompleteWithSelectedList = forwardRef<
     const handleTabClick = (index: number) => {
       if (activeTab !== index) {
         if (clearTabSwitch) {
-          handleClearSelected();
+          handleClearSelected(!tabInlineSearch);
           if (tabInlineSearch) {
             setSearchValue('');
             setInputValue('');

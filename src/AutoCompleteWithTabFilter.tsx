@@ -299,17 +299,18 @@ const AutoCompleteWithTabFilter = forwardRef<
             setAllDataLoaded(false);
         }, [handleChangeWithDebounce]);
 
-        const handleClearSelected = useCallback(() => {
+        const handleClearSelected = useCallback((preserveSearchOrEvent?: boolean | React.MouseEvent<HTMLElement>) => {
+            const preserveSearch = typeof preserveSearchOrEvent === 'boolean' ? preserveSearchOrEvent : false;
             setSelectedItems([]);
             setShowAllSelected(false);
             setShowToolsTab(false);
-            if (searchValue && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) {
+            if (!preserveSearch && searchValue && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) {
                 setSearchValue('');
             }
             if (isMultiple) onChange([]);
             else onChange({ [descId]: '', [desc]: '' });
             if (async && type === 'auto_suggestion' && (tabInlineSearch || resetAllSearch)) resetSuggections?.();
-        }, [searchValue, type, tabInlineSearch, isMultiple, onChange, descId, desc, async, resetSuggections]);
+        }, [searchValue, type, tabInlineSearch, isMultiple, onChange, descId, desc, async, resetSuggections, resetAllSearch]);
 
         const generateClassName = useCallback(() => {
             return `qbs-textfield-default ${className} ${errors && errors?.message ? 'textfield-error' : 'textfield'
@@ -822,7 +823,7 @@ const AutoCompleteWithTabFilter = forwardRef<
         const handleTabClick = useCallback((index: number) => {
             if (activeTab !== index) {
                 if (clearTabSwitch) {
-                    handleClearSelected();
+                    handleClearSelected(!tabInlineSearch);
                     if (tabInlineSearch) {
                         setSearchValue('');
                         setInputValue('');
