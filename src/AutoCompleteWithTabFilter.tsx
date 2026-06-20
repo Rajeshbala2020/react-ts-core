@@ -16,7 +16,7 @@ import { deepEqual } from './utilities/deepEqual';
 import { filterSuggestions } from './utilities/filterSuggestions';
 import { AllDropArrow, DropArrow, Search, Spinner, Tools } from './utilities/icons';
 import { default as Tooltip } from './utilities/NewTooltip';
-import { getKeyValue, safeToLowerString } from './utilities/getKeyValue';
+import { getKeyValue, isSelectionMatch, isSelectionMatchValue } from './utilities/getKeyValue';
 import {
     clampDropdownToViewportPreferRightAlign,
     MAX_DROPDOWN_WIDTH_WITH_TABS_PX,
@@ -710,17 +710,12 @@ const AutoCompleteWithTabFilter = forwardRef<
             selectedItems: ValueProps[] | string
         ): boolean => {
             if (Array.isArray(selectedItems)) {
-                return selectedItems.some(
-                    (selectedItem) =>
-                        getKeyValue(selectedItem, desc, 'name') === getKeyValue(item, desc, 'name') ||
-                        getKeyValue(selectedItem, descId, 'id') === getKeyValue(item, descId, 'id')
-                );
-            } else {
-                return (
-                    getKeyValue(item, desc, 'name') === safeToLowerString(selectedItems) ||
-                    getKeyValue(item, descId, 'id') === safeToLowerString(selectedItems)
+                return selectedItems.some((selectedItem) =>
+                    isSelectionMatch(selectedItem, item, desc, descId),
                 );
             }
+
+            return isSelectionMatchValue(item, selectedItems, desc, descId);
         };
 
         const handleLoadMore = () => {

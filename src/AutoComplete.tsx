@@ -12,6 +12,7 @@ import { useSuggestions } from './utilities/autosuggestions';
 import { debounce } from './utilities/debounce';
 import { deepEqual } from './utilities/deepEqual';
 import { filterSuggestions } from './utilities/filterSuggestions';
+import { isSelectionMatch, isSelectionMatchValue } from './utilities/getKeyValue';
 import { Close, DropArrow, Search, Spinner } from './utilities/icons';
 import Tooltip from './utilities/tooltip';
 
@@ -283,12 +284,12 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
       selectedItems: ValueProps[] | string,
     ): boolean => {
       if (Array.isArray(selectedItems)) {
-        return selectedItems.some(
-          (selectedItem) => selectedItem[desc] === item[desc],
+        return selectedItems.some((selectedItem) =>
+          isSelectionMatch(selectedItem, item, desc, descId),
         );
-      } else {
-        return item[desc] === selectedItems;
       }
+
+      return isSelectionMatchValue(item, selectedItems, desc, descId);
     };
 
     const handleLoadMore = () => {
