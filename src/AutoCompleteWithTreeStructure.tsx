@@ -10,6 +10,7 @@ import { buildTree } from './utilities/convertFlatArraytoTreeStructure';
 import { deepEqual } from './utilities/deepEqual';
 import { default as Tooltip } from './utilities/expandableTootltip';
 import { Search, Spinner } from './utilities/icons';
+import { isSelectionMatch, isSelectionMatchValue } from './utilities/getKeyValue';
 
 type ValueProps = {
   [key: string]: string;
@@ -196,14 +197,12 @@ const AutoCompleteWithTreeStructure = forwardRef<
       selectedItems: ValueProps[] | string
     ): boolean => {
       if (Array.isArray(selectedItems)) {
-        return selectedItems.some(
-          (selectedItem) =>
-            selectedItem[desc] === item[desc] ||
-            selectedItem[descId] === item[descId]
+        return selectedItems.some((selectedItem) =>
+          isSelectionMatch(selectedItem, item, desc, descId),
         );
-      } else {
-        return item[desc] === selectedItems;
       }
+
+      return isSelectionMatchValue(item, selectedItems, desc, descId);
     };
     useEffect(() => {
       if (!deepEqual(selectedItems, propsSeelctedItems))

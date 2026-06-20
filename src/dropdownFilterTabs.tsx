@@ -17,7 +17,7 @@ import { deepEqual } from './utilities/deepEqual';
 import { filterSuggestions } from './utilities/filterSuggestions';
 import { AllDropArrow, DropArrow, Search, Spinner } from './utilities/icons';
 import { default as Tooltip } from './utilities/NewTooltip';
-import { getKeyValue, safeToLowerString } from './utilities/getKeyValue';
+import { getKeyValue, isSelectionMatch, isSelectionMatchValue } from './utilities/getKeyValue';
 import {
   clampDropdownToViewportPreferRightAlign,
   MAX_DROPDOWN_WIDTH_WITH_TABS_PX,
@@ -736,19 +736,11 @@ const DropdownFilterTabs = forwardRef<
             }
           }
 
-          return (
-            getKeyValue(selectedItem, desc, 'name') ===
-              getKeyValue(item, desc, 'name') ||
-            getKeyValue(selectedItem, descId, 'id') ===
-              getKeyValue(item, descId, 'id')
-          );
+          return isSelectionMatch(selectedItem, item, desc, descId);
         });
-      } else {
-        return (
-          getKeyValue(item, desc, 'name') === safeToLowerString(selectedItems) ||
-          getKeyValue(item, descId, 'id') === safeToLowerString(selectedItems)
-        );
       }
+
+      return isSelectionMatchValue(item, selectedItems, desc, descId);
     }, [tab, currentTabId, desc, descId]);
 
     const handleLoadMore = () => {
