@@ -98,6 +98,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const [showToolTip, setShowTooltip] = useState(false);
   const [tooltipIsHovered, setTooltipIsHovered] = useState(false);
   const [suggestions, setSuggestions] = useState<any>([]);
+  const [hasFetchedSuggestions, setHasFetchedSuggestions] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
   const dropdownref = useRef<HTMLDivElement>(null);
@@ -243,10 +244,14 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   };
   const handlePickSuggestions = async (value?: string) => {
     if (getData) {
+      setHasFetchedSuggestions(false);
       setIsLoading(true);
       try {
         const fetchedSuggestions = await getData?.(value);
-        setSuggestions(fetchedSuggestions);
+        setSuggestions(
+          Array.isArray(fetchedSuggestions) ? fetchedSuggestions : [],
+        );
+        setHasFetchedSuggestions(true);
         setIsLoading(false);
         setTimeout(() => {
           if (type === 'custom_select') {
@@ -254,6 +259,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
           }
         }, 100);
       } catch (error) {
+        setHasFetchedSuggestions(false);
         setIsLoading(false);
       }
     }
@@ -661,15 +667,19 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const [showNoResults, setShowNoResults] = useState(false);
 
   useEffect(() => {
+    const customSelectRequestCompleted =
+      type === 'custom_select' && hasFetchedSuggestions && dropOpen;
+    const autocompleteSearchCompleted =
+      Boolean(inputValue) && timerRef.current === 1;
+
     if (
-      inputValue &&
+      (customSelectRequestCompleted || autocompleteSearchCompleted) &&
       filteredData?.length === 0 &&
-      !isLoading &&
-      timerRef.current === 1
+      !isLoading
     ) {
       const timer = setTimeout(() => {
         setShowNoResults(true);
-      }, 500); // Delay in milliseconds
+      }, customSelectRequestCompleted ? 0 : 500);
       return () => clearTimeout(timer);
     } else {
       setShowNoResults(false);
@@ -751,6 +761,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     timerRef.current,
     selectedIndex,
     dropOpen,
+    hasFetchedSuggestions,
+    type,
   ]);
 
   const setDropDown = () => {
@@ -805,11 +817,10 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
               </>
             ) : (
               showNoResults &&
-              !isLoading &&
-              timerRef.current === 1 && (
+              !isLoading && (
                 <li
-                  className={`$ cursor-pointer p-1 rounded-sm text-xxs`}
-                  onClick={handleClose}
+                  className="qbs-autocomplete-notfound cursor-default p-1 rounded-sm text-xxs"
+                  aria-disabled="true"
                 >
                   No Results Found
                 </li>
