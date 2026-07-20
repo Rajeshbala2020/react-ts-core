@@ -1006,7 +1006,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
         <div
           className={`qbs-relative qbs-autocomplete-selected-comp ${
-            expandable ? 'qbs-expandable-container' : 'qbs-container'}`} > {(selectedItems?.length > 0 || !tabInlineSearch) && ( <> {!countOnly ? ( getSelectedItems(false) ) : !tabInlineSearch ? ( <div className={`selected-items-counter-container ${disabled ?'selected-item-inline-counter-disabled' : ''} qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown && !disabled ?'selected-item-nontool-direct-counter' : ''}`}>
+            expandable ? 'qbs-expandable-container' : 'qbs-selected-comp-normal'}`} > {(selectedItems?.length > 0 || !tabInlineSearch) && ( <> {!countOnly ? ( getSelectedItems(false) ) : !tabInlineSearch ? ( <div className={`selected-items-counter-container ${disabled ?'selected-item-inline-counter-disabled' : ''} qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown && !disabled ?'selected-item-nontool-direct-counter' : ''}`}>
                   <Tooltip title={allSelectedTooltipContent} enabled={selectedItems?.length > 0 ? true : false}>
                     <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                       {selectedItems?.length}

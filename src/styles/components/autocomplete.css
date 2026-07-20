@@ -22,6 +22,49 @@
   --table-hover: #f8f8f8;
 }
 
+/*
+ * Scoped border-box so TextField / Autocomplete heights match pre-4.0.2 behavior.
+ * (Removing global body * broke height because padding+border were added outside h-*).
+ */
+.qbs-textfield,
+.qbs-textfield *,
+.qbs-autocomplete-selected-comp,
+.qbs-autocomplete-selected-comp *,
+.qbs-autocomplete-suggestions,
+.qbs-autocomplete-suggestions *,
+.autocomplete-suggections,
+.autocomplete-suggections *,
+.qbs-expandable-container,
+.qbs-expandable-container *,
+.tooltip-container,
+.tooltip-container *,
+.react-core-ts-search-container,
+.react-core-ts-search-container *,
+.qbs-autocomplete-container-table-view,
+.qbs-autocomplete-container-table-view * {
+  box-sizing: border-box;
+}
+
+/* Explicit TextField size heights — reliable even if utility order fights other CSS */
+.qbs-textfield input.qbs-h-10,
+input.qbs-peer.qbs-h-10 {
+  height: 2.5rem;
+  min-height: 2.5rem;
+  box-sizing: border-box;
+}
+.qbs-textfield input.qbs-h-\[25px\],
+input.qbs-peer.qbs-h-\[25px\] {
+  height: 25px;
+  min-height: 25px;
+  box-sizing: border-box;
+}
+.qbs-textfield input.qbs-h-\[34px\],
+input.qbs-peer.qbs-h-\[34px\] {
+  height: 34px;
+  min-height: 34px;
+  box-sizing: border-box;
+}
+
 .custom-spinner {
   width: 24px !important; /* w-6 */
   height: 24px; /* h-6 */
@@ -399,7 +442,8 @@ ul {
   position: absolute;
   right: 25px;
   z-index: 99;
-  top: 18px;
+  top: 50%;
+  transform: translateY(-50%);
   flex-wrap: wrap;
 }
 
@@ -425,7 +469,8 @@ ul {
   position: absolute;
   right: 8px;
   z-index: 99;
-  top: 6.5px;
+  top: 50%;
+  transform: translateY(-50%);
   flex-wrap: wrap;
 }
 
@@ -824,18 +869,89 @@ span.dropdown-search-icon {
 
 /* TextField Inner Search Button */
 .inner-search-button {
+  position: absolute;
   background: #f8f8f8;
-  border-radius: 6px;
-  padding: 0px 8px;
+  border: none;
+  border-radius: 0 3px 3px 0;
+  padding: 0 8px;
   display: flex;
   align-items: center;
-  justify-content: center;  
+  justify-content: center;
   cursor: pointer;
-  height: 38px;
+  height: calc(100% - 2px);
   width: 38px;
   top: 1px;
-  right: 2px;
+  right: 1px;
+  z-index: 2;
+  box-sizing: border-box;
 }
 .search-btn-input {
   padding-right: 38px;
+}
+
+/*
+ * Keep end icons inside the input border.
+ * (Sibling flex + qbs-w-full previously pushed icons outside the bordered input.)
+ */
+.qbs-autocomplete-adorement-wrapper,
+.qbs-input-adorement-wrapper {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  z-index: 2;
+  pointer-events: none;
+}
+.qbs-autocomplete-adorement-wrapper > *,
+.qbs-input-adorement-wrapper > * {
+  pointer-events: auto;
+}
+
+.qbs-autocomplete-adorement-wrapper .adorement,
+.qbs-autocomplete-adorement-wrapper .qbs-autocomplete-adorement,
+.qbs-input-adorement-wrapper .adorement {
+  position: relative !important;
+  right: auto !important;
+  top: auto !important;
+  height: 100%;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+
+/* Avoid Tailwind `container` utility collision (prefix makes it `.qbs-container`) */
+.qbs-selected-comp-normal {
+  position: relative;
+  display: block;
+  width: 100%;
+  max-width: none;
+}
+
+.qbs-autocomplete-selected-comp {
+  position: relative;
+  display: block;
+  width: 100%;
+}
+
+.qbs-autocomplete-selected-comp > .qbs-textfield-expandable.qbs-normal,
+.qbs-autocomplete-selected-comp > .qbs-textfield-expandable.qbs-normal .qbs-textfield-default {
+  display: block;
+  width: 100%;
+}
+
+/* Tools icon should sit inside the field, vertically centered */
+.qbs-tools-drop-btn {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%);
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
 }

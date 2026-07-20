@@ -643,7 +643,7 @@ const ExpandableAutoComplete = forwardRef<
         <div
           ref={expandableContainerRef}
           className={`${
-            expandable ? 'qbs-expandable-container' : 'qbs-container'
+            expandable ? 'qbs-expandable-container' : 'qbs-selected-comp-normal'
           } ${autoDropdown ? 'pr-8' : ''}`}
           style={{ position: 'relative' }}
         >

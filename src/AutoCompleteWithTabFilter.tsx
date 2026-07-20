@@ -1142,7 +1142,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                 {/* Displaying selected items for multi-select */}
 
                 <div
-                    className={`qbs-relative qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-container'
+                    className={`qbs-relative qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-selected-comp-normal'
                         }`}
                 >
 
@@ -1183,11 +1183,11 @@ const AutoCompleteWithTabFilter = forwardRef<
 
                     <>
                         {autoDropdown && !tabInlineSearch && !disabled && !readOnly && (
-                            <div className='qbs-inline-all-dropdown-btn'>
+                            <div className={`qbs-inline-all-dropdown-btn ${!tabInlineSearch && autoDropdown && !enableToolsTab ? 'qbs-inline-all-direct-dropdown-btn' : ''}`}>
                                 <button
                                     disabled={disabled ?? readOnly}
                                     onClick={(e) => handleOpenDropdown(e)}
-                                    className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
+                                    className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-all-dropdown-btn"
                                     data-testid="drop-arrow"
                                     type="button"
                                     id="autocomplete-drop-icon"

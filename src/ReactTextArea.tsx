@@ -211,19 +211,19 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
                 {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}
-          </div>
-          <div className={generateClassName('adorement')} ref={adorementRef}>
-            {errors && errors[name] && (
-              <div
-                className={` qbs-text-error-label qbs-text-error-icon qbs-cursor-pointer qbs-relative ${generateClassName(
-                  'message'
-                )}`}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                <CustomIcons name="alert" type="medium" />
-              </div>
-            )}
+            <div className={generateClassName('adorement')} ref={adorementRef}>
+              {errors && errors[name] && (
+                <div
+                  className={` qbs-text-error-label qbs-text-error-icon qbs-cursor-pointer qbs-relative ${generateClassName(
+                    'message'
+                  )}`}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <CustomIcons name="alert" type="medium" />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

@@ -521,7 +521,7 @@ const AutoCompleteWithSelectedList = forwardRef<
 
         <div
           className={`qbs-relative qbs-autocomplete-selected-comp ${
-            expandable ? 'qbs-expandable-container' : 'qbs-container'
+            expandable ? 'qbs-expandable-container' : 'qbs-selected-comp-normal'
           }`}
         >
           {selectedItems?.length > 0 && (

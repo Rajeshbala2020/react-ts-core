@@ -1008,74 +1008,74 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                 {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}
-          </div>
-          <div className="qbs-flex qbs-items-center qbs-justify-center qbs-autocomplete-adorement-wrapper">
-            <div
-              ref={adorementRef}
-              className={`${generateClassName(
-                'adorement', )} qbs-autocomplete-adorement qbs-auto-dorpdown-adorement qbs-mr-[1px] ${ isLoading ?'bg-white' : ''
-              }`}
-            >
-              {showClose && (
-                <button
-                  onClick={() => handleClear()}
-                  className="qbs-text-table-bodyColor qbs-text-[#667085]"
-                  aria-label="close"
-                  type="button"
-                  id="autocomplete-close-icon"
-                >
-                  <CustomIcons name="close" type="large-m" />
-                </button>
-              )}
-              {isLoading && <Spinner />}
-              {(type !== 'auto_complete' || autoDropdown) &&
-                !disabled &&
-                !readOnly && (
+            <div className="qbs-autocomplete-adorement-wrapper">
+              <div
+                ref={adorementRef}
+                className={`${generateClassName(
+                  'adorement', )} qbs-autocomplete-adorement qbs-auto-dorpdown-adorement qbs-mr-[1px] ${ isLoading ?'bg-white' : ''
+                }`}
+              >
+                {showClose && (
                   <button
-                    disabled={disabled ?? readOnly}
-                    onClick={(e) => handleOpenDropdown(e)}
-                    onBlur={handleClose}
-                    className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100"
-                    data-testid="drop-arrow"
+                    onClick={() => handleClear()}
+                    className="qbs-text-table-bodyColor qbs-text-[#667085]"
+                    aria-label="close"
                     type="button"
-                    id="autocomplete-drop-icon"
-                    ref={dropBtnRef}
+                    id="autocomplete-close-icon"
                   >
-                    {!dropOpen ? (
-                      autoDropdown ? (
+                    <CustomIcons name="close" type="large-m" />
+                  </button>
+                )}
+                {isLoading && <Spinner />}
+                {(type !== 'auto_complete' || autoDropdown) &&
+                  !disabled &&
+                  !readOnly && (
+                    <button
+                      disabled={disabled ?? readOnly}
+                      onClick={(e) => handleOpenDropdown(e)}
+                      onBlur={handleClose}
+                      className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100"
+                      data-testid="drop-arrow"
+                      type="button"
+                      id="autocomplete-drop-icon"
+                      ref={dropBtnRef}
+                    >
+                      {!dropOpen ? (
+                        autoDropdown ? (
+                          <AllDropArrow
+                            type="down"
+                            uniqueId="all-dropdow-arrow-icon"
+                            className="qbs-all-dropdow-arrow-icon"
+                          />
+                        ) : (
+                          <DropArrow uniqueDropArrowId="drop-arrow-icon" />
+                        )
+                      ) : autoDropdown ? (
                         <AllDropArrow
-                          type="down"
+                          type="up"
                           uniqueId="all-dropdow-arrow-icon"
                           className="qbs-all-dropdow-arrow-icon"
                         />
                       ) : (
-                        <DropArrow uniqueDropArrowId="drop-arrow-icon" />
-                      )
-                    ) : autoDropdown ? (
-                      <AllDropArrow
-                        type="up"
-                        uniqueId="all-dropdow-arrow-icon"
-                        className="qbs-all-dropdow-arrow-icon"
-                      />
-                    ) : (
-                      <DropArrow
-                        className="qbs-rotate-180"
-                        uniqueDropArrowId="drop-arrow-icon"
-                      />
-                    )}
-                  </button>
+                        <DropArrow
+                          className="qbs-rotate-180"
+                          uniqueDropArrowId="drop-arrow-icon"
+                        />
+                      )}
+                    </button>
+                  )}
+                {errors && errors[name] && (
+                  <div
+                    className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
+                      'message',
+                    )}`}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <CustomIcons name="alert" type="medium" />
+                  </div>
                 )}
-              {errors && errors[name] && (
-                <div
-                  className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
-                    'message',
-                  )}`}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  <CustomIcons name="alert" type="medium" />
-                </div>
-              )}
+              </div>
             </div>
           </div>
           {dropOpen &&

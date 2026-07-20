@@ -611,7 +611,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
         <div
           className={`${
-            expandable ? 'qbs-expandable-container !qbs-pt-[10px]' : 'qbs-container'
+            expandable ? 'qbs-expandable-container !qbs-pt-[10px]' : 'qbs-selected-comp-normal'
           }`}
           style={{ position: 'relative' }}
         >

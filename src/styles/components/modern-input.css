@@ -1,0 +1,159 @@
+/**
+ * Self-contained modern TextField / Autocomplete input styles.
+ * These used to live in host apps; the library must ship them for Vite / local preview.
+ */
+
+/* Base peer input (height + border) */
+input.qbs-peer,
+.qbs-textfield input[class*='qbs-h-'] {
+  box-sizing: border-box !important;
+  display: block;
+  width: 100%;
+  height: 2.5rem !important;
+  min-height: 2.5rem !important;
+  margin: 0;
+  border-style: solid;
+  border-width: 1px;
+  border-color: #d0d5dd;
+  border-radius: 4px;
+  background-color: #fff;
+  color: #111827;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  padding-left: 0.875rem;
+  padding-right: 0.875rem;
+  padding-top: 0;
+  padding-bottom: 0;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+}
+
+input.qbs-peer.qbs-h-\[34px\],
+.qbs-textfield input.qbs-h-\[34px\] {
+  height: 34px !important;
+  min-height: 34px !important;
+}
+
+input.qbs-peer.qbs-h-\[25px\],
+.qbs-textfield input.qbs-h-\[25px\] {
+  height: 25px !important;
+  min-height: 25px !important;
+  font-size: 0.75rem;
+}
+
+input.qbs-peer:focus {
+  border-color: #001f3f;
+}
+
+input.qbs-peer:disabled {
+  color: #98a2b3;
+  background-color: #f2f4f7;
+  cursor: not-allowed;
+}
+
+/* Host-token fallbacks (prefixed utilities that are not in default Tailwind theme) */
+.qbs-border-input-light {
+  border-color: #d0d5dd;
+}
+.qbs-text-input-text {
+  color: #111827;
+}
+.qbs-text-input-disabled,
+.disabled\:qbs-text-input-disabled:disabled {
+  color: #98a2b3;
+}
+.qbs-bg-disabled,
+.disabled\:qbs-bg-disabled:disabled {
+  background-color: #f2f4f7;
+}
+.qbs-text-grey-dark {
+  color: #344054;
+}
+.qbs-text-error-light {
+  color: #f04438;
+}
+.qbs-text-grey-medium {
+  color: #667085;
+}
+.qbs-bg-bodyBG {
+  background-color: #f9fafb;
+}
+.qbs-text-xxs {
+  font-size: 0.625rem;
+  line-height: 0.875rem;
+}
+.qbs-input-outline {
+  outline: none;
+}
+.text-common {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: #101828;
+}
+.text-error {
+  color: #f04438;
+}
+.text-grey-secondary {
+  color: #667085;
+}
+.text-text-primary {
+  color: #101828;
+}
+
+/* Floating label: hide native placeholder when modern label is used */
+.placeholder-transparent::placeholder {
+  color: transparent !important;
+}
+.placeholder-transparent::-webkit-input-placeholder {
+  color: transparent !important;
+}
+.focus\:placeholder-grey-secondary:focus::placeholder {
+  color: #98a2b3;
+}
+
+.modern-input-label-truncate {
+  max-width: calc(100% - 1.75rem);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  pointer-events: none;
+  background-color: transparent;
+}
+
+.modern-input-label-size {
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.modern-input-peer-focus-label-size,
+.peer-focus\:modern-input-peer-focus-label-size {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+/* When peer has value / is focused, shrink label (Tailwind peer-focus variant class name) */
+.qbs-peer:focus ~ .peer-focus\:modern-input-peer-focus-label-size,
+.qbs-peer:not(:placeholder-shown) ~ .modern-input-peer-focus-label-size,
+.qbs-peer:not(:placeholder-shown) ~ label.modern-input-label-truncate {
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+
+.active-input-label-bg {
+  background-color: #fff;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+.disabled-input-label-bg {
+  background-color: #f2f4f7;
+  padding-left: 0.25rem;
+  padding-right: 0.25rem;
+}
+
+/* Ensure bordered utility actually draws a border */
+.qbs-border {
+  border-style: solid;
+}

@@ -331,9 +331,9 @@ const TextField: React.FC<TextFieldProps> = ({
                       }
                     : {}),
                 }}
-                className={` ${generateClassName("input")} ${
-                  uppercase ? "uppercase placeholder:normal-case" : ""
-                } ''}`}
+                className={`${generateClassName("input")} ${
+                  uppercase ? "qbs-uppercase placeholder:qbs-normal-case" : ""
+                }`}
                 placeholder={placeholder}
                 onChange={(e) => {
                   handleChange(e);
@@ -354,117 +354,123 @@ const TextField: React.FC<TextFieldProps> = ({
                   {required ? <span className="text-error"> *</span> : <></>}
                 </label>
               )}
-            </div>
-            {enableSearch && (
-               <button
+              {enableSearch && (
+                <button
                   disabled={disabled ?? readOnly}
-                  onClick={() => onSearchClick?.(inputRef.current?.value || value || '')} 
+                  onClick={() =>
+                    onSearchClick?.(inputRef.current?.value || value || "")
+                  }
                   className={`${generateClassName("search")}`}
                   data-testid="tools-drop-arrow"
                   type="button"
                   id="search-btn-textfield"
                   ref={searchBtnRef}
-              >
-                <CustomIcons name="search" type="medium" />
-              </button>
-            )}
-            {(adorement ||
-              (showInfo && infoTitle) ||
-              step ||
-              (!isValid && isTooltip && errors && errors[name]) ||
-              isValid) && (
-              <div className="qbs-flex qbs-items-center qbs-justify-center qbs-gap-1">
-                {adorement && adorementPosition === "start" && (
-                  <div
-                    className={`  ${
-                      isDisabled ? "qbs-text-zinc-500" : "qbs-text-grey-medium"
-                    } qbs-absolute adorement qbs-left-0  `} // adorement  position added for start
-                  >
-                    <>{adorement}</>
-                  </div>
-                )}
-
-                <div
-                  className={`${generateClassName(
-                    "adorement"
-                  )} qbs-h-[20px] qbs-right-[1px]`} //added adorment bg color
-                  ref={adorementRef}
                 >
-                  {adorement && adorementPosition === "end" && (
+                  <CustomIcons name="search" type="medium" />
+                </button>
+              )}
+              {(adorement ||
+                (showInfo && infoTitle) ||
+                step ||
+                (!isValid && isTooltip && errors && errors[name]) ||
+                isValid) && (
+                <div className="qbs-input-adorement-wrapper">
+                  {adorement && adorementPosition === "start" && (
                     <div
-                      className={`  ${
-                        isDisabled ? "qbs-text-zinc-500" : "qbs-text-grey-medium"
-                      } `} // changed for adorment text blurness while disabled
+                      className={`${
+                        isDisabled
+                          ? "qbs-text-zinc-500"
+                          : "qbs-text-grey-medium"
+                      } qbs-absolute adorement qbs-left-0`}
                     >
                       <>{adorement}</>
                     </div>
                   )}
 
-                  {step && (
-                    <div className="qbs-ml-2">
-                      <CustomIcons
-                        name="TreeUp_Arrow"
-                        className={`qbs-text-gray-500 hover:qbs-text-dark qbs-cursor-pointer ${
-                          isDisabled ? "qbs-hidden" : "qbs-block"
+                  <div
+                    className={`${generateClassName(
+                      "adorement"
+                    )} qbs-h-[20px] qbs-right-[1px]`}
+                    ref={adorementRef}
+                  >
+                    {adorement && adorementPosition === "end" && (
+                      <div
+                        className={`${
+                          isDisabled
+                            ? "qbs-text-zinc-500"
+                            : "qbs-text-grey-medium"
                         }`}
-                        type="medium"
-                        onClick={() => {
-                          handleClick("up");
-                        }}
-                        onMouseDown={() => handleMouseDown("up")}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                        viewBox={true}
-                      />
-                      <CustomIcons
-                        name="TreeDown_Arrow"
-                        className={`qbs-text-gray-500 hover:qbs-text-dark qbs-cursor-pointer ${
-                          isDisabled ? "qbs-hidden" : "qbs-block"
-                        }`}
-                        type="medium"
-                        onClick={() => {
-                          handleClick("down");
-                        }}
-                        onMouseDown={() => handleMouseDown("down")}
-                        onMouseUp={handleMouseUp}
-                        onMouseLeave={handleMouseUp}
-                        viewBox={true}
-                      />
-                    </div>
-                  )}
+                      >
+                        <>{adorement}</>
+                      </div>
+                    )}
 
-                  {!isValid && isTooltip && errors && errors[name] && (
-                    <div
-                      className={` qbs-text-error-label qbs-relative qbs-bg-white qbs-cursor-pointer ${generateClassName(
-                        "message"
-                      )}`}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      <CustomIcons name="alert" type="medium" />
-                    </div>
-                  )}
-                  {infoTitle && showInfo && (
-                    <div
-                      className={`  qbs-relative qbs-bg-white qbs-cursor-pointer qbs-text-[#667085] `}
-                      onMouseEnter={() => setIsHovered(true)}
-                      onMouseLeave={() => setIsHovered(false)}
-                    >
-                      <CustomIcons name="infoCircle" type="medium" />
-                    </div>
-                  )}
-                  {isValid && (
-                    <div className="qbs-pl-2">
-                      <CustomIcons
-                        name="check_mark"
-                        type="medium"
-                        className="qbs-text-[#28B440]"
-                      />
-                    </div>
-                  )}
+                    {step && (
+                      <div className="qbs-ml-2">
+                        <CustomIcons
+                          name="TreeUp_Arrow"
+                          className={`qbs-text-gray-500 hover:qbs-text-dark qbs-cursor-pointer ${
+                            isDisabled ? "qbs-hidden" : "qbs-block"
+                          }`}
+                          type="medium"
+                          onClick={() => {
+                            handleClick("up");
+                          }}
+                          onMouseDown={() => handleMouseDown("up")}
+                          onMouseUp={handleMouseUp}
+                          onMouseLeave={handleMouseUp}
+                          viewBox={true}
+                        />
+                        <CustomIcons
+                          name="TreeDown_Arrow"
+                          className={`qbs-text-gray-500 hover:qbs-text-dark qbs-cursor-pointer ${
+                            isDisabled ? "qbs-hidden" : "qbs-block"
+                          }`}
+                          type="medium"
+                          onClick={() => {
+                            handleClick("down");
+                          }}
+                          onMouseDown={() => handleMouseDown("down")}
+                          onMouseUp={handleMouseUp}
+                          onMouseLeave={handleMouseUp}
+                          viewBox={true}
+                        />
+                      </div>
+                    )}
+
+                    {!isValid && isTooltip && errors && errors[name] && (
+                      <div
+                        className={` qbs-text-error-label qbs-relative qbs-bg-white qbs-cursor-pointer ${generateClassName(
+                          "message"
+                        )}`}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                      >
+                        <CustomIcons name="alert" type="medium" />
+                      </div>
+                    )}
+                    {infoTitle && showInfo && (
+                      <div
+                        className={`  qbs-relative qbs-bg-white qbs-cursor-pointer qbs-text-[#667085] `}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
+                      >
+                        <CustomIcons name="infoCircle" type="medium" />
+                      </div>
+                    )}
+                    {isValid && (
+                      <div className="qbs-pl-2">
+                        <CustomIcons
+                          name="check_mark"
+                          type="medium"
+                          className="qbs-text-[#28B440]"
+                        />
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         </div>
       </div>

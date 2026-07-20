@@ -625,45 +625,45 @@ const ModernAutoCompleteSuggections: React.FC<
               {required ? <span className="text-error"> *</span> : <></>}
             </label>
           )}
-        </div>
-        <div className="qbs-flex qbs-items-center qbs-justify-center">
-          <div
-            ref={adorementRef}
-            className={`${generateClassName('adorement')} qbs-autocomplete-adorement qbs-custom-dorpdown-adorement qbs-mr-[1px] ${ isLoading ?'bg-white' : ''
-            }`}
-          >
-            {isLoading && <Spinner />}
-            {errors && errors[name] && (
-              <div
-                className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
-                  'message'
-                )}`}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              >
-                <CustomIcons name="alert" type="medium" />
-              </div>
-            )}
+          <div className="qbs-autocomplete-adorement-wrapper">
+            <div
+              ref={adorementRef}
+              className={`${generateClassName('adorement')} qbs-autocomplete-adorement qbs-custom-dorpdown-adorement qbs-mr-[1px] ${ isLoading ?'bg-white' : ''
+              }`}
+            >
+              {isLoading && <Spinner />}
+              {errors && errors[name] && (
+                <div
+                  className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
+                    'message'
+                  )}`}
+                  onMouseEnter={() => setIsHovered(true)}
+                  onMouseLeave={() => setIsHovered(false)}
+                >
+                  <CustomIcons name="alert" type="medium" />
+                </div>
+              )}
 
-            {showWarningIcon && effectiveVisible.length > 0 && !showTick && !isLoading && (
-              <div
-                className={`qbs-text-warning-label qbs-relative qbs-mr-1 ${generateClassName(
-                  'warning'
-                )}`}
-              >
-                <CustomIcons name="alert" type="medium" />
-              </div>
-            )}
+              {showWarningIcon && effectiveVisible.length > 0 && !showTick && !isLoading && (
+                <div
+                  className={`qbs-text-warning-label qbs-relative qbs-mr-1 ${generateClassName(
+                    'warning'
+                  )}`}
+                >
+                  <CustomIcons name="alert" type="medium" />
+                </div>
+              )}
 
-            {showTick && !isLoading && (
-              <div className="qbs-text-tick-label qbs-relative qbs-mr-1">
-                <CustomIcons
-                  name="check_mark"
-                  type="medium"
-                  className="qbs-text-green-500"
-                />
-              </div>
-            )}
+              {showTick && !isLoading && (
+                <div className="qbs-text-tick-label qbs-relative qbs-mr-1">
+                  <CustomIcons
+                    name="check_mark"
+                    type="medium"
+                    className="qbs-text-green-500"
+                  />
+                </div>
+              )}
+            </div>
           </div>
         </div>
       </div>

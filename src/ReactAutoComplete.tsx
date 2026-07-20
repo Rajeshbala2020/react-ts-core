@@ -1005,60 +1005,60 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                 {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}
-          </div>
-          <div className="qbs-flex qbs-items-center qbs-justify-center">
-            <div
-              ref={adorementRef}
-              className={`${generateClassName(
-                'adorement',
-              )} qbs-autocomplete-adorement qbs-custom-dorpdown-adorement qbs-mr-[1px] ${
-                isLoading ? 'qbs-bg-white' : ''
-              }`}
-            >
-              {showClose && (
-                <button
-                  onClick={() => handleClear()}
-                  className="qbs-text-table-bodyColor qbs-text-[#667085]"
-                  aria-label="close"
-                  type="button"
-                  id="autocomplete-close-icon"
-                >
-                  <CustomIcons name="close" type="large-m" />
-                </button>
-              )}
-              {isLoading && <Spinner />}
-              {type !== 'auto_complete' && !disabled && !readOnly && (
-                <button
-                  disabled={disabled ?? readOnly}
-                  onClick={(e) => handleOpen(e)}
-                  onBlur={handleClose}
-                  className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100"
-                  data-testid="drop-arrow"
-                  type="button"
-                  id="autocomplete-drop-icon"
-                  ref={dropBtnRef}
-                >
-                  {!dropOpen ? (
-                    <DropArrow uniqueDropArrowId="drop-arrow-icon" />
-                  ) : (
-                    <DropArrow
-                      className="qbs-rotate-180"
-                      uniqueDropArrowId="drop-arrow-icon"
-                    />
-                  )}
-                </button>
-              )}
-              {errors && errors[name] && (
-                <div
-                  className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
-                    'message',
-                  )}`}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  <CustomIcons name="alert" type="medium" />
-                </div>
-              )}
+            <div className="qbs-autocomplete-adorement-wrapper">
+              <div
+                ref={adorementRef}
+                className={`${generateClassName(
+                  'adorement',
+                )} qbs-autocomplete-adorement qbs-custom-dorpdown-adorement qbs-mr-[1px] ${
+                  isLoading ? 'qbs-bg-white' : ''
+                }`}
+              >
+                {showClose && (
+                  <button
+                    onClick={() => handleClear()}
+                    className="qbs-text-table-bodyColor qbs-text-[#667085]"
+                    aria-label="close"
+                    type="button"
+                    id="autocomplete-close-icon"
+                  >
+                    <CustomIcons name="close" type="large-m" />
+                  </button>
+                )}
+                {isLoading && <Spinner />}
+                {type !== 'auto_complete' && !disabled && !readOnly && (
+                  <button
+                    disabled={disabled ?? readOnly}
+                    onClick={(e) => handleOpen(e)}
+                    onBlur={handleClose}
+                    className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100"
+                    data-testid="drop-arrow"
+                    type="button"
+                    id="autocomplete-drop-icon"
+                    ref={dropBtnRef}
+                  >
+                    {!dropOpen ? (
+                      <DropArrow uniqueDropArrowId="drop-arrow-icon" />
+                    ) : (
+                      <DropArrow
+                        className="qbs-rotate-180"
+                        uniqueDropArrowId="drop-arrow-icon"
+                      />
+                    )}
+                  </button>
+                )}
+                {errors && errors[name] && (
+                  <div
+                    className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
+                      'message',
+                    )}`}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  >
+                    <CustomIcons name="alert" type="medium" />
+                  </div>
+                )}
+              </div>
             </div>
           </div>
           {dropOpen &&

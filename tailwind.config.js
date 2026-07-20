@@ -5,6 +5,9 @@ module.exports = {
   content: ['./src/**/*.{js,jsx,ts,tsx}', './docs/**/*.{html,js,ts,tsx}'],
   corePlugins: {
     preflight: false,
+    // `container` becomes `.qbs-container` with our prefix and collided with
+    // component class names used as non-Tailwind wrappers.
+    container: false,
   },
   theme: {
     extend: {

@@ -11,6 +11,7 @@ const generatedTs = path.join(generatedDir, 'stylesContent.ts');
 const outCss = path.join(root, 'dist/react-core-ts.css');
 
 const componentFiles = [
+  'modern-input.css',
   'autocomplete.css',
   'treedropdown.css',
   'selectedautocomplete.css',
