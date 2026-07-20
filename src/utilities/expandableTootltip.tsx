@@ -122,7 +122,9 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
         tooltipStyle &&
         ReactDOM.createPortal(
           <span
-            ref={(node) => (dropRef.current = node)}
+            ref={(node) => {
+              dropRef.current = node;
+            }}
             className={`tooltiptext custom_tooltip_style_class  ${
               dropdownPosition == 'bottom-position' ? 'down' : 'up'
             }`}

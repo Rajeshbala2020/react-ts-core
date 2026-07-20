@@ -163,7 +163,9 @@ const OTPInput: React.FC<OTPInputProps> = ({
                 onChange={(e) => handleChange(e, index)}
                 onKeyDown={(e) => handleKeyDown(e, index)}
                 onPaste={handlePaste}
-                ref={(el) => (inputRefs.current[index] = el)}
+                ref={(el) => {
+                  inputRefs.current[index] = el;
+                }}
                 maxLength={1}
                 onFocus={(e) => (e.target.style.borderColor = '#667085')}
                 onBlur={(e) => (e.target.style.borderColor = '#D0D5DD')}

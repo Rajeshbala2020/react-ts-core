@@ -803,7 +803,9 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
                     }}
                     onClick={() => handleSuggestionClick(suggestion, index)}
                     tabIndex={index}
-                    ref={(el) => (itemRefs.current[index] = el)}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
                   >
                     <span className="suggestion-text">
                       {suggestion?.label ? suggestion?.label : suggestion.name}

@@ -149,7 +149,7 @@ export interface TextFieldProps {
   onEditComplete?: () => void;
   value?: string;
   onEditCancel?: () => void;
-  adorement?: JSX.Element | string | undefined;
+  adorement?: React.JSX.Element | string | undefined;
   autoComplete?: boolean;
   autoFocus?: boolean;
   register?: any;
@@ -202,7 +202,7 @@ export interface TextAreaProps {
   value?: string;
   onEditComplete?: () => void;
   onEditCancel?: () => void;
-  adorement?: JSX.Element;
+  adorement?: React.JSX.Element;
   autoComplete?: boolean;
   autoFocus?: boolean;
   hideLabel?: boolean;

@@ -991,7 +991,9 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                     data-testid={suggestion.name}
                     onClick={() => handleSuggestionClick(suggestion, index)}
                     tabIndex={index}
-                    ref={(el) => (itemRefs.current[index] = el)}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
                   >
                     {dropdownTheme === 'splitDetail' ? (
                       <div className="qbs-split-detail-row">

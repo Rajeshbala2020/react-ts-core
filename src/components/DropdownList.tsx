@@ -36,7 +36,9 @@ const DropdownList: React.FC<ValueProps> = ({
   return (
     <div
       key={idx.toString()}
-      ref={(el) => setItemRef?.(idx, el)}  // Properly store each ref
+      ref={(el) => {
+        setItemRef?.(idx, el);
+      }}
       className={`qbs-autocomplete-listitem-container ${
         (isMultiple || singleSelect) && 'qbs-autocomplete-checkbox-container'
       } ${isSelected(suggestion, selected) ? 'is-selected' : ''} ${idx === focusedIndex ? "is-selected" : ""}`}

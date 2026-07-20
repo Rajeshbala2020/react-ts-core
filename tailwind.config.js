@@ -1,7 +1,10 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-  content: [], // Ensure this includes all relevant paths
-  purge: ['./src/**/*.{js,jsx,ts,tsx}', './docs/**/*.{html,js,ts,tsx}'],
+  content: ['./src/**/*.{js,jsx,ts,tsx}', './docs/**/*.{html,js,ts,tsx}'],
+  // Library CSS is injected into consumer apps; avoid Tailwind preflight/base reset.
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {
       colors: {

@@ -796,7 +796,9 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
                     }}
                     onClick={() => handleSuggestionClick(suggestion, index)}
                     tabIndex={index}
-                    ref={(el) => (itemRefs.current[index] = el)}
+                    ref={(el) => {
+                      itemRefs.current[index] = el;
+                    }}
                   >
                     <span>
                       {suggestion?.label ? suggestion?.label : suggestion.name}

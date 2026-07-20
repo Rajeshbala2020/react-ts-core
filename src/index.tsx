@@ -1,4 +1,4 @@
-import './styles/global.css';
+import './injectStyles';
 
 export {
   default as AutoComplete,
