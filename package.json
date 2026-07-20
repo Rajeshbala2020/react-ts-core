@@ -1,6 +1,6 @@
 {
   "name": "react-core-ts",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "React Components",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -19,9 +19,15 @@
       "default": "./dist/index.js"
     },
     "./style.css": "./dist/react-core-ts.css",
-    "./dist/react-core-ts.css": "./dist/react-core-ts.css",
-    "./dist/styles/global.css": "./dist/styles/global.css",
-    "./package.json": "./package.json"
+    "./package.json": "./package.json",
+    "./dist/*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*"
+    },
+    "./*": {
+      "types": "./dist/*.d.ts",
+      "default": "./dist/*"
+    }
   },
   "scripts": {
     "start": "webpack serve --open --mode development",
