@@ -1,7 +1,7 @@
 import React from "react";
 
 export const DropArrow: React.FC<any> = ({
-  className = "",
+  className="",
   stroke = 1.5,
   uniqueId = "drop-arrow-icon",
 }) => {
@@ -26,7 +26,7 @@ export const DropArrow: React.FC<any> = ({
   );
 };
 
-export const Close: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Close: React.FC<any> = ({ className="", stroke = 1.5 }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -45,12 +45,12 @@ export const Close: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   );
 };
 
-export const Spinner: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Spinner: React.FC<any> = ({ className="", stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className="custom-spinner "
+        className="custom-spinner"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
@@ -68,7 +68,7 @@ export const Spinner: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
   );
 };
 
-export const Search: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Search: React.FC<any> = ({ className="", stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
@@ -91,7 +91,7 @@ export const Search: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
 };
 
 export const AllDropArrow: React.FC<any> = ({
-  className = "",
+  className="",
   uniqueId = "all-drop-up-arrow-icon",
   type = "up",
 }) => {
@@ -178,7 +178,7 @@ export const AllDropArrow: React.FC<any> = ({
   );
 };
 
-export const Tools: React.FC<any> = ({ className = "", stroke = 1.5 }) => {
+export const Tools: React.FC<any> = ({ className="", stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 20 20" fill="none">

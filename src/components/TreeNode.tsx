@@ -61,7 +61,7 @@ const TreeNode: React.FC<any> = ({
           >
             {(isMultiple || (singleSelect && showIcon)) && (
               <div
-                style={{ alignItems: singleSelect ? 'flex-start' : 'center' }}
+                style={{ alignItems: singleSelect ? 'qbs-flex-start' : 'center' }}
                 className={`${'qbs-autocomplete-checkbox'}`}
               >
                 {!singleSelect ? (
@@ -110,7 +110,7 @@ const TreeNode: React.FC<any> = ({
                   onClick={() => handleSelect(node)}
                   className={`${
                     node.expanded ? 'qbs-expanded-child' : ''
-                  } qbs-tree-list-container-sub-text cursor-pointer`}
+                  } qbs-tree-list-container-sub-text qbs-cursor-pointer`}
                 >
                   {node[desc]}
                 </span>

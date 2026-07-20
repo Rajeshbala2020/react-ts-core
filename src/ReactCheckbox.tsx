@@ -31,18 +31,18 @@ const Checkbox: React.FC<CheckboxProps> = ({
 
   return (
     <div
-      className={`text-common font-normal text-grey-secondary flex items-center justify-start gap-2 ${
-        disabled ? ' opacity-70' : ''
+      className={`text-common qbs-font-normal text-grey-secondary qbs-flex qbs-items-center qbs-justify-start qbs-gap-2 ${
+        disabled ? 'qbs-opacity-70' : ''
       } `}
     >
-      <div className="w-4 h-4">
-        <label className="relative">
+      <div className="qbs-w-4 qbs-h-4">
+        <label className="qbs-relative">
           <input
             type="checkbox"
             disabled={disabled}
             name={name}
             autoComplete="off"
-            className="border-none outline-none invisible "
+            className="qbs-border-none qbs-outline-none qbs-invisible"
             data-testid="app-common-checkbox"
             id={id ? `input-check-${id}` : `input-check-${name}`}
             value={value}
@@ -51,8 +51,8 @@ const Checkbox: React.FC<CheckboxProps> = ({
           />
 
           <div
-            className={`absolute top-0 left-0 text-text-primary ${propsClassName}  ${
-              disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+            className={`qbs-absolute qbs-top-0 qbs-left-0 text-text-primary ${propsClassName}  ${
+              disabled ? 'qbs-cursor-not-allowed' : 'qbs-cursor-pointer'
             }`}
           >
             {checked ? (

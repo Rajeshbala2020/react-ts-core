@@ -49,7 +49,7 @@ const InputActions: React.FC<ValueProps> = ({
         !countOnly && (
           <button
             onClick={handleClear}
-            className="icon-button text-[#667085] "
+            className="icon-button qbs-text-[#667085]"
             type="button"
             aria-label="clear"
           >
@@ -61,7 +61,7 @@ const InputActions: React.FC<ValueProps> = ({
           <button
             type="button"
             onClick={(e) => handleDropClose(e)}
-            className="icon-button text-[#667085] "
+            className="icon-button qbs-text-[#667085]"
             aria-label="toggle"
             name="toggle"
           >
@@ -74,7 +74,7 @@ const InputActions: React.FC<ValueProps> = ({
           <button
             disabled={(disabled || readOnly) && !viewMode}
             type="button"
-            className="icon-button text-[#667085] "
+            className="icon-button qbs-text-[#667085]"
             onClick={(e) => handleDropOpen(e)}
             aria-label="toggle"
             name="toggle"

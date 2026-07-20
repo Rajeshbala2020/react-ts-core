@@ -53,7 +53,7 @@ const CustomIcons: React.FC<IconsProps> = ({
           onMouseDown={onMouseDown}
           onMouseLeave={onMouseLeave}
           style={style}
-          className={`text-center  ${className}`}
+          className={`qbs-text-center  ${className}`}
         >
           <svg
             width={hasCustomSize ? handleGetDimension(type) : dimension}

@@ -567,7 +567,7 @@ const DropdownFilterTabs = forwardRef<
       // Re-query when dropdown opens to catch dynamically added containers
       const queryScrollableDivs = () => {
         return document.querySelectorAll(
-          'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+          'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
         );
       };
       
@@ -1045,7 +1045,7 @@ const DropdownFilterTabs = forwardRef<
                 transition: 'opacity 0.2s ease-in-out',
               }}
               className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${viewMode ? 'qbs-dropdown-selected-preview' : ''
-                } ${viewMode && filteredSelectedItems?.length === 0 ? 'hidden' : ''}`}
+                } ${viewMode && filteredSelectedItems?.length === 0 ? 'qbs-hidden' : ''}`}
             >
               {!viewMode && (
                 <>
@@ -1096,7 +1096,7 @@ const DropdownFilterTabs = forwardRef<
                             <button
                               disabled={disabled ?? readOnly}
                               onClick={(e) => handleOpenDropdown(e)}
-                              className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                              className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
                               data-testid="drop-arrow"
                               type="button"
                               id="autocomplete-drop-icon"
@@ -1105,7 +1105,7 @@ const DropdownFilterTabs = forwardRef<
                               <AllDropArrow
                                 type={!allDataLoaded ? 'down' : 'up'}
                                 uniqueId="all-dropdow-arrow-icon"
-                                className="all-dropdow-arrow-icon"
+                                className="qbs-all-dropdow-arrow-icon"
                               />
                             </button>
                           )}
@@ -1156,7 +1156,7 @@ const DropdownFilterTabs = forwardRef<
                   )}
 
                   <div
-                    className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'hidden' : ''
+                    className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'qbs-hidden' : ''
                       }`}
                     ref={itemsRef}
                     style={{
@@ -1233,14 +1233,14 @@ const DropdownFilterTabs = forwardRef<
                           Selected Items
                         </div>
                         <div
-                          className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
+                          className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'qbs-hidden' : ''
                             }`}
                           onClick={handleClearSelected}
                         >
                           Clear all
                         </div>
                         <div
-                          className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
+                          className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'qbs-hidden' : ''
                             }`}
                           onClick={() => {
                             handleApplySelected();

@@ -97,20 +97,20 @@ const TextField: React.FC<TextFieldProps> = ({
   const getHeight = () => {
     switch (size) {
       case "xs":
-        return " h-10 ";
+        return "qbs-h-10";
       case "xxs":
-        return " h-[25px] ";
+        return "qbs-h-[25px]";
       case "sm":
-        return " h-[34px] ";
+        return "qbs-h-[34px]";
       case "md":
-        return " h-10 ";
+        return "qbs-h-10";
       case "lg":
-        return " h-10 ";
+        return "qbs-h-10";
       default:
-        return " h-10 ";
+        return "qbs-h-10";
     }
   };
-  const getBg = () => backGround || "bg-transparent"; //added for set background colour according to the form
+  const getBg = () => backGround || "qbs-bg-transparent"; //added for set background colour according to the form
   const generateClassName = (
     from: "input" | "label" | "message" | "adorement" | "search"
   ): string => {
@@ -118,30 +118,28 @@ const TextField: React.FC<TextFieldProps> = ({
 
     switch (from) {
       case "input":
-        className += `block ${inputClassName} ${
-          size === "xxs" ? " text-xxs" : "text-common"
-        }  text-input-text font-normal ${
-          step && adorement ? "px-2.5" : "px-3.5"
-        } ${enableSearch ? "search-btn-input" : ""} w-full text-sm text-gray-900 ${getBg()} border appearance-none peer rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
+        className += `qbs-block ${inputClassName} ${
+          size === "xxs" ? "qbs-text-xxs" : "text-common"
+        }  qbs-text-input-text qbs-font-normal ${
+          step && adorement ? "qbs-px-2.5" : "qbs-px-3.5"
+        } ${enableSearch ? "search-btn-input" : ""} qbs-w-full qbs-text-sm qbs-text-gray-900 ${getBg()} qbs-border qbs-appearance-none qbs-peer qbs-rounded-[4px] disabled:qbs-text-input-disabled qbs-bg-white disabled:qbs-bg-disabled ${
           hideLabel ? "" : label && isModern ? "placeholder-transparent" : ""
         } focus:placeholder-grey-secondary ${
-          adorementPosition === "start" && " !pl-[45px] "
+          adorementPosition === "start" && "!qbs-pl-[45px]"
         }  ${getHeight()}`;
 
         if (errors && errors[name]) {
           className +=
-            " border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline";
+            "qbs-border-[#FDA29B] focus:qbs-border-error-[#FDA29B] focus:qbs-ring-[#FDA29B] focus:qbs-ring-3 focus:qbs-outline-[#FDA29B] qbs-input-outline";
         } else {
           className +=
-            " text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0";
+            "qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0";
         }
 
         break;
       case "label": // changes made for remove bg-white from placeolder is field disable and or with data
-        className += `flex modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size absolute duration-300 transform -translate-y-4 top-2 z-1 origin-[0] px-0 
-    peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2 
-    peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto  ${
-      isDisabled ? "cursor-pointer" : "cursor-text peer-focus:cursor-pointer"
+        className += `qbs-flex modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size qbs-absolute qbs-duration-300 qbs-transform -qbs-translate-y-4 qbs-top-2 qbs-z-1 qbs-origin-[0] qbs-px-0 peer-placeholder-shown:-qbs-translate-y-1/2 peer-placeholder-shown:qbs-top-1/2 peer-focus:qbs-top-2 peer-focus:-qbs-translate-y-4 qbs-start-[14px] rtl:peer-focus:qbs-translate-x-1/4 rtl:peer-focus:qbs-left-auto  ${
+      isDisabled ? "qbs-cursor-pointer" : "qbs-cursor-text peer-focus:qbs-cursor-pointer"
     } ${
           isDisabled && !checkIsEmptyField()
             ? "disabled-input-label-bg"
@@ -155,22 +153,22 @@ const TextField: React.FC<TextFieldProps> = ({
         }`;
 
         if (errors && errors[name]) {
-          className += " text-error-light ";
+          className += "qbs-text-error-light";
         } else {
-          className += " text-grey-dark peer-focus:text-blue-navy";
+          className += "qbs-text-grey-dark peer-focus:qbs-text-blue-navy";
         }
         break;
       case "message":
-        className = " text-error-icon ";
+        className="qbs-text-error-icon";
         break;
       case "adorement":
         className += `${
-          isDisabled ? "bg-bodyBG" : "bg-white"
-        } absolute right-0 adorement gap-1 flex items-center`;
+          isDisabled ? "qbs-bg-bodyBG" : "qbs-bg-white"
+        } qbs-absolute qbs-right-0 adorement qbs-gap-1 qbs-flex qbs-items-center`;
         break;
 
       case "search":
-          className += `absolute inner-search-button gap-1 flex items-center cursor-pointer`;
+          className += `qbs-absolute inner-search-button qbs-gap-1 qbs-flex qbs-items-center qbs-cursor-pointer`;
           break;
 
       default:
@@ -232,7 +230,7 @@ const TextField: React.FC<TextFieldProps> = ({
             />
           );
         case "text":
-          return <div className="text-sm text-gray-500 textfield-text-prefix">{prefixes.data}</div>;
+          return <div className="qbs-text-sm qbs-text-gray-500 textfield-text-prefix">{prefixes.data}</div>;
         default:
           return <></>;
       }
@@ -285,30 +283,30 @@ const TextField: React.FC<TextFieldProps> = ({
   return (
     <div
       ref={textFieldRef}
-      className={`qbs-textfield ${fullwidth ? "w-full" : "w-auto"}`}
+      className={`qbs-textfield ${fullwidth ? "qbs-w-full" : "qbs-w-auto"}`}
     >
       {label && !isModern && !hideLabel && (
-        <div className="mb-3">
-          <label className={`text-xs font-medium`}>
+        <div className="qbs-mb-3">
+          <label className={`qbs-text-xs qbs-font-medium`}>
             {label}
             {required ? <span className="text-error"> *</span> : <></>}
           </label>
         </div>
       )}
-      <div className="tooltip-container ">
+      <div className="tooltip-container">
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
         )}
         {isHovered && infoTitle && (
           <span className="tooltip-info">{infoTitle} </span>
         )}
-        <div className={`w-full ${prefixes ? "flex" : ""}`}>
+        <div className={`qbs-w-full ${prefixes ? "qbs-flex" : ""}`}>
           {prefixes && renderPrefix()}
           <div
-            className={`flex relative ${fullwidth ? "w-full" : "w-auto"}`}
+            className={`qbs-flex qbs-relative ${fullwidth ? "qbs-w-full" : "qbs-w-auto"}`}
             style={{ width: width }}
           >
-            <div className="relative w-full ">
+            <div className="qbs-relative qbs-w-full">
               <input
                 // key={updateKey}
                 type={type}
@@ -352,7 +350,7 @@ const TextField: React.FC<TextFieldProps> = ({
                   onClick={() => onLabelClick()}
                   className={generateClassName("label")}
                 >
-                  {label ? <span className="truncate">{label}</span> : ""}
+                  {label ? <span className="qbs-truncate">{label}</span> : ""}
                   {required ? <span className="text-error"> *</span> : <></>}
                 </label>
               )}
@@ -375,12 +373,12 @@ const TextField: React.FC<TextFieldProps> = ({
               step ||
               (!isValid && isTooltip && errors && errors[name]) ||
               isValid) && (
-              <div className="flex items-center justify-center gap-1 ">
+              <div className="qbs-flex qbs-items-center qbs-justify-center qbs-gap-1">
                 {adorement && adorementPosition === "start" && (
                   <div
                     className={`  ${
-                      isDisabled ? "text-zinc-500" : "text-grey-medium"
-                    } absolute adorement left-0  `} // adorement  position added for start
+                      isDisabled ? "qbs-text-zinc-500" : "qbs-text-grey-medium"
+                    } qbs-absolute adorement qbs-left-0  `} // adorement  position added for start
                   >
                     <>{adorement}</>
                   </div>
@@ -389,13 +387,13 @@ const TextField: React.FC<TextFieldProps> = ({
                 <div
                   className={`${generateClassName(
                     "adorement"
-                  )} h-[20px] right-[1px]`} //added adorment bg color
+                  )} qbs-h-[20px] qbs-right-[1px]`} //added adorment bg color
                   ref={adorementRef}
                 >
                   {adorement && adorementPosition === "end" && (
                     <div
                       className={`  ${
-                        isDisabled ? "text-zinc-500" : "text-grey-medium"
+                        isDisabled ? "qbs-text-zinc-500" : "qbs-text-grey-medium"
                       } `} // changed for adorment text blurness while disabled
                     >
                       <>{adorement}</>
@@ -403,11 +401,11 @@ const TextField: React.FC<TextFieldProps> = ({
                   )}
 
                   {step && (
-                    <div className="ml-2">
+                    <div className="qbs-ml-2">
                       <CustomIcons
                         name="TreeUp_Arrow"
-                        className={`text-gray-500 hover:text-dark cursor-pointer ${
-                          isDisabled ? "hidden" : "block"
+                        className={`qbs-text-gray-500 hover:qbs-text-dark qbs-cursor-pointer ${
+                          isDisabled ? "qbs-hidden" : "qbs-block"
                         }`}
                         type="medium"
                         onClick={() => {
@@ -420,8 +418,8 @@ const TextField: React.FC<TextFieldProps> = ({
                       />
                       <CustomIcons
                         name="TreeDown_Arrow"
-                        className={`text-gray-500 hover:text-dark cursor-pointer ${
-                          isDisabled ? "hidden" : "block"
+                        className={`qbs-text-gray-500 hover:qbs-text-dark qbs-cursor-pointer ${
+                          isDisabled ? "qbs-hidden" : "qbs-block"
                         }`}
                         type="medium"
                         onClick={() => {
@@ -437,7 +435,7 @@ const TextField: React.FC<TextFieldProps> = ({
 
                   {!isValid && isTooltip && errors && errors[name] && (
                     <div
-                      className={` text-error-label relative bg-white cursor-pointer ${generateClassName(
+                      className={` qbs-text-error-label qbs-relative qbs-bg-white qbs-cursor-pointer ${generateClassName(
                         "message"
                       )}`}
                       onMouseEnter={() => setIsHovered(true)}
@@ -448,7 +446,7 @@ const TextField: React.FC<TextFieldProps> = ({
                   )}
                   {infoTitle && showInfo && (
                     <div
-                      className={`  relative bg-white cursor-pointer text-[#667085] `}
+                      className={`  qbs-relative qbs-bg-white qbs-cursor-pointer qbs-text-[#667085] `}
                       onMouseEnter={() => setIsHovered(true)}
                       onMouseLeave={() => setIsHovered(false)}
                     >
@@ -456,11 +454,11 @@ const TextField: React.FC<TextFieldProps> = ({
                     </div>
                   )}
                   {isValid && (
-                    <div className="pl-2">
+                    <div className="qbs-pl-2">
                       <CustomIcons
                         name="check_mark"
                         type="medium"
-                        className="text-[#28B440]"
+                        className="qbs-text-[#28B440]"
                       />
                     </div>
                   )}

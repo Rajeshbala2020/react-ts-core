@@ -1,7 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
+  // Isolate library utilities from consumer Tailwind (e.g. .flex vs .qbs-flex)
+  prefix: 'qbs-',
   content: ['./src/**/*.{js,jsx,ts,tsx}', './docs/**/*.{html,js,ts,tsx}'],
-  // Library CSS is injected into consumer apps; avoid Tailwind preflight/base reset.
   corePlugins: {
     preflight: false,
   },

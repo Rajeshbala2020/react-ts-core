@@ -139,15 +139,15 @@ const OTPInput: React.FC<OTPInputProps> = ({
   return (
     <div>
       {label && (
-        <div className="mb-2 me-2">
-          <label className={`text-grey-label font-normal text-common`}>
+        <div className="qbs-mb-2 qbs-me-2">
+          <label className={`qbs-text-grey-label qbs-font-normal text-common`}>
             {label}
           </label>
         </div>
       )}
-      <div className="flex flex-col w-fit">
+      <div className="qbs-flex qbs-flex-col qbs-w-fit">
         <div
-          className="flex gap-x-5 "
+          className="qbs-flex qbs-gap-x-5"
           id={id ? `input-otp-${id}` : `input-otp-${name}`}
         >
           {Array(BoxLength)
@@ -169,14 +169,14 @@ const OTPInput: React.FC<OTPInputProps> = ({
                 maxLength={1}
                 onFocus={(e) => (e.target.style.borderColor = '#667085')}
                 onBlur={(e) => (e.target.style.borderColor = '#D0D5DD')}
-                className={`otp-input-customstyle w-[54px] h-10 text-center text-lg  border border-[#D0D5DD] focus:border-[#667085] transition-colors duration-200 outline-none rounded-sm`}
+                className={`otp-input-customstyle qbs-w-[54px] qbs-h-10 qbs-text-center qbs-text-lg qbs-border qbs-border-[#D0D5DD] focus:qbs-border-[#667085] qbs-transition-colors qbs-duration-200 qbs-outline-none qbs-rounded-sm`}
               />
             ))}
         </div>
-        <div className="flex items-center pt-3">
-          <p className="text-common text-[#475467]">Didn't receive a code? </p>
+        <div className="qbs-flex qbs-items-center qbs-pt-3">
+          <p className="text-common qbs-text-[#475467]">Didn't receive a code? </p>
           <span
-            className={`text-common text-[#003C71] ml-2  ${
+            className={`text-common qbs-text-[#003C71] qbs-ml-2  ${
               !isTimerCompleted ? 'cursor-not-allowed' : 'cursor-pointer'
             }`}
             onClick={handleResend}
@@ -185,12 +185,12 @@ const OTPInput: React.FC<OTPInputProps> = ({
           </span>
         </div>
         <div>
-          <span className="text-common text-[#475467]">
+          <span className="text-common qbs-text-[#475467]">
             Remaining Time: {formatTime(remainingTime)}
           </span>
         </div>
 
-        <div className="flex justify-center items-center text-[#F94110] text-base font-medium	">
+        <div className="qbs-flex qbs-justify-center qbs-items-center qbs-text-[#F94110] qbs-text-base qbs-font-medium">
           {errors && errors[name] && <span> {handleError(errors)}</span>}
         </div>
       </div>

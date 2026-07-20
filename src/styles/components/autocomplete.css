@@ -1,20 +1,25 @@
-body * {
-  box-sizing: border-box;
-}
+/* Intentionally no global `body *` reset — avoids conflicting with consumer apps. */
 :root {
-  --grey-dark: #4a4a4a;
-  --grey-light: #d3d3d3;
-  --blue-navy: #001f3f;
-  --input-disabled: #a9a9a9;
-  --error-light: #f08080;
-  --error-extra-light: #fddede;
-  --success: #28a745;
-  --success-light: #d4edda;
-  --blue-light: #add8e6;
-}
-:root {
-  --blue-navy: #001f3f;
-  --table-hover: #your-hover-color; /* Replace with your actual color code */
+  --rcts-grey-dark: #4a4a4a;
+  --rcts-grey-light: #d3d3d3;
+  --rcts-blue-navy: #001f3f;
+  --rcts-input-disabled: #a9a9a9;
+  --rcts-error-light: #f08080;
+  --rcts-error-extra-light: #fddede;
+  --rcts-success: #28a745;
+  --rcts-success-light: #d4edda;
+  --rcts-blue-light: #add8e6;
+  /* Back-compat aliases */
+  --grey-dark: var(--rcts-grey-dark);
+  --grey-light: var(--rcts-grey-light);
+  --blue-navy: var(--rcts-blue-navy);
+  --input-disabled: var(--rcts-input-disabled);
+  --error-light: var(--rcts-error-light);
+  --error-extra-light: var(--rcts-error-extra-light);
+  --success: var(--rcts-success);
+  --success-light: var(--rcts-success-light);
+  --blue-light: var(--rcts-blue-light);
+  --table-hover: #f8f8f8;
 }
 
 .custom-spinner {

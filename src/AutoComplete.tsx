@@ -320,7 +320,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
               justifyContent: 'space-between',
             }}
           >
-            <label className={`labels label-text`}>
+            <label className={`labels qbs-label-text`}>
               {label}
               {required && <span className="text-error"> *</span>}
             </label>
@@ -332,7 +332,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
         {/* Displaying selected items for multi-select */}
 
         <div style={{ position: 'relative' }}>
-          <div className="selected-items-container ">
+          <div className="selected-items-container">
             {selectedItems?.length > 0 && (
               <>
                 <div key={selectedItems[0].id} className="selected-item">
@@ -548,7 +548,7 @@ const AutoComplete = forwardRef<HTMLInputElement, AutoSuggestionInputProps>(
         {/* Displaying Validation Error */}
         {errors && (
           <div
-            className="text-error text-error-label mt-[1px]"
+            className="text-error qbs-text-error-label qbs-mt-[1px]"
             data-testid="autocomplete-error"
           >
             {errors.message}

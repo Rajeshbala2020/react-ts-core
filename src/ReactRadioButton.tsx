@@ -24,14 +24,14 @@ const Radio: React.FC<RadioProps> = ({
   };
   return (
     <div
-      className={`labels label-text flex items-center justify-start custom-radio-container ${
-        !customLabel && 'gap-0'
-      }  ${disabled ? ' opacity-70' : ''} `}
+      className={`labels qbs-label-text qbs-flex qbs-items-center qbs-justify-start qbs-custom-radio-container ${
+        !customLabel && 'qbs-gap-0'
+      }  ${disabled ? 'qbs-opacity-70' : ''} `}
     >
       <div>
         <label
-          className={`radio-button ${
-            disabled ? 'cursor-not-allowed' : 'cursor-pointer'
+          className={`qbs-radio-button ${
+            disabled ? 'qbs-cursor-not-allowed' : 'qbs-cursor-pointer'
           }`}
         >
           <input
@@ -51,8 +51,8 @@ const Radio: React.FC<RadioProps> = ({
       </div>
       {prefixNode && <div>{prefixNode}</div>}
       <div
-        className={`text-common font-normal cursor-pointer ${
-          checked ? 'text-secondary' : ''
+        className={`text-common qbs-font-normal qbs-cursor-pointer ${
+          checked ? 'qbs-text-secondary' : ''
         }`}
         onClick={labelClick}
       >

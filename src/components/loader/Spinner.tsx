@@ -1,12 +1,12 @@
 import { IconProps } from '../../commontypes'
 import React from 'react'
 
-const Spinner: React.FC<IconProps> = ({ className = '', stroke = 1.5 }) => {
+const Spinner: React.FC<IconProps> = ({ className='', stroke = 1.5 }) => {
   return (
     <div role="status">
       <svg
         aria-hidden="true"
-        className="w-6 h-6 mr-2  text-table-hover  animate-spin  fill-blue-navy"
+        className="qbs-w-6 qbs-h-6 qbs-mr-2 qbs-text-table-hover qbs-animate-spin qbs-fill-blue-navy"
         viewBox="0 0 100 101"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"

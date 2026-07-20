@@ -75,12 +75,12 @@ const SuggestionItem: React.FC<{ name: string; count: number; showCount: boolean
   showCount,
 }) => {
   return (
-    <div className="py-0.5 flex items-center justify-between gap-2 group relative">
-      <span className="flex-1 whitespace-normal break-words suggection-label">
+    <div className="qbs-py-0.5 qbs-flex qbs-items-center qbs-justify-between qbs-gap-2 qbs-group qbs-relative">
+      <span className="qbs-flex-1 qbs-whitespace-normal qbs-break-words qbs-suggection-label">
         {name}
       </span>
       {showCount && (
-        <span className="ml-2 suggection-count flex items-center justify-center min-w-[20px] h-5 px-1.5 rounded-full bg-orange-500 text-white text-[10px] font-medium flex-shrink-0">
+        <span className="qbs-ml-2 qbs-suggection-count qbs-flex qbs-items-center qbs-justify-center qbs-min-w-[20px] qbs-h-5 qbs-px-1.5 qbs-rounded-full qbs-bg-orange-500 qbs-text-white qbs-text-[10px] qbs-font-medium qbs-flex-shrink-0">
           {count}
         </span>
       )}
@@ -370,7 +370,7 @@ const ModernAutoCompleteSuggections: React.FC<
     document.addEventListener('click', handleClickOutside);
 
     const scrollableDivs = document.querySelectorAll(
-      'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+      'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
     );
 
     window.addEventListener('scroll', handleScroll);
@@ -433,29 +433,22 @@ const ModernAutoCompleteSuggections: React.FC<
   ): string => {
     let className = propsClassName || '';
     switch (type) {
-      case 'input':
-        className += ` block text-common text-input-text font-normal px-3.5 w-full text-sm text-gray-900 bg-transparent  border  appearance-none    peer h-10 rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
-          label && isModern
-            ? 'placeholder-transparent'
+      case 'input': className += ` qbs-block text-common qbs-text-input-text qbs-font-normal qbs-px-3.5 qbs-w-full qbs-text-sm qbs-text-gray-900 qbs-bg-transparent qbs-border qbs-appearance-none qbs-peer qbs-h-10 qbs-rounded-[4px] disabled:qbs-text-input-disabled qbs-bg-white disabled:qbs-bg-disabled ${ label && isModern ?'placeholder-transparent'
             : 'focus:placeholder-grey-secondary placeholder-input-label'
         } focus:placeholder-grey-secondary`;
 
         if (errors && errors[name]) {
           className +=
-            ' border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline';
+            'qbs-border-[#FDA29B] focus:qbs-border-error-[#FDA29B] focus:qbs-ring-[#FDA29B] focus:qbs-ring-3 focus:qbs-outline-[#FDA29B] qbs-input-outline';
         } else {
           className +=
-            ' text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0';
+            'qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0';
         }
 
         className += getHeight();
 
         break;
-      case 'label':
-        className += ` flex modern-input-label-truncate  peer-focus:modern-input-peer-focus-label-size 
-          ${
-            disabled
-              ? 'cursor-pointer'
+      case 'label': className += ` qbs-flex qbs-modern-input-label-truncate peer-focus:qbs-modern-input-peer-focus-label-size ${ disabled ?'cursor-pointer'
               : 'cursor-text peer-focus:cursor-pointer'
           } ${
           disabled && !checkIsEmptyField()
@@ -463,7 +456,7 @@ const ModernAutoCompleteSuggections: React.FC<
             : !disabled || !checkIsEmptyField()
             ? 'active-input-label-bg'
             : ''
-        } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
+        } qbs-absolute qbs-duration-300 qbs-transform -qbs-translate-y-4 qbs-top-2 qbs-z-1 qbs-origin-[0] qbs-px-0 peer-placeholder-shown:-qbs-translate-y-1/2 peer-placeholder-shown:qbs-top-1/2 peer-focus:qbs-top-2 peer-focus:-qbs-translate-y-4 qbs-start-[14px] rtl:peer-focus:qbs-translate-x-1/4 rtl:peer-focus:qbs-left-auto ${
           disabled
             ? 'cursor-pointer'
             : 'cursor-text peer-focus:cursor-pointer'
@@ -474,19 +467,19 @@ const ModernAutoCompleteSuggections: React.FC<
                : 'modern-input-peer-focus-label-size'
            }`;
         if (errors && errors[name]) {
-          className += ' text-error-light ';
+          className += 'qbs-text-error-light';
         } else {
-          className += ' text-grey-dark peer-focus:text-blue-navy';
+          className += 'qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
         }
         break;
       case 'message':
-        className = ' text-error-icon ';
+        className='qbs-text-error-icon';
         break;
       case 'warning':
-          className = ' text-warning-icon ';
+          className='qbs-text-warning-icon';
           break;
       case 'adorement':
-        className += '  absolute right-0 adorement gap-1 flex items-center ';
+        className += 'qbs-absolute qbs-right-0 adorement qbs-gap-1 qbs-flex qbs-items-center';
         break;
       default:
         break;
@@ -555,11 +548,11 @@ const ModernAutoCompleteSuggections: React.FC<
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col gap-1 autocomplete-with-suggection ${propsClassName || ''} ${effectiveVisible.length > 0 ? 'suggection-warning-container' : ''} ${showTick && !isLoading ? 'suggection-okey-container' : ''}`}
+      className={`qbs-flex qbs-flex-col qbs-gap-1 qbs-autocomplete-with-suggection ${propsClassName || ''} ${effectiveVisible.length > 0 ? 'suggection-warning-container' : ''} ${showTick && !isLoading ? 'suggection-okey-container' : ''}`}
     >
       {label && !isModern && (
-        <div className="mb-3">
-          <label className={`text-xs font-medium`}>
+        <div className="qbs-mb-3">
+          <label className={`qbs-text-xs qbs-font-medium`}>
             {label}
             {required ? <span className="text-error"> *</span> : <></>}
           </label>
@@ -569,9 +562,9 @@ const ModernAutoCompleteSuggections: React.FC<
         {isHovered && errors && errors[name] && (
           <span className="tooltip">{handleError(errors)} </span>
         )}
-        <div className="flex relative w-full">
+        <div className="qbs-flex qbs-relative qbs-w-full">
         <div
-          className="relative w-full"
+          className="qbs-relative qbs-w-full"
           onMouseEnter={() => {}}
           onMouseLeave={() => {}}
         >
@@ -628,22 +621,21 @@ const ModernAutoCompleteSuggections: React.FC<
               onClick={() => onLabelClick()}
               className={generateClassName('label')}
             >
-              {label ? <span className="truncate">{label}</span> : ''}
+              {label ? <span className="qbs-truncate">{label}</span> : ''}
               {required ? <span className="text-error"> *</span> : <></>}
             </label>
           )}
         </div>
-        <div className="flex items-center justify-center">
+        <div className="qbs-flex qbs-items-center qbs-justify-center">
           <div
             ref={adorementRef}
-            className={`${generateClassName('adorement')} qbs-autocomplete-adorement custom-dorpdown-adorement mr-[1px] ${
-              isLoading ? 'bg-white' : ''
+            className={`${generateClassName('adorement')} qbs-autocomplete-adorement qbs-custom-dorpdown-adorement qbs-mr-[1px] ${ isLoading ?'bg-white' : ''
             }`}
           >
             {isLoading && <Spinner />}
             {errors && errors[name] && (
               <div
-                className={` text-error-label relative cursor-pointer ${generateClassName(
+                className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
                   'message'
                 )}`}
                 onMouseEnter={() => setIsHovered(true)}
@@ -655,7 +647,7 @@ const ModernAutoCompleteSuggections: React.FC<
 
             {showWarningIcon && effectiveVisible.length > 0 && !showTick && !isLoading && (
               <div
-                className={`text-warning-label relative  mr-1 ${generateClassName(
+                className={`qbs-text-warning-label qbs-relative qbs-mr-1 ${generateClassName(
                   'warning'
                 )}`}
               >
@@ -664,11 +656,11 @@ const ModernAutoCompleteSuggections: React.FC<
             )}
 
             {showTick && !isLoading && (
-              <div className="text-tick-label relative mr-1">
+              <div className="qbs-text-tick-label qbs-relative qbs-mr-1">
                 <CustomIcons
                   name="check_mark"
                   type="medium"
-                  className="text-green-500"
+                  className="qbs-text-green-500"
                 />
               </div>
             )}
@@ -679,10 +671,10 @@ const ModernAutoCompleteSuggections: React.FC<
       {showDropdown && effectiveVisible.length > 0 && (
         <>
           {insideOpen ? (
-            <div className="suggection-list">
+            <div className="qbs-suggection-list">
               <div
                 ref={dropdownContentRef}
-                className="bg-white border border-grey-light shadow-gray-300 shadow-md rounded-sm max-h-40 overflow-auto text-[11px] text-gray-700 px-3.5 py-1.5"
+                className="qbs-bg-white qbs-border qbs-border-grey-light qbs-shadow-gray-300 qbs-shadow-md qbs-rounded-sm qbs-max-h-40 qbs-overflow-auto qbs-text-[11px] qbs-text-gray-700 qbs-px-3.5 qbs-py-1.5"
               >
                 {effectiveVisible.map((g) => (
                   <SuggestionItem 
@@ -698,12 +690,12 @@ const ModernAutoCompleteSuggections: React.FC<
             <Portal>
               <div
                 ref={dropdownContentRef}
-                className="autocomplete-suggections autosuggection-list suggection-list bg-white shadow-gray-300 shadow-md border border-grey-light z-50"
+                className="autocomplete-suggections qbs-autosuggection-list qbs-suggection-list qbs-bg-white qbs-shadow-gray-300 qbs-shadow-md qbs-border qbs-border-grey-light qbs-z-50"
                 style={dropPosition}
               >
-                <div className="h-auto max-h-40 overflow-auto w-full py-1.5">
+                <div className="qbs-h-auto qbs-max-h-40 qbs-overflow-auto qbs-w-full qbs-py-1.5">
                   {effectiveVisible.map((g) => (
-                    <div key={g.name} className="px-3.5 text-gray-700 suggection-item">
+                    <div key={g.name} className="qbs-px-3.5 qbs-text-gray-700 qbs-suggection-item">
                       <SuggestionItem 
                         name={g.name} 
                         count={g.count} 

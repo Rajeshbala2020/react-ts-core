@@ -224,7 +224,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
   const getHeight = () => {
     switch (size) {
       case 'sm':
-        return ' h-[34px] ';
+        return 'qbs-h-[34px]';
       default:
         return ' ';
     }
@@ -513,7 +513,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     setSelectedIndex(0);
 
     const scrollableDivs = document.querySelectorAll(
-      'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+      'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
     );
 
     // Listen to window/document scrolls, plus any scrollable divs
@@ -574,7 +574,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
     let className = propsClassName;
     switch (type) {
       case 'input':
-        className += ` block text-common text-input-text font-normal px-3.5 w-full text-sm text-gray-900 bg-transparent  border  appearance-none    peer h-10 rounded-[4px] disabled:text-input-disabled bg-white disabled:bg-disabled ${
+        className += ` qbs-block text-common qbs-text-input-text qbs-font-normal qbs-px-3.5 qbs-w-full qbs-text-sm qbs-text-gray-900 qbs-bg-transparent qbs-border qbs-appearance-none qbs-peer qbs-h-10 qbs-rounded-[4px] disabled:qbs-text-input-disabled qbs-bg-white disabled:qbs-bg-disabled ${
           label && isModern
             ? 'placeholder-transparent'
             : 'focus:placeholder-grey-secondary placeholder-input-label'
@@ -582,31 +582,31 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
 
         if (errors && errors[name]) {
           className +=
-            ' border-[#FDA29B] focus:border-error-[#FDA29B] focus:ring-[#FDA29B] focus:ring-3 focus:outline-[#FDA29B] input-outline';
+            'qbs-border-[#FDA29B] focus:qbs-border-error-[#FDA29B] focus:qbs-ring-[#FDA29B] focus:qbs-ring-3 focus:qbs-outline-[#FDA29B] qbs-input-outline';
         } else {
           className +=
-            ' text-grey-dark border-input-light focus:border-blue-navy  focus:outline-none  focus:ring-0';
+            'qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0';
         }
 
         className += getHeight()
 
         break;
       case 'label':
-        className += ` flex modern-input-label-truncate  peer-focus:modern-input-peer-focus-label-size 
+        className += ` qbs-flex modern-input-label-truncate peer-focus:modern-input-peer-focus-label-size 
           ${
             isDisabled
-              ? 'cursor-pointer'
-              : 'cursor-text peer-focus:cursor-pointer'
+              ? 'qbs-cursor-pointer'
+              : 'qbs-cursor-text peer-focus:qbs-cursor-pointer'
           } ${
           isDisabled && !checkIsEmptyField()
             ? 'disabled-input-label-bg'
             : !isDisabled || !checkIsEmptyField()
             ? 'active-input-label-bg'
             : ''
-        } absolute   duration-300 transform -translate-y-4  top-2 z-1 origin-[0]  px-0 peer-placeholder-shown:-translate-y-1/2 peer-placeholder-shown:top-1/2 peer-focus:top-2  peer-focus:-translate-y-4 start-[14px] rtl:peer-focus:translate-x-1/4 rtl:peer-focus:left-auto ${
+        } qbs-absolute qbs-duration-300 qbs-transform -qbs-translate-y-4 qbs-top-2 qbs-z-1 qbs-origin-[0] qbs-px-0 peer-placeholder-shown:-qbs-translate-y-1/2 peer-placeholder-shown:qbs-top-1/2 peer-focus:qbs-top-2 peer-focus:-qbs-translate-y-4 qbs-start-[14px] rtl:peer-focus:qbs-translate-x-1/4 rtl:peer-focus:qbs-left-auto ${
           isDisabled
-            ? 'cursor-pointer'
-            : 'cursor-text peer-focus:cursor-pointer'
+            ? 'qbs-cursor-pointer'
+            : 'qbs-cursor-text peer-focus:qbs-cursor-pointer'
         }
            ${
              checkIsEmptyField()
@@ -614,16 +614,16 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                : 'modern-input-peer-focus-label-size'
            }`;
         if (errors && errors[name]) {
-          className += ' text-error-light ';
+          className += 'qbs-text-error-light';
         } else {
-          className += ' text-grey-dark peer-focus:text-blue-navy';
+          className += 'qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
         }
         break;
       case 'message':
-        className = ' text-error-icon ';
+        className='qbs-text-error-icon';
         break;
       case 'adorement':
-        className += '  absolute right-0 adorement gap-1 flex items-center ';
+        className += 'qbs-absolute qbs-right-0 adorement qbs-gap-1 qbs-flex qbs-items-center';
         break;
       default:
         break;
@@ -886,14 +886,14 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
         <div
           ref={dropdownContentRef}
           style={{ ...dropPosition, overflow: 'hidden' }}
-          className={`autocomplete-suggections autocomplete-suggections-tableview absolute bg-white shadow-gray-300 shadow-md border border-grey-light z-50 mt-9${
+          className={`autocomplete-suggections autocomplete-suggections-tableview qbs-absolute qbs-bg-white qbs-shadow-gray-300 qbs-shadow-md qbs-border qbs-border-grey-light qbs-z-50 qbs-mt-9${
             dropdownTheme === 'splitDetail'
               ? ' autocomplete-suggections--split-detail'
               : ''
           }`}
         >
           <ul
-            className={`h-auto overflow-auto w-full ${tableView ? '' : 'py-1.5'}`}
+            className={`qbs-h-auto qbs-overflow-auto qbs-w-full ${tableView ? '' : 'qbs-py-1.5'}`}
             ref={scrollContainerRef}
             style={{ maxHeight: dropPosition.maxHeight ? `calc(${dropPosition.maxHeight} - 2rem)` : undefined }}
           >
@@ -902,8 +902,8 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                 {dropdownTheme === 'default' &&
                   columnHeader &&
                   columnHeader.length > 0 && (
-                  <li className="sticky top-0 auto-suggections-tableview-header z-10 bg-gray-100 border-b border-grey-light">
-                    <ul className="flex items-stretch w-full list-none p-0 m-0">
+                  <li className="qbs-sticky qbs-top-0 qbs-auto-suggections-tableview-header qbs-z-10 qbs-bg-gray-100 qbs-border-b qbs-border-grey-light">
+                    <ul className="qbs-flex qbs-items-stretch qbs-w-full qbs-list-none qbs-p-0 qbs-m-0">
                       {(() => {
                         // Sort columns by order if specified, otherwise maintain array order
                         const sortedColumns = additionalColumns 
@@ -933,10 +933,10 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                               return header ? (
                                 <li
                                   key={column.key}
-                                  className={`${column.width ? 'flex-shrink-0' : 'flex-1'} min-w-0 px-3 py-2 ${!isLastBefore ? 'border-r border-grey-light' : ''} break-words flex flex-col`}
+                                  className={`${column.width ? 'qbs-flex-shrink-0' : 'qbs-flex-1'} qbs-min-w-0 qbs-px-3 qbs-py-2 ${!isLastBefore ? 'qbs-border-r qbs-border-grey-light' : ''} qbs-break-words qbs-flex qbs-flex-col`}
                                   style={column.width ? { width: `${column.width}px` } : undefined}
                                 >
-                                  <span className="block whitespace-normal text-xs font-semibold text-gray-700">
+                                  <span className="qbs-block qbs-whitespace-normal qbs-text-xs qbs-font-semibold qbs-text-gray-700">
                                     {header.label}
                                   </span>
                                 </li>
@@ -945,8 +945,8 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                             
                             {/* First column header (label/name) */}
                             {nameHeader && (
-                              <li className={`flex-1 min-w-0 px-3 py-2 ${hasColumnsAfter ? 'border-r border-grey-light' : ''} break-words flex flex-col`}>
-                                <span className="block whitespace-normal text-xs font-semibold text-gray-700">
+                              <li className={`qbs-flex-1 qbs-min-w-0 qbs-px-3 qbs-py-2 ${hasColumnsAfter ? 'qbs-border-r qbs-border-grey-light' : ''} qbs-break-words qbs-flex qbs-flex-col`}>
+                                <span className="qbs-block qbs-whitespace-normal qbs-text-xs qbs-font-semibold qbs-text-gray-700">
                                   {nameHeader.label}
                                 </span>
                               </li>
@@ -959,10 +959,10 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                               return header ? (
                                 <li
                                   key={column.key}
-                                  className={`${column.width ? 'flex-shrink-0' : 'flex-1'} min-w-0 px-3 py-2 ${!isLastColumn ? 'border-r border-grey-light' : ''} break-words flex flex-col`}
+                                  className={`${column.width ? 'qbs-flex-shrink-0' : 'qbs-flex-1'} qbs-min-w-0 qbs-px-3 qbs-py-2 ${!isLastColumn ? 'qbs-border-r qbs-border-grey-light' : ''} qbs-break-words qbs-flex qbs-flex-col`}
                                   style={column.width ? { width: `${column.width}px` } : undefined}
                                 >
-                                  <span className="block whitespace-normal text-xs font-semibold text-gray-700">
+                                  <span className="qbs-block qbs-whitespace-normal qbs-text-xs qbs-font-semibold qbs-text-gray-700">
                                     {header.label}
                                   </span>
                                 </li>
@@ -978,14 +978,14 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                   <li
                     className={`${
                       value?.id === suggestion?.id
-                        ? 'bg-blue-navy text-white'
+                        ? 'bg-blue-navy qbs-text-white'
                         : `${
                             index === selectedIndex ? 'is-selected' : ''
                           } hover:bg-table-hover`
                     } cursor-pointer text-xxs qbs-autocomplete-suggections-items ${
                       dropdownTheme === 'splitDetail' || tableView
-                        ? 'border-b border-grey-light last:border-b-0'
-                        : 'p-1 ps-3.5 pl-[10px]'
+                        ? 'qbs-border-b qbs-border-grey-light last:qbs-border-b-0'
+                        : 'qbs-p-1 qbs-ps-3.5 qbs-pl-[10px]'
                     }`}
                     key={suggestion?.id}
                     data-testid={suggestion.name}
@@ -1026,7 +1026,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                           )}
                       </div>
                     ) : (
-                      <ul className="flex items-stretch w-full list-none p-0 m-0">
+                      <ul className="qbs-flex qbs-items-stretch qbs-w-full qbs-list-none qbs-p-0 qbs-m-0">
                         {(() => {
                           // Sort columns by order if specified, otherwise maintain array order
                           const sortedColumns = additionalColumns
@@ -1061,21 +1061,21 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                                   <li
                                     key={column.key}
                                     className={`${
-                                      column.width ? 'flex-shrink-0' : 'flex-1'
-                                    } min-w-0 px-3 ${
-                                      tableView ? 'py-2' : ''
+                                      column.width ? 'qbs-flex-shrink-0' : 'qbs-flex-1'
+                                    } qbs-min-w-0 qbs-px-3 ${
+                                      tableView ? 'qbs-py-2' : ''
                                     } ${
                                       !isLastBefore
-                                        ? 'border-r border-grey-light'
+                                        ? 'qbs-border-r qbs-border-grey-light'
                                         : ''
-                                    } break-words flex flex-col`}
+                                    } qbs-break-words qbs-flex qbs-flex-col`}
                                     style={
                                       column.width
                                         ? { width: `${column.width}px` }
                                         : undefined
                                     }
                                   >
-                                    <span className="block whitespace-normal">
+                                    <span className="qbs-block qbs-whitespace-normal">
                                       {suggestion?.[column.key]}
                                     </span>
                                   </li>
@@ -1084,15 +1084,15 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
 
                               {/* First column (label/name) */}
                               <li
-                                className={`flex-1 min-w-0 px-3 ${
-                                  tableView ? 'py-2' : ''
+                                className={`qbs-flex-1 qbs-min-w-0 qbs-px-3 ${
+                                  tableView ? 'qbs-py-2' : ''
                                 } ${
                                   hasColumnsAfter
-                                    ? 'border-r border-grey-light'
+                                    ? 'qbs-border-r qbs-border-grey-light'
                                     : ''
-                                } break-words flex flex-col`}
+                                } qbs-break-words qbs-flex qbs-flex-col`}
                               >
-                                <span className="block whitespace-normal">
+                                <span className="qbs-block qbs-whitespace-normal">
                                   {suggestion?.label
                                     ? suggestion?.label
                                     : suggestion.name}
@@ -1108,21 +1108,21 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                                   <li
                                     key={column.key}
                                     className={`${
-                                      column.width ? 'flex-shrink-0' : 'flex-1'
-                                    } min-w-0 px-3 ${
-                                      tableView ? 'py-2' : ''
+                                      column.width ? 'qbs-flex-shrink-0' : 'qbs-flex-1'
+                                    } qbs-min-w-0 qbs-px-3 ${
+                                      tableView ? 'qbs-py-2' : ''
                                     } ${
                                       !isLastColumn
-                                        ? 'border-r border-grey-light'
+                                        ? 'qbs-border-r qbs-border-grey-light'
                                         : ''
-                                    } break-words flex flex-col`}
+                                    } qbs-break-words qbs-flex qbs-flex-col`}
                                     style={
                                       column.width
                                         ? { width: `${column.width}px` }
                                         : undefined
                                     }
                                   >
-                                    <span className="block whitespace-normal">
+                                    <span className="qbs-block qbs-whitespace-normal">
                                       {suggestion?.[column.key]}
                                     </span>
                                   </li>
@@ -1141,7 +1141,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
               !isLoading &&
               timerRef.current === 1 && (
                 <li
-                  className={`$ cursor-pointer p-1 rounded-sm text-xxs`}
+                  className={`$ qbs-cursor-pointer qbs-p-1 qbs-rounded-sm qbs-text-xxs`}
                   onClick={handleClose}
                 >
                   No Results Found
@@ -1288,12 +1288,12 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
       id={
         id ? `autocomplete-container-${id}` : `autocomplete-container-${name}`
       }
-      className={`autocomplete-container-table-view flex-grow  ${fullWidth ? 'w-full' : 'w-auto'}`}
+      className={`qbs-autocomplete-container-table-view qbs-flex-grow  ${fullWidth ? 'qbs-w-full' : 'qbs-w-auto'}`}
       ref={dropdownref}
     >
       {label && !isModern && (
-        <div className="mb-3">
-          <label className={`text-xs font-medium`}>
+        <div className="qbs-mb-3">
+          <label className={`qbs-text-xs qbs-font-medium`}>
             {label}
             {required ? <span className="text-error"> *</span> : <></>}
           </label>
@@ -1339,11 +1339,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
           )}
 
         <div
-          className={`flex relative ${fullWidth ? 'w-full' : 'w-auto'}`}
+          className={`qbs-flex qbs-relative ${fullWidth ? 'qbs-w-full' : 'qbs-w-auto'}`}
           style={{ width: width }}
         >
           <div
-            className="relative w-full"
+            className="qbs-relative qbs-w-full"
             onMouseEnter={() => handleMouseEnter()}
             onMouseLeave={() => handleMouseLeave()}
           >
@@ -1402,24 +1402,22 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                 onClick={() => onLabelClick()}
                 className={generateClassName('label')}
               >
-                {label ? <span className="truncate">{label}</span> : ''}
+                {label ? <span className="qbs-truncate">{label}</span> : ''}
                 {required ? <span className="text-error"> *</span> : <></>}
               </label>
             )}
           </div>
-          <div className="flex items-center justify-center autocomplete-adorement-wrapper">
+          <div className="qbs-flex qbs-items-center qbs-justify-center qbs-autocomplete-adorement-wrapper">
             <div
               ref={adorementRef}
               className={`${generateClassName(
-                'adorement'
-              )} qbs-autocomplete-adorement auto-dorpdown-adorement mr-[1px] ${
-                isLoading ? 'bg-white' : ''
+                'adorement')} qbs-autocomplete-adorement qbs-auto-dorpdown-adorement qbs-mr-[1px] ${ isLoading ?'bg-white' : ''
               }`}
             >
               {showClose && (
                 <button
                   onClick={() => handleClear()}
-                  className=" text-table-bodyColor text-[#667085]"
+                  className="qbs-text-table-bodyColor qbs-text-[#667085]"
                   aria-label="close"
                   type="button"
                   id="autocomplete-close-icon"
@@ -1435,10 +1433,10 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                   data-testid="autocomplete-search-button"
                   onClick={handleSearchButtonClick}
                   disabled={isLoading}
-                  className="btn-search-on text-table-bodyColor text-[#667085] focus-visible:outline-slate-100 p-0.5 inline-flex items-center justify-center min-w-[28px] min-h-[28px] disabled:opacity-70"
+                  className="qbs-btn-search-on qbs-text-table-bodyColor qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-p-0.5 qbs-inline-flex qbs-items-center qbs-justify-center qbs-min-w-[28px] qbs-min-h-[28px] disabled:qbs-opacity-70"
                 >
                   {isLoading ? (
-                    <span className="inline-flex items-center justify-center [&_svg]:mr-0 [&_svg]:h-5 [&_svg]:w-5">
+                    <span className="qbs-inline-flex qbs-items-center qbs-justify-center [&_svg]:qbs-mr-0 [&_svg]:qbs-h-5 [&_svg]:qbs-w-5">
                       <Spinner />
                     </span>
                   ) : (
@@ -1454,7 +1452,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                     disabled={disabled ?? readOnly}
                     onClick={(e) => handleOpenDropdown(e)}
                     onBlur={handleClose}
-                    className=" text-[#667085] focus-visible:outline-slate-100"
+                    className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100"
                     data-testid="drop-arrow"
                     type="button"
                     id="autocomplete-drop-icon"
@@ -1465,7 +1463,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                         <AllDropArrow
                           type="down"
                           uniqueId="all-dropdow-arrow-icon"
-                          className="all-dropdow-arrow-icon"
+                          className="qbs-all-dropdow-arrow-icon"
                         />
                       ) : (
                         <DropArrow uniqueDropArrowId="drop-arrow-icon" />
@@ -1474,11 +1472,11 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
                       <AllDropArrow
                         type="up"
                         uniqueId="all-dropdow-arrow-icon"
-                        className="all-dropdow-arrow-icon"
+                        className="qbs-all-dropdow-arrow-icon"
                       />
                     ) : (
                       <DropArrow
-                        className="rotate-180"
+                        className="qbs-rotate-180"
                         uniqueDropArrowId="drop-arrow-icon"
                       />
                     )}
@@ -1487,7 +1485,7 @@ const ReactAutoCompleteTableView: React.FC<AutoSuggestionInputProps> = ({
               {errors && errors[name] && (
                 <div
                   ref={errorIconRef}
-                  className={` text-error-label  relative cursor-pointer ${generateClassName(
+                  className={` qbs-text-error-label qbs-relative qbs-cursor-pointer ${generateClassName(
                     'message'
                   )}`}
                   onMouseEnter={() => setIsHovered(true)}

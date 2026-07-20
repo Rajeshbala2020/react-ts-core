@@ -296,7 +296,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
       window.addEventListener('scroll', handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener('scroll', handleClickOutside as any)
@@ -595,10 +595,10 @@ const AutoCompleteWithTreeStructure = forwardRef<
             style={{
               marginBottom: 5,
               display: 'flex',
-              justifyContent: 'space-between',
+              justifyContent: 'qbs-space-between',
             }}
           >
-            <label className={`labels label-text`}>
+            <label className={`labels qbs-label-text`}>
               {label}
               {required && <span className="text-error"> *</span>}
             </label>
@@ -611,7 +611,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
 
         <div
           className={`${
-            expandable ? 'qbs-expandable-container !pt-[10px]' : 'qbs-container'
+            expandable ? 'qbs-expandable-container !qbs-pt-[10px]' : 'qbs-container'
           }`}
           style={{ position: 'relative' }}
         >
@@ -704,7 +704,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
                 // onChange={handleChange}
                 onFocus={onFocusTreeDropdown}
                 onClick={() => handleOnClick()}
-                className={`${generateClassName()} resize-none overflow-y-auto`}
+                className={`${generateClassName()} qbs-resize-none qbs-overflow-y-auto`}
                 placeholder={selectedItems?.length > 0 ? '' : placeholder ?? ''}
                 readOnly={
                   readOnly ||
@@ -856,7 +856,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
         {/* {errors && (
           // 
           <div
-            className="text-error text-error-label mt-[1px]"
+            className="text-error qbs-text-error-label qbs-mt-[1px]"
             data-testid="autocomplete-error"
           >
             {handleerror(errors)}

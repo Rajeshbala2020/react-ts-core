@@ -270,7 +270,7 @@ const ExpandableAutoComplete = forwardRef<
       window.addEventListener('scroll', handleClickOutside as any);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener('scroll', handleClickOutside as any)
@@ -629,7 +629,7 @@ const ExpandableAutoComplete = forwardRef<
               justifyContent: 'space-between',
             }}
           >
-            <label className={`labels label-text`}>
+            <label className={`labels qbs-label-text`}>
               {label}
               {required && <span className="text-error"> *</span>}
             </label>
@@ -732,7 +732,7 @@ const ExpandableAutoComplete = forwardRef<
               <button
                 disabled={disabled ?? readOnly}
                 onClick={(e) => handleOpenDropdown(e)}
-                className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
                 data-testid="drop-arrow"
                 type="button"
                 id="autocomplete-drop-icon"
@@ -741,7 +741,7 @@ const ExpandableAutoComplete = forwardRef<
                 <AllDropArrow
                   type={!dropOpen ? 'down' : 'up'}
                   uniqueId="all-dropdow-arrow-icon"
-                  className="all-dropdow-arrow-icon"
+                  className="qbs-all-dropdow-arrow-icon"
                 />
               </button>
             )}
@@ -750,7 +750,7 @@ const ExpandableAutoComplete = forwardRef<
           {selectedItems?.length > 1 && (
             <div
               id="expandable-clear-all"
-              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs absolute right-2 qbs-bottom-0 ${autoDropdown && isExpandableSingleLine ? 'qbs-clear-with-auto-dropdown' : ''}`}
+              className={`qbs-clear-link qbs-text-right qbs-cursor-pointer qbs-text-xs qbs-absolute qbs-right-2 qbs-bottom-0 ${autoDropdown && isExpandableSingleLine ? 'qbs-clear-with-auto-dropdown' : ''}`}
               onClick={handleClearSelected}
             >
               Clear all
@@ -921,7 +921,7 @@ const ExpandableAutoComplete = forwardRef<
         {/* Displaying Validation Error */}
         {errors && (
           <div
-            className="text-error text-error-label mt-[1px]"
+            className="text-error qbs-text-error-label qbs-mt-[1px]"
             data-testid="autocomplete-error"
           >
             {errors.message}

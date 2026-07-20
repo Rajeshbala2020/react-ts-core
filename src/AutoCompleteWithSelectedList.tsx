@@ -517,7 +517,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       document.addEventListener('scroll', handleScroll as any, true);
 
       const scrollableDivs = document.querySelectorAll(
-        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+        'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
       );
       scrollableDivs.forEach((div) =>
         div.addEventListener('scroll', handleScroll as any)
@@ -993,7 +993,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               justifyContent: 'space-between',
             }}
           >
-            <label className={`labels label-text`}>
+            <label className={`labels qbs-label-text`}>
               {label}
               {required && <span className="text-error"> *</span>}
             </label>
@@ -1005,16 +1005,8 @@ const AutoCompleteWithSelectedList = forwardRef<
         {/* Displaying selected items for multi-select */}
 
         <div
-          className={`qbs-relative  qbs-autocomplete-selected-comp ${
-            expandable ? 'qbs-expandable-container' : 'qbs-container'
-          }`}
-        >
-          {(selectedItems?.length > 0 || !tabInlineSearch) && (
-            <>
-              {!countOnly ? (
-                getSelectedItems(false)
-              ) : !tabInlineSearch ? (
-                <div className={`selected-items-counter-container ${disabled ? 'selected-item-inline-counter-disabled' : ''} qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown && !disabled ? 'selected-item-nontool-direct-counter' : ''}`}>
+          className={`qbs-relative qbs-autocomplete-selected-comp ${
+            expandable ? 'qbs-expandable-container' : 'qbs-container'}`} > {(selectedItems?.length > 0 || !tabInlineSearch) && ( <> {!countOnly ? ( getSelectedItems(false) ) : !tabInlineSearch ? ( <div className={`selected-items-counter-container ${disabled ?'selected-item-inline-counter-disabled' : ''} qbs-text-sm qbs-gap-1 ${!tabInlineSearch && autoDropdown && !disabled ?'selected-item-nontool-direct-counter' : ''}`}>
                   <Tooltip title={allSelectedTooltipContent} enabled={selectedItems?.length > 0 ? true : false}>
                     <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                       {selectedItems?.length}
@@ -1033,7 +1025,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                   >
                     {selectedItems?.length > 99 ? '99+' : selectedItems?.length}
                   </span>
-                  <span className="selected-label-text">
+                  <span className="qbs-selected-label-text">
                     {selectedLabel && selectedLabel !== '' ? (
                       selectedLabel
                     ) : (
@@ -1051,7 +1043,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                     <button
                         disabled={disabled ?? readOnly}
                         onClick={(e) => handleOpenDropdown(e)}
-                        className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                        className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
                         data-testid="drop-arrow"
                         type="button"
                         id="autocomplete-drop-icon"
@@ -1060,7 +1052,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                         <AllDropArrow
                             type={!allDataLoaded ? 'down' : 'up'}
                             uniqueId="all-dropdow-arrow-icon"
-                            className="all-dropdow-arrow-icon"
+                            className="qbs-all-dropdow-arrow-icon"
                         />
                     </button>
                 </div>
@@ -1148,9 +1140,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                 style={{
                   ...dropdownStyle,
                   minHeight: viewMode ? 100 : 192,
-                  visibility: visible ? 'visible' : 'hidden',
-                  opacity: visible ? 1 : 0,
-                  transition: 'opacity 0.2s ease-in-out',
+                  visibility: visible ? 'visible' : 'hidden', opacity: visible ? 1 : 0, transition: 'opacity 0.2s ease-in-out',
                 }}
                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${
                   viewMode ? 'qbs-dropdown-selected-preview' : ''
@@ -1183,7 +1173,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                               <button
                                 disabled={disabled ?? readOnly}
                                 onClick={(e) => handleOpenDropdown(e)}
-                                className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                                className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
                                 data-testid="drop-arrow"
                                 type="button"
                                 id="autocomplete-drop-icon"
@@ -1192,7 +1182,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                                 <AllDropArrow
                                   type={!allDataLoaded ? 'down' : 'up'}
                                   uniqueId="all-dropdow-arrow-icon"
-                                  className="all-dropdow-arrow-icon"
+                                  className="qbs-all-dropdow-arrow-icon"
                                 />
                               </button>
                             )}
@@ -1368,7 +1358,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         {/* Displaying Validation Error */}
         {errors && (
           <div
-            className="text-error text-error-label mt-[1px]"
+            className="text-error qbs-text-error-label qbs-mt-[1px]"
             data-testid="autocomplete-error"
           >
             {errors.message}

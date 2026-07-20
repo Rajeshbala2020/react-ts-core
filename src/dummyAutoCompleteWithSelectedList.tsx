@@ -508,7 +508,7 @@ const AutoCompleteWithSelectedList = forwardRef<
               justifyContent: 'space-between',
             }}
           >
-            <label className={`labels label-text`}>
+            <label className={`labels qbs-label-text`}>
               {label}
               {required && <span className="text-error"> *</span>}
             </label>
@@ -520,7 +520,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         {/* Displaying selected items for multi-select */}
 
         <div
-          className={`qbs-relative  qbs-autocomplete-selected-comp ${
+          className={`qbs-relative qbs-autocomplete-selected-comp ${
             expandable ? 'qbs-expandable-container' : 'qbs-container'
           }`}
         >
@@ -536,7 +536,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                   <span className="badge qbs-rounded-full qbs-text-xs qbs-inline-flex qbs-items-center qbs-justify-center qbs-px-2 qbs-py-1 qbs-leading-none qbs-min-w-6 qbs-min-h-6">
                     {selectedItems?.length}
                   </span>
-                  <span className="selected-label-text">
+                  <span className="qbs-selected-label-text">
                     {selectedLabel && selectedLabel !== '' ? (
                       selectedLabel
                     ) : (
@@ -709,7 +709,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                     >
                       {selectedItems?.length > 0 ? (
                         <div
-                          className={`qbs-flex qbs-w-full qbs-text-xs items-center`}
+                          className={`qbs-flex qbs-w-full qbs-text-xs qbs-items-center`}
                         >
                           <div className="qbs-selected-lbs qbs-flex-grow">
                             Selected Items
@@ -724,7 +724,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                           </div>
                         </div>
                       ) : (
-                        <div className="w-full flex items-center justify-center">
+                        <div className="qbs-w-full qbs-flex qbs-items-center qbs-justify-center">
                           {' '}
                           No Items Selected
                         </div>
@@ -759,7 +759,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         {/* Displaying Validation Error */}
         {errors && (
           <div
-            className="text-error text-error-label mt-[1px]"
+            className="text-error qbs-text-error-label qbs-mt-[1px]"
             data-testid="autocomplete-error"
           >
             {errors.message}

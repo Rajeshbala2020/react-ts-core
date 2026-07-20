@@ -425,7 +425,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             document.addEventListener('scroll', handleScroll as any, true);
 
             const scrollableDivs = document.querySelectorAll(
-                'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto'
+                'div[style*="overflow"], .overflow-auto, .overflow-y-auto, .overflow-x-auto, .qbs-overflow-auto, .qbs-overflow-y-auto, .qbs-overflow-x-auto'
             );
             scrollableDivs.forEach((div) =>
                 div.addEventListener('scroll', handleScroll as any)
@@ -1127,10 +1127,10 @@ const AutoCompleteWithTabFilter = forwardRef<
                         style={{
                             marginBottom: 5,
                             display: 'flex',
-                            justifyContent: 'space-between',
+                            justifyContent: 'qbs-space-between',
                         }}
                     >
-                        <label className={`labels label-text`}>
+                        <label className={`labels qbs-label-text`}>
                             {label}
                             {required && <span className="text-error"> *</span>}
                         </label>
@@ -1142,7 +1142,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                 {/* Displaying selected items for multi-select */}
 
                 <div
-                    className={`qbs-relative  qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-container'
+                    className={`qbs-relative qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-container'
                         }`}
                 >
 
@@ -1169,7 +1169,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                     >
                                         {selectedItems?.length > 99 ? '99+' : selectedItems?.length}
                                     </span>
-                                    <span className="selected-label-text">
+                                    <span className="qbs-selected-label-text">
                                         {selectedLabel && selectedLabel !== '' ? (
                                             selectedLabel
                                         ) : (
@@ -1187,7 +1187,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                 <button
                                     disabled={disabled ?? readOnly}
                                     onClick={(e) => handleOpenDropdown(e)}
-                                    className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                                    className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
                                     data-testid="drop-arrow"
                                     type="button"
                                     id="autocomplete-drop-icon"
@@ -1196,7 +1196,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                     <AllDropArrow
                                         type={!allDataLoaded ? 'down' : 'up'}
                                         uniqueId="all-dropdow-arrow-icon"
-                                        className="all-dropdow-arrow-icon"
+                                        className="qbs-all-dropdow-arrow-icon"
                                     />
                                 </button>
                             </div>
@@ -1259,7 +1259,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                         <button
                             disabled={disabled ?? readOnly}
                             onClick={(e) => handleOpenToolsTab(e)}
-                            className={`absolute right-2 top-2 tools-drop-btn focus-visible:outline-slate-100 ${viewMode ? 'hidden' : ''} ${tabSelectedItems?.length > 0 ? 'has-selected-items' : ''} ${showToolsTab ? 'tools-drop-btn-active' : ''}`}
+                            className={`qbs-absolute qbs-right-2 qbs-top-2 qbs-tools-drop-btn focus-visible:qbs-outline-slate-100 ${viewMode ? 'qbs-hidden' : ''} ${tabSelectedItems?.length > 0 ? 'has-selected-items' : ''} ${showToolsTab ? 'tools-drop-btn-active' : ''}`}
                             data-testid="tools-drop-arrow"
                             type="button"
                             id="tools-drop-icon"
@@ -1267,7 +1267,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                         >
                             <Tools
                                 uniqueId="tools-arrow-icon"
-                                className="tools-arrow-icon"
+                                className="qbs-tools-arrow-icon"
                             />
 
                         </button>
@@ -1288,7 +1288,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                     transition: 'opacity 0.2s ease-in-out',
                                 }}
                                 className={`qbs-autocomplete-suggestions qbs-autocomplete-selected-suggestions ${viewMode ? 'qbs-dropdown-selected-preview' : ''
-                                    } ${viewMode && selectedItems?.length === 0 ? 'hidden' : ''}`}
+                                    } ${viewMode && selectedItems?.length === 0 ? 'qbs-hidden' : ''}`}
                             >
                                 {!viewMode && (
                                     <>
@@ -1317,7 +1317,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                                             <button
                                                                 disabled={disabled ?? readOnly}
                                                                 onClick={(e) => handleOpenDropdown(e)}
-                                                                className="text-[#667085] focus-visible:outline-slate-100 absolute right-2 qbs-all-dropdown-btn"
+                                                                className="qbs-text-[#667085] focus-visible:qbs-outline-slate-100 qbs-absolute qbs-right-2 qbs-all-dropdown-btn"
                                                                 data-testid="drop-arrow"
                                                                 type="button"
                                                                 id="autocomplete-drop-icon"
@@ -1326,7 +1326,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                                                 <AllDropArrow
                                                                     type={!allDataLoaded ? 'down' : 'up'}
                                                                     uniqueId="all-dropdow-arrow-icon"
-                                                                    className="all-dropdow-arrow-icon"
+                                                                    className="qbs-all-dropdow-arrow-icon"
                                                                 />
                                                             </button>
                                                         )}
@@ -1375,7 +1375,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                 )}
 
                                 <div
-                                    className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'hidden' : ''
+                                    className={`qbs-autocomplete-suggestions-sub qbs-autocomplete-selected-suggestions-outer ${viewMode ? 'qbs-hidden' : ''
                                         }`}
                                     ref={itemsRef}
                                     style={{
@@ -1450,14 +1450,14 @@ const AutoCompleteWithTabFilter = forwardRef<
                                                         Selected Items
                                                     </div>
                                                     <div
-                                                        className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
+                                                        className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'qbs-hidden' : ''
                                                             }`}
                                                         onClick={handleClearSelected}
                                                     >
                                                         Clear all
                                                     </div>
                                                     <div
-                                                        className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'hidden' : ''
+                                                        className={`qbs-done-link qbs-text-right qbs-cursor-pointer ${viewMode ? 'qbs-hidden' : ''
                                                             }`}
                                                         onClick={() => {
                                                             setDropOpen(false);
@@ -1535,7 +1535,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                 {/* Displaying Validation Error */}
                 {errors && (
                     <div
-                        className="text-error text-error-label mt-[1px]"
+                        className="text-error qbs-text-error-label qbs-mt-[1px]"
                         data-testid="autocomplete-error"
                     >
                         {errors.message}
