@@ -129,7 +129,6 @@ input.qbs-peer.qbs-input-error:focus,
 .text-common {
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: #101828;
 }
 .text-error {
   color: #f04438;
