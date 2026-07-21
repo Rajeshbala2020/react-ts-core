@@ -595,7 +595,7 @@ const AutoCompleteWithTreeStructure = forwardRef<
             style={{
               marginBottom: 5,
               display: 'flex',
-              justifyContent: 'qbs-space-between',
+              justifyContent: 'space-between',
             }}
           >
             <label className={`labels qbs-label-text`}>

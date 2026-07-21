@@ -1,0 +1,174 @@
+/**
+ * Semantic / host-token fallbacks that Tailwind may not emit, or that
+ * need guaranteed styles when the library is consumed in Vite apps.
+ */
+
+/* --- Missing important / RTL utilities --- */
+.\!qbs-pt-\[10px\] {
+  padding-top: 10px !important;
+}
+.\!qbs-pl-\[45px\] {
+  padding-left: 45px !important;
+}
+
+/* TextArea RTL peer-focus nudge (class used in ReactTextArea) */
+[dir='rtl'] .qbs-peer:focus ~ .rtl\:peer-focus\:qbs-translate-x-1\/6,
+.qbs-peer:focus ~ .rtl\:peer-focus\:qbs-translate-x-1\/6:where([dir='rtl'] *) {
+  transform: translateX(16.666667%);
+}
+
+/* --- Labels / selected chrome --- */
+.qbs-label-text,
+.labels.qbs-label-text {
+  font-size: 12px;
+  font-weight: 500;
+  color: #344054;
+  line-height: 16px;
+}
+.qbs-selected-label-text {
+  color: #344054;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 20px;
+  white-space: nowrap;
+}
+.qbs-text-hundred-plus {
+  font-size: 10px;
+  letter-spacing: -0.02em;
+}
+.qbs-text-grey-label {
+  color: #667085;
+  font-size: 0.875rem;
+}
+
+/* --- Search-on-button chrome --- */
+.qbs-btn-search-on {
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #667085;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.qbs-btn-search-on:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+.qbs-btn-search-on:focus-visible {
+  outline: 2px solid #cbd5e1;
+  outline-offset: 1px;
+}
+
+/* --- Adornment hooks --- */
+.qbs-custom-dorpdown-adorement,
+.qbs-auto-dorpdown-adorement,
+.qbs-autocomplete-adorement {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 100%;
+  padding-right: 4px;
+  box-sizing: border-box;
+}
+.adorement {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* --- Loader / empty dropdown padding --- */
+.qbs-autocomplete-loader {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 64px;
+  padding-top: 4rem;
+  box-sizing: border-box;
+}
+
+/* --- Suggestion list (Name/Count autocomplete) --- */
+.qbs-autocomplete-with-suggection {
+  width: 100%;
+}
+.qbs-suggection-list {
+  margin-top: 4px;
+  width: 100%;
+}
+.qbs-suggection-item {
+  cursor: pointer;
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+.qbs-suggection-item:hover {
+  background-color: #f8f8f8;
+}
+.qbs-suggection-label {
+  color: #344054;
+  font-size: 0.75rem;
+  line-height: 1rem;
+}
+.qbs-suggection-count {
+  background-color: #f97316;
+  color: #fff;
+}
+.qbs-autosuggection-list {
+  position: absolute;
+  z-index: 50;
+}
+
+/* Warning / success suggestion containers */
+.suggection-warning-container .qbs-peer {
+  border-color: #fdb022;
+}
+.suggection-okey-container .qbs-peer {
+  border-color: #28b440;
+}
+
+/* --- Radio / checkbox hooks --- */
+.qbs-custom-radio-container {
+  gap: 8px;
+}
+.qbs-radio-button {
+  cursor: pointer;
+}
+
+/* --- Misc icon hooks (no-op safe defaults) --- */
+.qbs-all-dropdow-arrow-icon,
+.qbs-tools-arrow-icon,
+.qbs-tree-single-select-icon {
+  display: inline-block;
+  vertical-align: middle;
+}
+
+/* Extra color tokens often expected from host design systems */
+.qbs-text-gray-500 {
+  color: #6b7280;
+}
+.qbs-text-gray-700 {
+  color: #374151;
+}
+.qbs-text-gray-900 {
+  color: #111827;
+}
+.qbs-bg-gray-100 {
+  background-color: #f3f4f6;
+}
+.qbs-shadow-gray-300 {
+  --tw-shadow-color: #d1d5db;
+}
+.qbs-border-b {
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+}
+.qbs-border-r {
+  border-right-width: 1px;
+  border-right-style: solid;
+}
+
+/* Ensure focus outline utilities work when host CSS resets outlines */
+.focus-visible\:qbs-outline-slate-100:focus-visible {
+  outline: 2px solid #f1f5f9;
+  outline-offset: 2px;
+}

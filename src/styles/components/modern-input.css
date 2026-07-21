@@ -43,7 +43,7 @@ input.qbs-peer.qbs-h-\[25px\],
   font-size: 0.75rem;
 }
 
-input.qbs-peer:focus {
+input.qbs-peer:focus:not(.qbs-input-error) {
   border-color: #001f3f;
 }
 
@@ -51,6 +51,25 @@ input.qbs-peer:disabled {
   color: #98a2b3;
   background-color: #f2f4f7;
   cursor: not-allowed;
+}
+
+/*
+ * Error state — must beat `input.qbs-peer` / `:focus` (element+class specificity).
+ * Broken Tailwind classes like `focus:qbs-border-error-[#FDA29B]` never ship in CSS.
+ */
+input.qbs-peer.qbs-input-error,
+.qbs-textfield input.qbs-input-error,
+.qbs-autocomplete-container-table-view input.qbs-input-error {
+  border-color: #fda29b !important;
+  outline: none;
+}
+
+input.qbs-peer.qbs-input-error:focus,
+.qbs-textfield input.qbs-input-error:focus,
+.qbs-autocomplete-container-table-view input.qbs-input-error:focus {
+  border-color: #fda29b !important;
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(253, 162, 155, 0.35);
 }
 
 /* Host-token fallbacks (prefixed utilities that are not in default Tailwind theme) */
@@ -74,7 +93,27 @@ input.qbs-peer:disabled {
 .qbs-text-error-light {
   color: #f04438;
 }
+.qbs-text-error-icon,
+.qbs-text-error-label {
+  color: #f04438;
+}
+.qbs-text-warning-icon,
+.qbs-text-warning-label {
+  color: #f79009;
+}
+.qbs-text-tick-label {
+  color: #28b440;
+}
 .qbs-text-grey-medium {
+  color: #667085;
+}
+.qbs-border-grey-light {
+  border-color: #d0d5dd;
+}
+.qbs-text-table-bodyColor {
+  color: #667085;
+}
+.placeholder-input-label::placeholder {
   color: #667085;
 }
 .qbs-bg-bodyBG {
@@ -156,4 +195,15 @@ input.qbs-peer:disabled {
 /* Ensure bordered utility actually draws a border */
 .qbs-border {
   border-style: solid;
+}
+
+/* Utilities that apps expect but Tailwind may not emit / lose specificity */
+.qbs-z-1 {
+  z-index: 1;
+}
+.qbs-start-\[14px\] {
+  inset-inline-start: 14px;
+}
+.hover\:qbs-text-dark:hover {
+  color: #101828;
 }

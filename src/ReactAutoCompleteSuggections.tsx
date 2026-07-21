@@ -439,13 +439,13 @@ const ModernAutoCompleteSuggections: React.FC<
 
         if (errors && errors[name]) {
           className +=
-            'qbs-border-[#FDA29B] focus:qbs-border-error-[#FDA29B] focus:qbs-ring-[#FDA29B] focus:qbs-ring-3 focus:qbs-outline-[#FDA29B] qbs-input-outline';
+            ' qbs-input-error';
         } else {
           className +=
-            'qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0';
+            ' qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0';
         }
 
-        className += getHeight();
+        className += ` ${getHeight()}`;
 
         break;
       case 'label': className += ` qbs-flex qbs-modern-input-label-truncate peer-focus:qbs-modern-input-peer-focus-label-size ${ disabled ?'cursor-pointer'
@@ -467,9 +467,9 @@ const ModernAutoCompleteSuggections: React.FC<
                : 'modern-input-peer-focus-label-size'
            }`;
         if (errors && errors[name]) {
-          className += 'qbs-text-error-light';
+          className += ' qbs-text-error-light';
         } else {
-          className += 'qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
+          className += ' qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
         }
         break;
       case 'message':
@@ -479,7 +479,7 @@ const ModernAutoCompleteSuggections: React.FC<
           className='qbs-text-warning-icon';
           break;
       case 'adorement':
-        className += 'qbs-absolute qbs-right-0 adorement qbs-gap-1 qbs-flex qbs-items-center';
+        className += ' qbs-absolute qbs-right-0 adorement qbs-gap-1 qbs-flex qbs-items-center';
         break;
       default:
         break;

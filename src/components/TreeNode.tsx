@@ -61,7 +61,7 @@ const TreeNode: React.FC<any> = ({
           >
             {(isMultiple || (singleSelect && showIcon)) && (
               <div
-                style={{ alignItems: singleSelect ? 'qbs-flex-start' : 'center' }}
+                style={{ alignItems: singleSelect ? 'flex-start' : 'center' }}
                 className={`${'qbs-autocomplete-checkbox'}`}
               >
                 {!singleSelect ? (

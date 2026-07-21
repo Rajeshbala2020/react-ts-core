@@ -3,6 +3,7 @@
 @tailwind utilities;
 
 @import './components/modern-input.css';
+@import './components/qbs-fallbacks.css';
 @import './components/autocomplete.css';
 @import './components/treedropdown.css';
 @import './components/selectedautocomplete.css';

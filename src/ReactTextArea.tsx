@@ -87,10 +87,10 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
         } focus:placeholder-grey-secondary`;
         if (errors && errors[name]) {
           className +=
-            'qbs-border-[#FDA29B] focus:qbs-border-error-[#FDA29B] focus:qbs-ring-[#FDA29B] focus:qbs-ring-3';
+            ' qbs-input-error';
         } else {
           className +=
-            'qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0';
+            ' qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0';
         }
         break;
       //   case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
@@ -109,9 +109,9 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
       //     }`;
 
       //     if (errors && errors[name]) {
-      //       className += 'qbs-text-error-light';
+      //       className += ' qbs-text-error-light';
       //     } else {
-      //       className += 'qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
+      //       className += ' qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
       //     }
       //     break;
       case 'label': // changes made for remove bg-white from placeolder is field disable and or with data
@@ -132,9 +132,9 @@ const ModernTextArea: React.FC<TextAreaProps> = ({
         }`;
 
         if (errors && errors[name]) {
-          className += 'qbs-text-error-light';
+          className += ' qbs-text-error-light';
         } else {
-          className += 'qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
+          className += ' qbs-text-grey-dark peer-focus:qbs-text-blue-navy';
         }
         break;
 

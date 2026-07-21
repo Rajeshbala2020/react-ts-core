@@ -125,15 +125,14 @@ const TextField: React.FC<TextFieldProps> = ({
         } ${enableSearch ? "search-btn-input" : ""} qbs-w-full qbs-text-sm qbs-text-gray-900 ${getBg()} qbs-border qbs-appearance-none qbs-peer qbs-rounded-[4px] disabled:qbs-text-input-disabled qbs-bg-white disabled:qbs-bg-disabled ${
           hideLabel ? "" : label && isModern ? "placeholder-transparent" : ""
         } focus:placeholder-grey-secondary ${
-          adorementPosition === "start" && "!qbs-pl-[45px]"
+          adorementPosition === "start" ? "!qbs-pl-[45px]" : ""
         }  ${getHeight()}`;
 
         if (errors && errors[name]) {
-          className +=
-            "qbs-border-[#FDA29B] focus:qbs-border-error-[#FDA29B] focus:qbs-ring-[#FDA29B] focus:qbs-ring-3 focus:qbs-outline-[#FDA29B] qbs-input-outline";
+          className += " qbs-input-error";
         } else {
           className +=
-            "qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0";
+            " qbs-text-grey-dark qbs-border-input-light focus:qbs-border-blue-navy focus:qbs-outline-none focus:qbs-ring-0";
         }
 
         break;
@@ -153,22 +152,22 @@ const TextField: React.FC<TextFieldProps> = ({
         }`;
 
         if (errors && errors[name]) {
-          className += "qbs-text-error-light";
+          className += " qbs-text-error-light";
         } else {
-          className += "qbs-text-grey-dark peer-focus:qbs-text-blue-navy";
+          className += " qbs-text-grey-dark peer-focus:qbs-text-blue-navy";
         }
         break;
       case "message":
         className="qbs-text-error-icon";
         break;
       case "adorement":
-        className += `${
+        className += ` ${
           isDisabled ? "qbs-bg-bodyBG" : "qbs-bg-white"
         } qbs-absolute qbs-right-0 adorement qbs-gap-1 qbs-flex qbs-items-center`;
         break;
 
       case "search":
-          className += `qbs-absolute inner-search-button qbs-gap-1 qbs-flex qbs-items-center qbs-cursor-pointer`;
+          className += ` qbs-absolute inner-search-button qbs-gap-1 qbs-flex qbs-items-center qbs-cursor-pointer`;
           break;
 
       default:
