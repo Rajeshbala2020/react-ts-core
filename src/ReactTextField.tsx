@@ -1,7 +1,14 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 import { TextFieldProps } from "./commontypes";
 import CustomIcons from "./components/customIcons";
+import Portal from "./components/portal";
 import ModernAutoComplete from "./ReactAutoComplete";
 import { applyPositionClass } from "./utilities/getPosition";
 
@@ -58,6 +65,11 @@ const TextField: React.FC<TextFieldProps> = ({
   const [Width, setWidth] = useState<number>(0);
   const inputRef = useRef<HTMLInputElement>(null);
   const adorementRef = useRef<HTMLDivElement>(null);
+  const errorIconRef = useRef<HTMLDivElement>(null);
+  const [errorTooltipPosition, setErrorTooltipPosition] = useState<{
+    top: number;
+    left: number;
+  } | null>(null);
   const intervalRef = useRef<any>(null);
   const clickTimeoutRef = useRef<any>(null);
   const [isHolding, setIsHolding] = useState<boolean>(false);
@@ -282,6 +294,44 @@ const TextField: React.FC<TextFieldProps> = ({
   useEffect(() => {
     applyPositionClass(textFieldRef, isHovered);
   }, [isHovered]);
+
+  const updateErrorTooltipPosition = useCallback(() => {
+    if (!errorIconRef.current) return;
+
+    const rect = errorIconRef.current.getBoundingClientRect();
+    setErrorTooltipPosition((previousPosition) => {
+      const nextPosition = {
+        top: rect.bottom + 6,
+        left: rect.right,
+      };
+
+      if (
+        previousPosition?.top === nextPosition.top &&
+        previousPosition.left === nextPosition.left
+      ) {
+        return previousPosition;
+      }
+
+      return nextPosition;
+    });
+  }, []);
+
+  useLayoutEffect(() => {
+    if (!(isHovered && errors && errors[name])) {
+      setErrorTooltipPosition(null);
+      return;
+    }
+
+    updateErrorTooltipPosition();
+    window.addEventListener("scroll", updateErrorTooltipPosition, true);
+    window.addEventListener("resize", updateErrorTooltipPosition);
+
+    return () => {
+      window.removeEventListener("scroll", updateErrorTooltipPosition, true);
+      window.removeEventListener("resize", updateErrorTooltipPosition);
+    };
+  }, [isHovered, errors, name, updateErrorTooltipPosition]);
+
   return (
     <div
       ref={textFieldRef}
@@ -296,8 +346,21 @@ const TextField: React.FC<TextFieldProps> = ({
         </div>
       )}
       <div className="tooltip-container ">
-        {isHovered && errors && errors[name] && (
-          <span className="tooltip">{handleError(errors)} </span>
+        {isHovered && errors && errors[name] && errorTooltipPosition && (
+          <Portal>
+            <span
+              className="tooltip tooltip-portal-error"
+              style={{
+                position: "fixed",
+                top: errorTooltipPosition.top,
+                left: errorTooltipPosition.left,
+                transform: "translateX(-100%)",
+                zIndex: 9999,
+              }}
+            >
+              {handleError(errors)}
+            </span>
+          </Portal>
         )}
         {isHovered && infoTitle && (
           <span className="tooltip-info">{infoTitle} </span>
@@ -437,6 +500,7 @@ const TextField: React.FC<TextFieldProps> = ({
 
                   {!isValid && isTooltip && errors && errors[name] && (
                     <div
+                      ref={errorIconRef}
                       className={` text-error-label relative bg-white cursor-pointer ${generateClassName(
                         "message"
                       )}`}
