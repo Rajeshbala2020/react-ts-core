@@ -86,16 +86,24 @@ const AutoCompleteWithTreeStructure = forwardRef<
     const dropRef = useRef(null);
     const dropLevelRef = useRef<string>('bottom');
 
-    const getDropdownData = useCallback(() => {
-      return flatArray ? buildTree(data, descId, parentField) : data;
-    }, [data, flatArray, descId, parentField]);
+    // Shared normalizer for both static `data` and API `suggestions`
+    // so flatArray / nested tree behavior stays consistent.
+    const normalizeToTree = useCallback(
+      (items: any[] = []) =>
+        flatArray ? buildTree(items, descId, parentField) : items,
+      [flatArray, descId, parentField]
+    );
 
+    const isAsyncDataMode = Boolean(async || initialLoad);
+
+    // Default / widely used path: static `data` prop only.
+    // Do not run this in async/initialLoad mode so API results are not overwritten.
     useEffect(() => {
-      if (data) {
-        setDropDownData(getDropdownData());
-        setFilteredData([]);
-      }
-    }, [data, getDropdownData]);
+      if (isAsyncDataMode) return;
+      setDropDownData(normalizeToTree(data ?? []));
+      setFilteredData([]);
+    }, [data, normalizeToTree, isAsyncDataMode]);
+
     useImperativeHandle(ref, () => inputRef.current);
 
     const [dropdownStyle, setDropdownStyle] = useState({
@@ -191,6 +199,15 @@ const AutoCompleteWithTreeStructure = forwardRef<
       selectedItems
       // nextBlock
     );
+
+    // API path only: apply getData results to the tree.
+    // Uses the same flatArray/buildTree normalizer as the static data path.
+    // Skipped when async/initialLoad are off so existing `data`-only usage is unchanged.
+    useEffect(() => {
+      if (!isAsyncDataMode) return;
+      setDropDownData(normalizeToTree(suggestions ?? []));
+      setFilteredData([]);
+    }, [suggestions, isAsyncDataMode, normalizeToTree]);
 
     const isSelected = (
       item: ValueProps,
