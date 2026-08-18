@@ -200,6 +200,10 @@ body * {
   color: #313131;
 }
 
+.qbs-textfield-default:disabled {
+  z-index: 0;
+}
+
 .qbs-expandable-container {
   border: 1px solid #d6d8dc;
   background: #fff;
@@ -442,6 +446,12 @@ ul {
 
 .selected-item-inline-counter-disabled {
   right: 8px;
+}
+
+.selected-item-inline-counter-disabled .badge {
+  background-color: #c63a3a;
+  color: #fff;
+  opacity: 1;
 }
 
 .selected-item-tool-direct-counter {
