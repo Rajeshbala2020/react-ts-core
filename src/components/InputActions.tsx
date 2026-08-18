@@ -34,6 +34,19 @@ const InputActions: React.FC<ValueProps> = ({
   uniqueDropArrowId,
   autoDropdown = false,
 }) => {
+  const showClear =
+    Boolean(inputValue || searchValue) &&
+    !disabled &&
+    !readOnly &&
+    !expandable &&
+    !countOnly;
+  const showToggle =
+    !autoDropdown && (!(disabled || readOnly) || Boolean(viewMode));
+
+  if (!showClear && !showToggle) {
+    return null;
+  }
+
   return (
     <div
       className={`${
@@ -42,11 +55,7 @@ const InputActions: React.FC<ValueProps> = ({
           : 'qbs-autocomplete-close-icon'
       } `}
     >
-      {(inputValue || searchValue) &&
-        !disabled &&
-        !readOnly &&
-        !expandable &&
-        !countOnly && (
+      {showClear && (
           <button
             onClick={handleClear}
             className="icon-button text-[#667085] "
@@ -56,7 +65,7 @@ const InputActions: React.FC<ValueProps> = ({
             <Close />
           </button>
         )}
-      {!autoDropdown &&
+      {showToggle &&
         (dropOpen ? (
           <button
             type="button"
