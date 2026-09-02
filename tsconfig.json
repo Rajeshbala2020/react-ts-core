@@ -6,7 +6,10 @@
     "declaration": true,
     "module": "commonjs",
     "target": "es5",
+    "lib": ["ES2019", "DOM"],
     "esModuleInterop": true,
+    "skipLibCheck": true,
+    "types": [],
     "jsx": "react-jsx" // or "react-jsxdev" for development mode
 
   },
