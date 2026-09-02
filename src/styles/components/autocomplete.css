@@ -705,6 +705,11 @@ span.dropdown-search-icon {
   border-color: transparent transparent #000 transparent;
 }
 
+.custom_tooltip_style_class.up.tooltiptext::after,
+.custom_tooltip_style_class.down.tooltiptext::after {
+  left: var(--tooltip-arrow-left, 50%);
+}
+
 .autocomplete-suggections .qbs-autocomplete-suggections-items {
   display: flex;
   /* justify-content: space-between; */

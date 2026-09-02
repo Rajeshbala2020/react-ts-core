@@ -1,9 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
+import { getPortalTooltipCoords } from './getPosition';
 
 const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
   const [dropdownPosition, setDropdownPosition] = useState('bottom-position');
-  const dropRef = useRef(null);
+  const dropRef = useRef<HTMLDivElement | null>(null);
   const menuButtonRef = useRef<HTMLDivElement>(null);
   const [isTooltipMounted, setIsTooltipMounted] = useState(false);
 
@@ -11,11 +12,11 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
   const [tooltipStyle, setTooltipStyle] = useState({
     top: 0,
     left: 0,
-    width: 0,
+    arrowOffset: 50,
   });
   const hideTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const handleMouseEnter = (e: React.MouseEvent) => {
+  const handleMouseEnter = () => {
     if (hideTimeoutRef.current) {
       clearTimeout(hideTimeoutRef.current);
       hideTimeoutRef.current = null;
@@ -25,63 +26,45 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
     }
   };
 
-  useEffect(() => {
-    if (
-      visible &&
-      isTooltipMounted &&
-      menuButtonRef.current &&
+  const updatePosition = useCallback(() => {
+    if (!menuButtonRef.current || !dropRef.current) return;
+
+    const coords = getPortalTooltipCoords(
+      menuButtonRef.current,
       dropRef.current
-    ) {
-      const inputBoxRect = menuButtonRef.current.getBoundingClientRect();
-      const tooltipHeight = dropRef.current.offsetHeight;
-      const tooltipWidth = dropRef.current.offsetWidth;
-      const boxWidth = inputBoxRect.width;
-      const viewportHeight = window.innerHeight;
-
-      const spaceAbove = inputBoxRect.top;
-      const spaceBelow = viewportHeight - inputBoxRect.bottom;
-
-      let dropPosition: 'top-position' | 'bottom-position' = 'bottom-position';
-      if (spaceBelow >= tooltipHeight + 20) {
-        dropPosition = 'bottom-position';
-      } else if (spaceAbove >= tooltipHeight + 20) {
-        dropPosition = 'top-position';
-      } else {
-        dropPosition =
-          spaceBelow > spaceAbove ? 'bottom-position' : 'top-position';
+    );
+    setDropdownPosition(coords.placement);
+    setTooltipStyle((prev) => {
+      if (
+        prev.top === coords.top &&
+        prev.left === coords.left &&
+        prev.arrowOffset === coords.arrowOffset
+      ) {
+        return prev;
       }
-      setDropdownPosition(dropPosition);
+      return {
+        top: coords.top,
+        left: coords.left,
+        arrowOffset: coords.arrowOffset,
+      };
+    });
+  }, []);
 
-      let top =
-        dropPosition === 'bottom-position'
-          ? inputBoxRect.bottom + 8 + window.scrollY
-          : inputBoxRect.top - tooltipHeight - 8 + window.scrollY;
+  useLayoutEffect(() => {
+    if (!visible || !isTooltipMounted) return;
 
-      const left = inputBoxRect.left + boxWidth / 2 - 200 / 2 + window.scrollX;
+    updatePosition();
+    const frame = window.requestAnimationFrame(updatePosition);
 
-      setTooltipStyle({
-        top,
-        left: Math.max(left, 8),
-        width: 200,
-      });
+    window.addEventListener('resize', updatePosition);
+    window.addEventListener('scroll', updatePosition, true);
 
-      // ✨ Recalculate again after a small delay
-      setTimeout(() => {
-        if (dropRef.current) {
-          const correctedHeight = dropRef.current.offsetHeight;
-          const correctedTop =
-            dropPosition === 'bottom-position'
-              ? inputBoxRect.bottom + 8 + window.scrollY
-              : inputBoxRect.top - correctedHeight - 8 + window.scrollY;
-
-          setTooltipStyle((prev) => ({
-            ...prev,
-            top: correctedTop,
-          }));
-        }
-      }, 0);
-    }
-  }, [visible]);
+    return () => {
+      window.cancelAnimationFrame(frame);
+      window.removeEventListener('resize', updatePosition);
+      window.removeEventListener('scroll', updatePosition, true);
+    };
+  }, [visible, isTooltipMounted, updatePosition]);
 
   useEffect(() => {
     const handleMouseMove = (event: MouseEvent) => {
@@ -152,17 +135,19 @@ const ExpandableToolTip: React.FC<any> = ({ title, children, enabled }) => {
             className={`tooltiptext custom_tooltip_style_class ${
               dropdownPosition == 'bottom-position' ? 'down' : 'up'
             }`}
-            style={{
-              top: tooltipStyle.top,
-              left: tooltipStyle.left,
-              opacity: visible ? 1 : 0,
-              visibility: visible ? 'visible' : 'hidden',
-              width: tooltipStyle.width,
-              minWidth: '60px',
-              maxWidth: '200px',
-              pointerEvents: 'auto',
-              maxHeight: '210px',
-            }}
+            style={
+              {
+                top: tooltipStyle.top,
+                left: tooltipStyle.left,
+                opacity: visible ? 1 : 0,
+                visibility: visible ? 'visible' : 'hidden',
+                minWidth: '60px',
+                maxWidth: '200px',
+                pointerEvents: 'auto',
+                maxHeight: '210px',
+                '--tooltip-arrow-left': `${tooltipStyle.arrowOffset}px`,
+              } as React.CSSProperties
+            }
           >
             <div
               className=""
