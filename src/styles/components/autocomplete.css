@@ -434,6 +434,25 @@ ul {
   left: 0;
 }
 
+.selected-items-outer-container.selected-items-inline {
+  position: absolute;
+  top: 50%;
+  left: 8px;
+  right: 32px;
+  transform: translateY(-50%);
+  z-index: 99;
+  flex-wrap: nowrap;
+  align-items: center;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.selected-items-inline .selected-items-container {
+  position: static;
+  flex-shrink: 0;
+  pointer-events: auto;
+}
+
 .selected-items-container .badge, 
 .selected-items-counter-container .badge {
   background-color: #c63a3a;

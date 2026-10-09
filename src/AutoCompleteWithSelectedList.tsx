@@ -781,11 +781,12 @@ const AutoCompleteWithSelectedList = forwardRef<
       return selectedRowLimit * maxHeight + 5;
     };
     const getSelectedItems = (dropdown: boolean) => {
+      const inline = !dropdown && !expandable;
       return (
         <div
           ref={selItemRef}
-          className="selected-items-outer-container"
-          style={{ maxHeight: `${getSelectedRowLimit()}px` }}
+          className={`selected-items-outer-container ${inline ? 'selected-items-inline' : ''}`}
+          style={inline ? undefined : { maxHeight: `${getSelectedRowLimit()}px` }}
         >
           {selectedItems
             .slice(

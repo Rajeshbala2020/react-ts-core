@@ -730,6 +730,27 @@ export default function App() {
               onChange={(e) => console.log(e, "onchange")}
             />
           </div>
+          <div style={{ width: 300 }} id="chips-demo">
+            <AutoCompleteWithSelectedList
+              label="Chips Demo (countOnly false)"
+              name="chips-demo"
+              type="auto_suggestion"
+              desc="name"
+              isMultiple={true}
+              singleSelect={false}
+              descId="id"
+              data={treeDropData}
+              itemCount={2}
+              placeholder="Auto Suggestion"
+              selectedItems={[
+                { id: 1, name: "Alpha" },
+                { id: 2, name: "Bravo" },
+                { id: 3, name: "Charlie" },
+              ]}
+              onChange={(e) => console.log(e, "onchange")}
+              countOnly={false}
+            />
+          </div>
           <div style={{ width: 300 }}>
             <AutoCompleteWithSelectedList
               label="Auto Suggestion With Data"

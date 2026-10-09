@@ -859,11 +859,12 @@ const AutoCompleteWithTabFilter = forwardRef<
         }, [selectedRowLimit]);
 
         const getSelectedItems = useCallback((dropdown: boolean) => {
+            const inline = !dropdown && !expandable;
             return (
                 <div
                     ref={selItemRef}
-                    className="selected-items-outer-container"
-                    style={{ maxHeight: `${getSelectedRowLimit()}px` }}
+                    className={`selected-items-outer-container ${inline ? 'selected-items-inline' : ''}`}
+                    style={inline ? undefined : { maxHeight: `${getSelectedRowLimit()}px` }}
                 >
                     {selectedItems
                         .slice(
@@ -915,7 +916,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                     )}
                 </div>
             );
-        }, [selectedItems, getSelectedRowLimit, itemCount, showAllSelected, desc, textCount, viewMode, handleRemoveSelectedItem, tooltipContent, handleShowAllSelected]);
+        }, [selectedItems, getSelectedRowLimit, itemCount, showAllSelected, desc, textCount, viewMode, handleRemoveSelectedItem, tooltipContent, handleShowAllSelected, expandable]);
 
         const getTabItems = useCallback(() => {
             return (
