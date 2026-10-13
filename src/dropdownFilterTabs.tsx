@@ -100,7 +100,8 @@ const DropdownFilterTabs = forwardRef<
       moreOptionTabLabel = 'More Options',
       moreOptionTabIcon,
       onMoreOptionChange,
-      moreOptionResetKey: externalResetKey
+      moreOptionResetKey: externalResetKey,
+      searchInputClassName,
     },
     ref
   ) => {
@@ -1083,7 +1084,7 @@ const DropdownFilterTabs = forwardRef<
                           <Search />
                         </span>
                         <input
-                          className="dropdown-search-input"
+                          className={`dropdown-search-input ${searchInputClassName ?? ''}`}
                           onChange={handleSuggestionChange}
                           value={searchValue}
                           placeholder="Type to search"
