@@ -101,6 +101,7 @@ const AutoCompleteWithTabFilter = forwardRef<
             moreOptionTabIcon,
             onMoreOptionChange,
             resetAllSearch = true,
+            searchInputClassName,
         },
         ref
     ) => {
@@ -1306,7 +1307,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                                         <Search />
                                                     </span>
                                                     <input
-                                                        className="dropdown-search-input"
+                                                        className={`dropdown-search-input ${searchInputClassName ?? ''}`}
                                                         onChange={handleSuggestionChange}
                                                         value={searchValue}
                                                         placeholder="Type to search"
@@ -1530,6 +1531,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                             moreOptionTabIcon={moreOptionTabIcon}
                             onMoreOptionChange={onMoreOptionChange}
                             moreOptionResetKey={moreOptionResetKey}
+                            searchInputClassName={searchInputClassName}
                         />)
                     }
                 </div>
