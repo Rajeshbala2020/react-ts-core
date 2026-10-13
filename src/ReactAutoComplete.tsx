@@ -52,6 +52,8 @@ interface AutoSuggestionInputProps {
   labelTitle?: string;
   isModern?: boolean;
   size?: 'xs' | 'sm' | 'md' | 'lg' | 'xxs';
+  /** When true, typed text that is not in the dropdown is kept and committed as the value. */
+  allowCustomValue?: boolean;
 }
 
 const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
@@ -87,6 +89,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   labelTitle,
   isModern = true,
   size = 'md',
+  allowCustomValue = false,
 }) => {
   const [inputValue, setInputValue] = useState<any>(value?.name ?? '');
   const [isHovered, setIsHovered] = useState<boolean>(false);
@@ -110,6 +113,8 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   const scrollContainerRef = useRef<HTMLUListElement | null>(null);
   const isSelectingRef = useRef(false);
   const hasUserChangedInputRef = useRef(false); // Track if user has actually typed/changed input
+  const requestIdRef = useRef(0);
+  const lastQueryRef = useRef<string | null>(null);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -173,6 +178,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     hasUserChangedInputRef.current = true; // Mark that user has changed the input
 
     setInputValue(value);
+    discardStaleSuggestions(value);
     handleValChange(value);
     if (!value) {
       setInputValue('');
@@ -242,15 +248,32 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
       setSuggestions(filteredData);
     }
   };
+  // Results from a previous search must not show while a new, unrelated search is pending.
+  const discardStaleSuggestions = (value: string) => {
+    if (type !== 'auto_complete' || isStaticList) return;
+    const next = value.trim().toLowerCase();
+    const last = lastQueryRef.current;
+    if (!next || last === null || !next.startsWith(last)) {
+      requestIdRef.current += 1;
+      lastQueryRef.current = null;
+      setSuggestions([]);
+      setIsLoading(false);
+    }
+  };
+
   const handlePickSuggestions = async (value?: string) => {
     if (getData) {
+      const requestId = ++requestIdRef.current;
       setHasFetchedSuggestions(false);
       setIsLoading(true);
       try {
         const fetchedSuggestions = await getData?.(value);
+        if (requestId !== requestIdRef.current) return;
         setSuggestions(
           Array.isArray(fetchedSuggestions) ? fetchedSuggestions : [],
         );
+        lastQueryRef.current =
+          !value || value === '*' ? '' : value.trim().toLowerCase();
         setHasFetchedSuggestions(true);
         setIsLoading(false);
         setTimeout(() => {
@@ -259,6 +282,7 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
           }
         }, 100);
       } catch (error) {
+        if (requestId !== requestIdRef.current) return;
         setHasFetchedSuggestions(false);
         setIsLoading(false);
       }
@@ -530,6 +554,21 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
   // const getPosition = () => {
   //   return 'bottom'
   // }
+  const commitCustomValue = (typedValue: string) => {
+    const trimmed = typedValue.toString().trim();
+    if (!trimmed) return;
+    onChange({ id: undefined, name: trimmed, from: 5 });
+    setInputValue(trimmed);
+    setDropOpen(false);
+    hasUserChangedInputRef.current = false;
+  };
+
+  const rejectUnlistedValue = (typedValue: string) => {
+    onChange({ id: undefined, name: typedValue, from: 4 });
+    setInputValue('');
+    hasUserChangedInputRef.current = false;
+  };
+
   const selectExactMatchFromSuggestions = () => {
     // If user is clicking on dropdown, don't execute exact match logic
     if (isSelectingRef.current) {
@@ -549,9 +588,13 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     }
 
     if (!filteredData || filteredData.length === 0) {
-      // No suggestions to match against – notify parent with raw value
-      onChange({ id: undefined, name: inputValue, from: 4 });
-      hasUserChangedInputRef.current = false; // Reset flag
+      if (allowCustomValue) {
+        commitCustomValue(inputValue);
+      } else {
+        // No suggestions to match against – notify parent with raw value
+        onChange({ id: undefined, name: inputValue, from: 4 });
+        hasUserChangedInputRef.current = false; // Reset flag
+      }
       return;
     }
 
@@ -565,10 +608,11 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
     if (matchIndex >= 0) {
       const match = filteredData[matchIndex];
       handleSuggestionClick(match, matchIndex);
+    } else if (allowCustomValue) {
+      commitCustomValue(inputValue);
     } else {
-      // No exact match – notify parent with typed value
-      onChange({ id: undefined, name: inputValue, from: 4 });
-      setInputValue('');
+      // No exact match – notify parent with typed value and clear input
+      rejectUnlistedValue(inputValue);
     }
     hasUserChangedInputRef.current = false; // Reset flag after handling
   };
@@ -590,21 +634,24 @@ const ModernAutoComplete: React.FC<AutoSuggestionInputProps> = ({
         // Exact match found - select it
         isSelectingRef.current = true;
         handleSuggestionClick(filteredData[exactMatchIndex], exactMatchIndex);
+      } else if (allowCustomValue) {
+        // Accept typed value that is not in the list
+        commitCustomValue(inputValue);
       } else if (dropOpen && filteredData[selectedIndex]) {
         // No exact match but dropdown is open and has highlighted item - select highlighted item
         isSelectingRef.current = true;
         handleSuggestionClick(filteredData[selectedIndex], selectedIndex);
       } else {
         // No exact match and no highlighted item - trigger invalid value action
-        onChange({ id: undefined, name: inputValue, from: 4 });
-        setInputValue('');
-        hasUserChangedInputRef.current = false; // Reset flag
+        rejectUnlistedValue(inputValue);
       }
     } else if (inputValue && (!filteredData || filteredData.length === 0 ) && hasUserChangedInputRef.current) {
-      // No suggestions available - trigger invalid value action
-      onChange({ id: undefined, name: inputValue, from: 4 });
-      setInputValue('');
-      hasUserChangedInputRef.current = false; // Reset flag
+      if (allowCustomValue) {
+        commitCustomValue(inputValue);
+      } else {
+        // No suggestions available - trigger invalid value action
+        rejectUnlistedValue(inputValue);
+      }
     }
     // Don't prevent default - allow Tab to move focus
   };

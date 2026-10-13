@@ -113,6 +113,8 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
 
   const isSelectingRef = useRef(false);
   const hasUserChangedInputRef = useRef(false); // Track if user has actually typed/changed input
+  const requestIdRef = useRef(0);
+  const lastQueryRef = useRef<string | null>(null);
   const [dropPosition, setDropPosition] = useState<any>({
     top: 0,
     left: 0,
@@ -176,6 +178,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
     hasUserChangedInputRef.current = true; // Mark that user has changed the input
 
     setInputValue(value);
+    discardStaleSuggestions(value);
     handleValChange(value);
     if (!value) {
       setInputValue('');
@@ -247,17 +250,35 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
       setSuggestions(filteredData);
     }
   };
+  // Results from a previous search must not show while a new, unrelated search is pending.
+  const discardStaleSuggestions = (value: string) => {
+    if (type !== 'auto_complete' || isStaticList) return;
+    const next = value.trim().toLowerCase();
+    const last = lastQueryRef.current;
+    if (!next || last === null || !next.startsWith(last)) {
+      requestIdRef.current += 1;
+      lastQueryRef.current = null;
+      setSuggestions([]);
+      setIsLoading(false);
+    }
+  };
+
   const handlePickSuggestions = async (value?: string) => {
     if (getData) {
+      const requestId = ++requestIdRef.current;
       setIsLoading(true);
       try {
         const fetchedSuggestions = await getData?.(value);
+        if (requestId !== requestIdRef.current) return;
         setSuggestions(fetchedSuggestions);
+        lastQueryRef.current =
+          !value || value === '*' ? '' : value.trim().toLowerCase();
         setIsLoading(false);
         if (autoDropdown) {
           setRefetchData(true);
         }
       } catch (error) {
+        if (requestId !== requestIdRef.current) return;
         setIsLoading(false);
       }
     }
@@ -302,6 +323,7 @@ const ModernAutoCompleteDropdown: React.FC<AutoSuggestionInputProps> = ({
             data?.push(element);
           });
           setSuggestions(fetchedSuggestions);
+          lastQueryRef.current = '';
           setIsLoading(false);
           if (autoDropdown) {
             setRefetchData(false);

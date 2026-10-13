@@ -881,7 +881,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                     title={String(item?.[desc])}
                                     enabled={String(item?.[desc])?.length > textCount}
                                 >
-                                    <div key={item.id} className="selected-item">
+                                    <div key={item.id} className="selected-item qbs-selected-chip">
                                         {String(item?.[desc])?.length > textCount
                                             ? `${String(item?.[desc]).substring(0, textCount)}...`
                                             : String(item?.[desc])}
@@ -902,7 +902,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                         <div className="selected-items-container">
                             <Tooltip title={tooltipContent} enabled={true}>
                                 <div
-                                    className={`selected-item-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${dropdown ? 'qbs-cursor-pointer' : ''
+                                    className={`selected-item-more qbs-selected-chip-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${dropdown ? 'qbs-cursor-pointer' : ''
                                         }`}
                                     onClick={() => {
                                         handleShowAllSelected(dropdown);
@@ -1120,7 +1120,8 @@ const AutoCompleteWithTabFilter = forwardRef<
         return (
             <div
                 id={id ? `selected-list-${id}` : `selected-list-${name}`}
-                className={fullWidth ? 'fullWidth' : 'autoWidth'}
+                className={`${fullWidth ? 'fullWidth' : 'autoWidth'} ${selectedItems?.length > 0 ? 'qbs-has-selected' : ''}`}
+                data-has-value={selectedItems?.length > 0 ? 'true' : 'false'}
                 ref={dropdownRef}
             >
                 {label && (
@@ -1236,7 +1237,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                 }
                             }}
                             onClick={() => handleOnClick()}
-                            className={generateClassName()}
+                            className={`${generateClassName()} ${selectedItems?.length > 0 ? 'qbs-input-has-selected' : ''}`}
                             placeholder={
                                 selectedItems?.length > 0
                                     ? !tabInlineSearch && searchValue

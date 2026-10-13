@@ -287,6 +287,23 @@ export default function App() {
             />
           </div>
 
+          <div style={{ width: 300 }} id="custom-value-demo">
+            <ModernAutoComplete
+              name="custom-value-demo"
+              label="Auto Complete (allowCustomValue)"
+              id="custom-value-demo"
+              type="auto_complete"
+              placeholder="Type anything"
+              isCustomPlaceholder
+              getData={getDatas}
+              allowCustomValue
+              onChange={(e) => {
+                (window as any).__lastChange = e;
+                console.log(e, "onchange");
+              }}
+            />
+          </div>
+
           <div style={{ width: 300 }}>
             <ModernAutoComplete
               name="sample"
@@ -749,6 +766,28 @@ export default function App() {
               ]}
               onChange={(e) => console.log(e, "onchange")}
               countOnly={false}
+            />
+          </div>
+          <div style={{ width: 300 }} id="chips-typing-demo">
+            <AutoCompleteWithSelectedList
+              label="Chips + Typing (tabInlineSearch false)"
+              name="chips-typing-demo"
+              type="auto_suggestion"
+              desc="name"
+              isMultiple={true}
+              singleSelect={false}
+              descId="id"
+              data={treeDropData}
+              itemCount={2}
+              placeholder="Search"
+              selectedItems={[
+                { id: 1, name: "Alpha" },
+                { id: 2, name: "Bravo" },
+                { id: 3, name: "Charlie" },
+              ]}
+              onChange={(e) => console.log(e, "onchange")}
+              countOnly={false}
+              tabInlineSearch={false}
             />
           </div>
           <div style={{ width: 300 }}>

@@ -438,13 +438,23 @@ ul {
   position: absolute;
   top: 50%;
   left: 8px;
-  right: 32px;
+  right: auto;
+  max-width: calc(100% - 40px);
   transform: translateY(-50%);
   z-index: 99;
   flex-wrap: nowrap;
   align-items: center;
   overflow: hidden;
   pointer-events: none;
+}
+
+.selected-items-outer-container.selected-items-inline.selected-items-inline-editable {
+  max-width: calc(100% - 130px);
+}
+
+.qbs-input-with-inline-chips {
+  padding-right: 56px;
+  text-overflow: ellipsis;
 }
 
 .selected-items-inline .selected-items-container {

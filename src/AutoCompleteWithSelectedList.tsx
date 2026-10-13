@@ -3,6 +3,7 @@ import React, {
   useCallback,
   useEffect,
   useImperativeHandle,
+  useLayoutEffect,
   useMemo,
   useRef,
   useState,
@@ -88,6 +89,8 @@ const AutoCompleteWithSelectedList = forwardRef<
   ) => {
     const dropdownRef = useRef<HTMLDivElement>(null);
     const selItemRef = useRef<HTMLDivElement>(null);
+    const inlineChipsRef = useRef<HTMLDivElement>(null);
+    const [inlineChipsWidth, setInlineChipsWidth] = useState(0);
     const itemsRef = useRef<HTMLDivElement>(null);
     const dropdownSelectedRef = useRef<HTMLDivElement>(null);
     const tabRef = useRef<HTMLUListElement>(null);
@@ -772,6 +775,28 @@ const AutoCompleteWithSelectedList = forwardRef<
       }
     };
 
+    const isInputEditable = !(
+      readOnly ||
+      type === 'custom_select' ||
+      (type === 'auto_suggestion' && !expandable && tabInlineSearch)
+    );
+    const showInlineChips =
+      !countOnly && !expandable && selectedItems?.length > 0;
+
+    useLayoutEffect(() => {
+      const el = inlineChipsRef.current;
+      if (!showInlineChips || !el) {
+        setInlineChipsWidth(0);
+        return;
+      }
+      const measure = () => setInlineChipsWidth(el.offsetWidth);
+      measure();
+      if (typeof ResizeObserver === 'undefined') return;
+      const observer = new ResizeObserver(measure);
+      observer.observe(el);
+      return () => observer.disconnect();
+    }, [showInlineChips, selectedItems, showAllSelected, itemCount]);
+
     const getSelectedRowLimit = () => {
       let maxHeight = 36;
       if (selItemRef?.current && selItemRef?.current.clientWidth < 300) {
@@ -784,8 +809,10 @@ const AutoCompleteWithSelectedList = forwardRef<
       const inline = !dropdown && !expandable;
       return (
         <div
-          ref={selItemRef}
-          className={`selected-items-outer-container ${inline ? 'selected-items-inline' : ''}`}
+          ref={inline ? inlineChipsRef : selItemRef}
+          className={`selected-items-outer-container ${inline ? 'selected-items-inline' : ''} ${
+            inline && isInputEditable && !disabled ? 'selected-items-inline-editable' : ''
+          }`}
           style={inline ? undefined : { maxHeight: `${getSelectedRowLimit()}px` }}
         >
           {selectedItems
@@ -803,7 +830,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                   title={item?.[desc]}
                   enabled={item?.[desc]?.length > textCount}
                 >
-                  <div key={item.id} className="selected-item">
+                  <div key={item.id} className="selected-item qbs-selected-chip">
                     {item?.[desc]?.length > textCount
                       ? `${item?.[desc].substring(0, textCount)}...`
                       : item?.[desc]}
@@ -824,7 +851,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             <div className="selected-items-container">
               <Tooltip title={tooltipContent} enabled={true}>
                 <div
-                  className={`selected-item-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${
+                  className={`selected-item-more qbs-selected-chip-more qbs-rounded-full qbs-min-h-6 qbs-min-w-6 qbs-p-1 ${
                     dropdown ? 'qbs-cursor-pointer' : ''
                   }`}
                   onClick={() => {
@@ -983,7 +1010,10 @@ const AutoCompleteWithSelectedList = forwardRef<
     return (
       <div
         id={id ? `selected-list-${id}` : `selected-list-${name}`}
-        className={fullWidth ? 'fullWidth' : 'autoWidth'}
+        className={`${fullWidth ? 'fullWidth' : 'autoWidth'} ${
+          selectedItems?.length > 0 ? 'qbs-has-selected' : ''
+        }`}
+        data-has-value={selectedItems?.length > 0 ? 'true' : 'false'}
         ref={dropdownRef}
       >
         {label && (
@@ -1101,7 +1131,14 @@ const AutoCompleteWithSelectedList = forwardRef<
                 }
               }}
               onClick={() => handleOnClick()}
-              className={generateClassName()}
+              className={`${generateClassName()} ${
+                selectedItems?.length > 0 ? 'qbs-input-has-selected' : ''
+              } ${showInlineChips ? 'qbs-input-with-inline-chips' : ''}`}
+              style={
+                showInlineChips && inlineChipsWidth > 0
+                  ? { paddingLeft: inlineChipsWidth + 14 }
+                  : undefined
+              }
               placeholder={
                 selectedItems?.length > 0 || searchValue
                   ? !tabInlineSearch && searchValue
@@ -1111,11 +1148,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                     : ''
                   : placeholder ?? ''
               }
-              readOnly={
-                readOnly ||
-                type === 'custom_select' ||
-                (type === 'auto_suggestion' && !expandable && tabInlineSearch)
-              }
+              readOnly={!isInputEditable}
               disabled={disabled}
               data-testid="custom-autocomplete"
             />
