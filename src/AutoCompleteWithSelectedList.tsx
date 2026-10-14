@@ -84,6 +84,7 @@ const AutoCompleteWithSelectedList = forwardRef<
       matchFromStart = false,
       autoDropdown = false,
       enableSelectAll = false,
+      searchInputClassName,
     },
     ref
   ) => {
@@ -1204,7 +1205,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                             <Search />
                           </span>
                           <input
-                            className="dropdown-search-input"
+                            className={`dropdown-search-input ${searchInputClassName ?? ''}`}
                             onChange={handleSuggestionChange}
                             value={searchValue}
                             placeholder="Type to search"
