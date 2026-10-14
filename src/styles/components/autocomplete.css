@@ -200,6 +200,28 @@ body * {
   color: #313131;
 }
 
+.qbs-autocomplete-selected-comp.qbs-custom-search-size .qbs-textfield-expandable.qbs-normal {
+  height: 100%;
+}
+
+.qbs-autocomplete-selected-comp.qbs-custom-search-size .qbs-textfield-default {
+  height: 100%;
+  min-height: 0;
+}
+
+.qbs-autocomplete-selected-comp.qbs-custom-search-size .selected-items-container,
+.qbs-autocomplete-selected-comp.qbs-custom-search-size .selected-items-counter-container,
+.qbs-autocomplete-selected-comp.qbs-custom-search-size .qbs-inline-all-dropdown-btn,
+.qbs-autocomplete-selected-comp.qbs-custom-search-size .tools-drop-btn {
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+.react-core-ts-search-container.qbs-custom-search-size .dropdown-search-input {
+  height: 100%;
+  min-height: 0;
+}
+
 .qbs-textfield-default:disabled {
   z-index: 0;
 }

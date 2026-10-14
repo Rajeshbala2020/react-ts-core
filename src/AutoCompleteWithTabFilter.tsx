@@ -23,6 +23,7 @@ import {
     MIN_DROPDOWN_WIDTH_PX,
     measureTabListNaturalWidth,
 } from './utilities/measureTabListNaturalWidth';
+import { omitHeightClasses } from './utilities/omitHeightClasses';
 import DropdownFilterTabs from './dropdownFilterTabs';
 
 const AutoCompleteWithTabFilter = forwardRef<
@@ -314,9 +315,12 @@ const AutoCompleteWithTabFilter = forwardRef<
         }, [searchValue, type, tabInlineSearch, isMultiple, onChange, descId, desc, async, resetSuggections, resetAllSearch]);
 
         const generateClassName = useCallback(() => {
-            return `qbs-textfield-default ${className} ${errors && errors?.message ? 'textfield-error' : 'textfield'
+            const fieldClassName = searchInputClassName
+                ? omitHeightClasses(className)
+                : className ?? '';
+            return `qbs-textfield-default ${fieldClassName} ${searchInputClassName ?? ''} ${errors && errors?.message ? 'textfield-error' : 'textfield'
                 } ${expandable ? 'expandable' : ''}`;
-        }, [errors, name]);
+        }, [className, searchInputClassName, errors, expandable]);
         const handleRemoveSelectedItem = useCallback((index: number) => {
             setSelectedItems((prev) => {
                 return prev.filter((_, i) => i !== index);
@@ -1146,7 +1150,7 @@ const AutoCompleteWithTabFilter = forwardRef<
 
                 <div
                     className={`qbs-relative  qbs-autocomplete-selected-comp ${expandable ? 'qbs-expandable-container' : 'qbs-container'
-                        }`}
+                        } ${searchInputClassName ? `qbs-custom-search-size ${searchInputClassName}` : ''}`}
                 >
 
                     {(selectedItems?.length > 0 || !tabInlineSearch) && (
@@ -1301,7 +1305,7 @@ const AutoCompleteWithTabFilter = forwardRef<
                                             tabInlineSearch && (
                                                 <div
                                                     style={{ position: 'relative' }}
-                                                    className="react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer"
+                                                    className={`react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer ${searchInputClassName ? `qbs-custom-search-size ${searchInputClassName}` : ''}`}
                                                 >
                                                     <span className="dropdown-search-icon">
                                                         <Search />

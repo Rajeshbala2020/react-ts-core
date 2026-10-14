@@ -1078,7 +1078,7 @@ const DropdownFilterTabs = forwardRef<
                     !(moreOptionTab && activeTab === tab.length) && (
                       <div
                         style={{ position: 'relative' }}
-                        className="react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer"
+                        className={`react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer ${searchInputClassName ? `qbs-custom-search-size ${searchInputClassName}` : ''}`}
                       >
                         <span className="dropdown-search-icon">
                           <Search />

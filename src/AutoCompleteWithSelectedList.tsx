@@ -26,6 +26,7 @@ import {
   MIN_DROPDOWN_WIDTH_PX,
   measureTabListNaturalWidth,
 } from './utilities/measureTabListNaturalWidth';
+import { omitHeightClasses } from './utilities/omitHeightClasses';
 
 const AutoCompleteWithSelectedList = forwardRef<
   HTMLInputElement,
@@ -424,10 +425,13 @@ const AutoCompleteWithSelectedList = forwardRef<
     };
 
     const generateClassName = useCallback(() => {
-      return `qbs-textfield-default ${className} ${
+      const fieldClassName = searchInputClassName
+        ? omitHeightClasses(className)
+        : className ?? '';
+      return `qbs-textfield-default ${fieldClassName} ${searchInputClassName ?? ''} ${
         errors && errors?.message ? 'textfield-error' : 'textfield'
       } ${expandable ? 'expandable' : ''}`;
-    }, [errors, name]);
+    }, [className, searchInputClassName, errors, expandable]);
     const handleRemoveSelectedItem = (index: number) => {
       setSelectedItems((prev) => {
         return prev.filter((_, i) => i !== index);
@@ -1039,7 +1043,7 @@ const AutoCompleteWithSelectedList = forwardRef<
         <div
           className={`qbs-relative  qbs-autocomplete-selected-comp ${
             expandable ? 'qbs-expandable-container' : 'qbs-container'
-          }`}
+          } ${searchInputClassName ? `qbs-custom-search-size ${searchInputClassName}` : ''}`}
         >
           {(selectedItems?.length > 0 || !tabInlineSearch) && (
             <>
@@ -1199,7 +1203,7 @@ const AutoCompleteWithSelectedList = forwardRef<
                       tabInlineSearch && (
                         <div
                           style={{ position: 'relative' }}
-                          className="react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer"
+                          className={`react-core-ts-search-container qbs-autocomplete-selected-suggestions-outer ${searchInputClassName ? `qbs-custom-search-size ${searchInputClassName}` : ''}`}
                         >
                           <span className="dropdown-search-icon">
                             <Search />

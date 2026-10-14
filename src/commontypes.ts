@@ -105,7 +105,7 @@ export interface AutoSuggestionInputProps {
   moreOptionTabIcon?: React.ReactNode; // icon to display in the more options tab
   onMoreOptionChange?: (values?: any) => void; // separate callback for moreOptionValues
   resetAllSearch?: boolean; // allow to reset if tabInlineSearch is false
-  searchInputClassName?: string; // custom class for dropdown search input
+  searchInputClassName?: string; // custom class for the trigger field, container, and dropdown search input
 }
 export interface IconsProps {
   name: any;
