@@ -244,6 +244,10 @@ body * {
   margin-top: 2px;
   padding-top: 10px;
 }
+.qbs-dropdown-selected-actions {
+  min-height: 32px;
+  padding: 8px 10px 10px;
+}
 .qbs-dropdown-selected-preview {
   .qbs-dropdown-selected-container {
     border-top: 0px;

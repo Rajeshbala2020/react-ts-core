@@ -176,9 +176,8 @@ const AutoCompleteWithSelectedList = forwardRef<
         let dropdownHeight = viewMode ? 160 : 300; // Assume a fixed height or calculate based on content
         const defaultHeight = 184;
 
-        if (countOnly) {
-          if (dropdownSelectedRef?.current)
-            dropdownHeight += dropdownSelectedRef?.current?.clientHeight;
+        if (selectedItems?.length > 0 && dropdownSelectedRef?.current) {
+          dropdownHeight += dropdownSelectedRef.current.clientHeight;
         }
         if (tab.length > 0) {
           if (tabRef?.current) dropdownHeight += tabRef?.current?.clientHeight;
@@ -1175,6 +1174,7 @@ const AutoCompleteWithSelectedList = forwardRef<
             uniqueDropArrowId={uniqueDropArrowId}
             viewMode={viewMode}
             autoDropdown={autoDropdown && !tabInlineSearch ? true : false}
+            hasSelectedItems={selectedItems?.length > 0}
           />
           {/* Displaying Loading Spinner */}
 
@@ -1345,15 +1345,19 @@ const AutoCompleteWithSelectedList = forwardRef<
                     )}
                 </div>
                 <>
-                  {countOnly && selectedItems?.length > 0 && (
+                  {selectedItems?.length > 0 && (
                     <>
                       <div
-                        className={`qbs-expandable-container qbs-dropdown-selected-container`}
+                        className={`qbs-expandable-container qbs-dropdown-selected-container ${
+                          !countOnly ? 'qbs-dropdown-selected-actions' : ''
+                        }`}
                         ref={dropdownSelectedRef}
                       >
                         <div className={`qbs-flex qbs-w-full qbs-text-xs`}>
                           <div className="qbs-selected-lbs qbs-flex-grow">
-                            Selected Items
+                            {countOnly
+                              ? 'Selected Items'
+                              : `${selectedItems.length} selected`}
                           </div>
                           <div
                             className={`qbs-clear-link qbs-text-right qbs-cursor-pointer ${
@@ -1375,10 +1379,11 @@ const AutoCompleteWithSelectedList = forwardRef<
                           </div>
                         </div>
 
-                        {getSelectedItems(true)}
+                        {countOnly && getSelectedItems(true)}
 
                         <>
-                          {selectedItems?.length > itemCount &&
+                          {countOnly &&
+                            selectedItems?.length > itemCount &&
                             showAllSelected && (
                               <div className="qbs-readmore-collapse">
                                 <div

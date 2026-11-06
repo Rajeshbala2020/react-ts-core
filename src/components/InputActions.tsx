@@ -17,6 +17,7 @@ type ValueProps = {
   viewMode?: boolean;
   uniqueDropArrowId?: string;
   autoDropdown?: boolean;
+  hasSelectedItems?: boolean;
 };
 const InputActions: React.FC<ValueProps> = ({
   inputValue,
@@ -33,9 +34,10 @@ const InputActions: React.FC<ValueProps> = ({
   viewMode,
   uniqueDropArrowId,
   autoDropdown = false,
+  hasSelectedItems = false,
 }) => {
   const showClear =
-    Boolean(inputValue || searchValue) &&
+    Boolean(inputValue || searchValue || hasSelectedItems) &&
     !disabled &&
     !readOnly &&
     !expandable &&
